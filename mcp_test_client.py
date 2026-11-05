@@ -19,13 +19,9 @@ os.environ["OPENAI_API_KEY"] = api_key
 
 MODEL = "gpt-6.1-terra"
 
-MCP_SERVER = Path(
-    r"C:\Users\ferra\Dev\KiCAD_Agent\KiCAD-MCP-Server\dist\index.js"
-)
+MCP_SERVER = Path(__file__).parent / "KiCAD-MCP-Server" / "dist" / "index.js"
 
-PROJECT_DIR = Path(
-    r"C:\Users\ferra\Documents\KiCad"
-)
+PROJECT_DIR = Path.home() / "Documents" / "KiCad"
 
 MAX_STEPS = 20
 
