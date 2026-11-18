@@ -1,0 +1,461 @@
+"""Callable KiCad agent for the eval harness.
+
+    run_agent(question, output_dir)  -> dict   # one agent run on any question
+    run_task(task, run_dir)          -> dict   # one tasks.jsonl task
+
+CLI (one task, for trying it out):
+
+    .venv/bin/python eval/agent.py b06                # -> eval/output/b06/run0/
+    .venv/bin/python eval/agent.py u11 --run 2 --max-steps 10
+
+What the agent can and cannot see:
+- It gets only task["question"]. The task's "project", "instructions" and
+  "reference_netlist" fields (the original design) are never shown to it.
+- It works in a fresh output folder per run. For build tasks the folder is
+  seeded with the benchmark's OUTPUT/ contents (project-local libraries in
+  lib/); for injection tasks with the task's setup_files.
+- Every tool argument that names a file or folder is checked before it reaches
+  the MCP server: relative paths are resolved against the output folder, and
+  anything outside it is refused, except read-only use of KiCad's installed
+  libraries. So the reference design and the rest of the disk are off limits.
+- Only schematic, project and library tools are offered (PCB, routing,
+  manufacturing and global-library-table tools are left out), plus two
+  client-side tools to list and read files in the project directory.
+- The model may request several tool calls per turn (parallel_tool_calls);
+  they are executed one after another. max_steps counts model turns.
+
+The schematic the agent saves is returned as result["schematic"] (the root
+.kicad_sch in the output folder) for the grader.
+"""
+
+import argparse
+import asyncio
+import json
+import os
+import re
+import shutil
+import sys
+import time
+from pathlib import Path
+
+import keyring
+from mcp import ClientSession, StdioServerParameters
+from mcp.client.stdio import stdio_client
+from openai import AsyncOpenAI
+
+HERE = Path(__file__).resolve().parent
+REPO = HERE.parent
+MCP_SERVER = REPO / "KiCAD-MCP-Server" / "dist" / "index.js"
+VENV_PYTHON = REPO / ".venv" / "bin" / "python"
+DEFAULT_BENCHMARK = REPO.parent / "KiCAD_benchmark"
+OUTPUT_ROOT = HERE / "output"
+
+MODEL = "gpt-6.1-terra"
+MAX_STEPS = 100
+TIMEOUT_S = 1800
+
+# Folders the agent may read but never write (KiCad's installed libraries).
+READ_ONLY_ROOTS = [Path(p) for p in ("/usr/share/kicad", "/usr/share/kicad-nightly")
+                   if Path(p).is_dir()]
+
+# Schematic / project / library tools. Everything else the server offers
+# (PCB, routing, fabrication, global library tables, DigiKey, ...) is hidden.
+TOOLS = {
+    # project + schematic files
+    "create_project", "open_project", "save_project", "get_project_info", "create_schematic",
+    # components
+    "add_schematic_component", "batch_add_components", "delete_schematic_component",
+    "edit_schematic_component", "batch_edit_schematic_components",
+    "set_schematic_component_property", "get_schematic_component",
+    "replace_schematic_component", "move_schematic_component", "rotate_schematic_component",
+    # connections
+    "add_schematic_wire", "delete_schematic_wire", "add_schematic_net_label",
+    "delete_schematic_net_label", "connect_to_net", "add_no_connect", "batch_add_no_connects",
+    # inspection
+    "get_net_connections", "get_wire_connections", "get_schematic_pin_locations",
+    "list_schematic_components", "list_schematic_nets", "list_schematic_wires",
+    "list_schematic_labels", "get_net_at_point", "list_floating_labels", "find_orphaned_wires",
+    # checks
+    "annotate_schematic", "run_erc", "validate_schematic", "generate_netlist",
+    # libraries
+    "list_symbol_libraries", "search_symbols", "list_library_symbols", "get_symbol_info",
+    "list_symbol_pins", "batch_list_symbol_pins", "search_footprints", "get_footprint_info",
+    "list_library_footprints", "list_symbols_in_library",
+    # project-local custom parts
+    "create_symbol", "register_symbol_library", "register_footprint_library",
+}
+
+# Tools run by this client, not the MCP server (the server has no way to read
+# plain files). Same path guard as server tools: project directory only.
+LOCAL_TOOLS = [
+    {"type": "function", "name": "list_project_files", "strict": False,
+     "description": "List the files in the project directory (or a subfolder of it), recursively.",
+     "parameters": {"type": "object", "properties": {
+         "path": {"type": "string", "description": "Folder inside the project directory; default the project directory itself"}}}},
+    {"type": "function", "name": "read_project_file", "strict": False,
+     "description": "Read a text file inside the project directory (notes, specs, .kicad_sch, .kicad_sym, ...). Returns at most 20000 characters.",
+     "parameters": {"type": "object", "properties": {
+         "path": {"type": "string", "description": "File path inside the project directory"}},
+         "required": ["path"]}},
+]
+READ_LIMIT = 20000
+
+# Batch wiring: one model turn wires many pins. Each connection becomes an
+# add_schematic_net_label call on the server (a label on the pin's endpoint);
+# pins with the same net name are connected.
+WIRE_TOOL = {
+    "type": "function", "name": "connect_pins_to_nets", "strict": False,
+    "description": ("Connect many component pins to named nets in one call. For each entry a "
+                    "net label with the net name is placed exactly on the pin endpoint, so all "
+                    "pins given the same net name are connected. Use this instead of one "
+                    "add_schematic_net_label or wire call per pin. Components must already be "
+                    "placed. Returns how many succeeded and the errors for the ones that failed."),
+    "parameters": {"type": "object", "properties": {
+        "schematicPath": {"type": "string", "description": "Path to the .kicad_sch file"},
+        "connections": {"type": "array", "description": "Pins to connect", "items": {
+            "type": "object", "properties": {
+                "ref": {"type": "string", "description": "Component reference, e.g. R1"},
+                "pin": {"type": "string", "description": "Pin number, e.g. 1 or A5"},
+                "net": {"type": "string", "description": "Net name, e.g. GND, +3V3, SDA"}},
+            "required": ["ref", "pin", "net"]}}},
+        "required": ["schematicPath", "connections"]},
+}
+
+
+async def connect_pins_to_nets(session, args):
+    ok, failed = 0, []
+    for c in args.get("connections", []):
+        try:
+            res = await session.call_tool("add_schematic_net_label", arguments={
+                "schematicPath": args["schematicPath"], "componentRef": str(c["ref"]),
+                "pinNumber": str(c["pin"]), "netName": str(c["net"])})
+            text = " ".join(getattr(b, "text", "") for b in res.content)
+            if res.is_error or '"success": false' in text:
+                failed.append({**c, "error": text[:200]})
+            else:
+                ok += 1
+        except Exception as exc:
+            failed.append({**c, "error": str(exc)[:200]})
+    return {"is_error": bool(failed) and not ok,
+            "result": {"connected": ok, "failed": len(failed), "errors": failed[:30]}}
+
+# Short-term memory: the client sends the conversation itself each turn.
+# Tool results are capped at RESULT_LIMIT characters when they come in (trim at
+# the source). Once the tool results in the history add up to more than
+# RESULTS_BUDGET characters (~25K tokens), the oldest are replaced by a stub
+# until it fits again; the last KEEP_RESULTS always stay in full. Small runs
+# are never touched. Tool calls, the agent's own messages and reasoning stay.
+RESULT_LIMIT = 8000
+RESULTS_BUDGET = 100_000
+KEEP_RESULTS = 6
+CLEARED = '{"cleared": "old tool result removed to save context; call the tool again if you need it"}'
+
+
+def run_local_tool(name, args, output_dir):
+    path = Path(args.get("path") or output_dir)
+    if name == "list_project_files":
+        if not path.is_dir():
+            return {"is_error": True, "error": f"not a folder: {path}"}
+        files = sorted(str(p.relative_to(output_dir)) for p in path.rglob("*")
+                       if p.is_file() and not p.name.startswith("_"))
+        return {"is_error": False, "result": files[:500]}
+    if not path.is_file():
+        return {"is_error": True, "error": f"file not found: {path}"}
+    text = path.read_text(errors="replace")
+    return {"is_error": False, "result": text[:READ_LIMIT],
+            "truncated": len(text) > READ_LIMIT}
+
+
+PATH_KEY = re.compile(r"(?i)(path|dir|file|folder|^filename$)s?$")
+
+SYSTEM_PROMPT = """You are an electronics design agent operating KiCad through an MCP server.
+
+You must use tools to perform actual design operations.
+
+Instructions:
+1. Use real KiCad components and valid connections.
+2. Calculate appropriate component values.
+3. Check tool results for errors.
+4. Verify the electrical design when possible (ERC).
+5. Never claim to have executed a tool you did not execute.
+6. Do not export manufacturing files and do not lay out a PCB; only the schematic is needed.
+7. Do not modify existing unrelated projects.
+8. If a tool is unavailable or a request cannot be done, explain the limitation.
+
+Suggested workflow for a schematic: create the project, look up the symbols you
+need, place all components (batch_add_components), check their pins, then wire
+everything with connect_pins_to_nets (one call can connect many pins; give pins
+that belong together the same net name), mark unused pins with no-connects, and
+finish with run_erc.
+
+Your project directory is {output_dir}
+It is the OUTPUT folder: "OUTPUT/lib" means the lib folder inside it. Use absolute
+paths inside this directory for every file you create or open. Files outside it
+are not accessible.
+
+To save context, only your most recent tool results are kept in full; older
+ones may be replaced by a stub. Call a tool again if you need an old result.
+
+Work incrementally and report what was actually created."""
+
+BUILD_PREAMBLE = ("Create a new KiCad project named {name} in the project directory and "
+                  "draw its schematic for the following request.\n\n")
+
+
+# --------------------------------------------------------------------------
+# Path guard
+# --------------------------------------------------------------------------
+
+class PathRefused(Exception):
+    pass
+
+
+def _inside(path, root):
+    return path == root or root in path.parents
+
+
+def guard_args(args, output_dir):
+    """Resolve path-like arguments against output_dir; refuse any outside it.
+
+    Returns a copy of args with relative paths made absolute.
+    """
+    def check(key, value):
+        if not isinstance(value, str) or not value.strip():
+            return value
+        p = Path(os.path.expanduser(value))
+        p = (p if p.is_absolute() else output_dir / p).resolve()
+        if _inside(p, output_dir):
+            return str(p)
+        if any(_inside(p, r) for r in READ_ONLY_ROOTS) and not re.search(
+                r"(?i)output|target|dest", key):
+            return str(p)
+        raise PathRefused(f"{key}={value!r} is outside the project directory {output_dir}")
+
+    out = {}
+    for key, value in args.items():
+        if PATH_KEY.search(key):
+            out[key] = [check(key, v) for v in value] if isinstance(value, list) else check(key, value)
+        else:
+            out[key] = value
+    # Library registration must stay in the project, never the user's global table.
+    if out.get("scope") not in (None, "project"):
+        raise PathRefused(f"scope={out['scope']!r}: only project-scope library tables are allowed")
+    return out
+
+
+# --------------------------------------------------------------------------
+# Agent loop
+# --------------------------------------------------------------------------
+
+def _openai_tool(tool):
+    return {"type": "function", "name": tool.name, "description": tool.description or "",
+            "parameters": tool.input_schema, "strict": False}
+
+
+def _usage(resp):
+    u = getattr(resp, "usage", None)
+    details = getattr(u, "input_tokens_details", None)
+    return ((getattr(u, "input_tokens", 0) or 0), (getattr(u, "output_tokens", 0) or 0),
+            (getattr(details, "cached_tokens", 0) or 0))
+
+
+def find_schematic(output_dir):
+    """Root schematic: <name>.kicad_sch next to <name>.kicad_pro, else the largest one."""
+    for pro in sorted(Path(output_dir).rglob("*.kicad_pro")):
+        sch = pro.with_suffix(".kicad_sch")
+        if sch.exists():
+            return sch
+    schs = sorted(Path(output_dir).rglob("*.kicad_sch"), key=lambda p: -p.stat().st_size)
+    return schs[0] if schs else None
+
+
+async def _loop(session, question, output_dir, model, max_steps, result):
+    client = AsyncOpenAI(api_key=_api_key(), max_retries=6)
+    listed = (await session.list_tools()).tools
+    tools = [_openai_tool(t) for t in listed if t.name in TOOLS] + LOCAL_TOOLS + [WIRE_TOOL]
+    names = {t["name"] for t in tools}
+    local = {t["name"] for t in LOCAL_TOOLS}
+    instructions = SYSTEM_PROMPT.format(output_dir=output_dir)
+
+    async def call_model(**kw):
+        t0 = time.time()
+        resp = await client.responses.create(model=model, instructions=instructions, tools=tools,
+                                             parallel_tool_calls=True, **kw)
+        tin, tout, tcached = _usage(resp)
+        result["turns"] += 1
+        result["input_tokens"] += tin
+        result["cached_input_tokens"] += tcached
+        result["output_tokens"] += tout
+        result["model_calls"].append({"seconds": round(time.time() - t0, 2), "input_tokens": tin,
+                                      "cached_input_tokens": tcached, "output_tokens": tout})
+        return resp
+
+    items = [{"role": "user", "content": question}]
+    outputs_seen = []  # indexes into items of function_call_output entries
+
+    def clear_stale():
+        total = sum(len(items[i]["output"]) for i in outputs_seen)
+        for i in outputs_seen[:-KEEP_RESULTS]:
+            if total <= RESULTS_BUDGET:
+                break
+            if items[i]["output"] != CLEARED:
+                total -= len(items[i]["output"]) - len(CLEARED)
+                items[i]["output"] = CLEARED
+                result["cleared_results"] += 1
+
+    resp = await call_model(input=items, store=False, include=["reasoning.encrypted_content"])
+    for _ in range(max_steps):
+        items.extend(o.model_dump(exclude_none=True) for o in resp.output)
+        calls = [item for item in resp.output if item.type == "function_call"]
+        if not calls:
+            result["answer"] = resp.output_text
+            result["stop_reason"] = "done"
+            return
+        for call in calls:
+            t0 = time.time()
+            record = {"name": call.name, "arguments": call.arguments}
+            try:
+                args = json.loads(call.arguments or "{}")
+                record["arguments"] = args
+                if call.name not in names:
+                    raise ValueError(f"unknown or unavailable tool {call.name}")
+                args = guard_args(args, output_dir)
+                if call.name == "connect_pins_to_nets":
+                    out = await connect_pins_to_nets(session, args)
+                    record["is_error"] = out["is_error"]
+                    text = json.dumps(out, default=str)
+                elif call.name in local:
+                    out = run_local_tool(call.name, args, output_dir)
+                    record["is_error"] = out["is_error"]
+                    text = json.dumps(out, default=str)
+                else:
+                    res = await session.call_tool(call.name, arguments=args)
+                    payload = (res.structured_content if res.structured_content is not None
+                               else [b.model_dump(mode="json") for b in res.content])
+                    record["is_error"] = bool(res.is_error)
+                    text = json.dumps({"is_error": bool(res.is_error), "result": payload}, default=str)
+            except PathRefused as exc:
+                record.update(is_error=True, refused=str(exc))
+                text = json.dumps({"is_error": True, "error": f"Refused: {exc}"})
+            except Exception as exc:  # bad JSON, server error, ...
+                record.update(is_error=True, error=str(exc))
+                text = json.dumps({"is_error": True, "error": str(exc)})
+            record["seconds"] = round(time.time() - t0, 2)
+            record["result"] = text[:4000]
+            result["tool_calls"].append(record)
+            if len(text) > RESULT_LIMIT:
+                text = text[:RESULT_LIMIT] + f'... [truncated {len(text) - RESULT_LIMIT} chars]'
+            outputs_seen.append(len(items))
+            items.append({"type": "function_call_output", "call_id": call.call_id,
+                          "output": text})
+        clear_stale()
+        resp = await call_model(input=items, store=False, include=["reasoning.encrypted_content"])
+    result["answer"] = resp.output_text
+    result["stop_reason"] = "max_steps"
+
+
+def _api_key():
+    key = os.environ.get("OPENAI_API_KEY") or keyring.get_password("KiCAD_Agent", "OPENAI_API_KEY")
+    if not key:
+        raise RuntimeError("No OpenAI API key (OPENAI_API_KEY or keyring KiCAD_Agent)")
+    return key
+
+
+async def run_agent(question, output_dir, model=MODEL, max_steps=MAX_STEPS, timeout=TIMEOUT_S):
+    """Run the agent once on `question`, working only inside `output_dir`.
+
+    Returns a dict: answer, schematic (path or None), stop_reason
+    (done / max_steps / timeout / error), turns, input_tokens, output_tokens,
+    seconds, tool_calls (name, arguments, is_error, result, seconds), model_calls.
+    """
+    output_dir = Path(output_dir).resolve()
+    output_dir.mkdir(parents=True, exist_ok=True)
+    result = {"question": question, "output_dir": str(output_dir), "model": model,
+              "answer": "", "schematic": None, "stop_reason": None, "error": None,
+              "turns": 0, "input_tokens": 0, "cached_input_tokens": 0, "output_tokens": 0, "seconds": 0.0,
+              "tool_calls": [], "model_calls": [], "cleared_results": 0}
+    env = {"KICAD_BACKEND": "auto", "LOG_LEVEL": "error",
+           "PATH": os.environ.get("PATH", "/usr/bin:/bin"), "HOME": os.environ.get("HOME", "")}
+    if VENV_PYTHON.exists():
+        env["KICAD_PYTHON"] = str(VENV_PYTHON)
+    params = StdioServerParameters(command="node", args=[str(MCP_SERVER)],
+                                   cwd=str(output_dir), env=env)
+    t0 = time.time()
+    try:
+        with open(output_dir / "_mcp_server.log", "w") as errlog:
+            async with stdio_client(params, errlog=errlog) as (read, write):
+                async with ClientSession(read, write) as session:
+                    await session.initialize()
+                    await asyncio.wait_for(
+                        _loop(session, question, output_dir, model, max_steps, result), timeout)
+    except asyncio.TimeoutError:
+        result["stop_reason"] = "timeout"
+    except Exception as exc:
+        while isinstance(exc, BaseExceptionGroup) and len(exc.exceptions) == 1:
+            exc = exc.exceptions[0]  # stdio_client wraps errors in a TaskGroup
+        if isinstance(exc, asyncio.TimeoutError):
+            result["stop_reason"] = "timeout"
+        else:
+            result["stop_reason"] = "error"
+            result["error"] = f"{type(exc).__name__}: {exc}"
+    result["seconds"] = round(time.time() - t0, 2)
+    sch = find_schematic(output_dir)
+    result["schematic"] = str(sch) if sch else None
+    (output_dir / "_answer.md").write_text(result["answer"] or "")
+    return result
+
+
+# --------------------------------------------------------------------------
+# Tasks
+# --------------------------------------------------------------------------
+
+def prepare(task, run_dir, benchmark=DEFAULT_BENCHMARK):
+    """Fresh output folder for one run; returns the prompt the agent will get."""
+    run_dir = Path(run_dir).resolve()
+    if run_dir.exists():
+        shutil.rmtree(run_dir)
+    run_dir.mkdir(parents=True)
+    question = task["question"]
+    if task["type"] == "build":
+        deps = Path(benchmark) / Path(task["instructions"]).parent / "OUTPUT"
+        if deps.is_dir():
+            shutil.copytree(deps, run_dir, dirs_exist_ok=True,
+                            ignore=shutil.ignore_patterns(".gitkeep"))
+        question = BUILD_PREAMBLE.format(name=task["id"]) + question
+    for rel, content in task.get("setup_files", {}).items():
+        (run_dir / rel).parent.mkdir(parents=True, exist_ok=True)
+        (run_dir / rel).write_text(content)
+    return question
+
+
+async def run_task(task, run_dir, benchmark=DEFAULT_BENCHMARK, **kw):
+    question = prepare(task, run_dir, benchmark)
+    result = await run_agent(question, run_dir, **kw)
+    result["task_id"] = task["id"]
+    with open(Path(run_dir) / "_run.json", "w") as f:
+        json.dump(result, f, indent=1, default=str)
+    return result
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("task_id")
+    ap.add_argument("--tasks", type=Path, default=HERE / "tasks.jsonl")
+    ap.add_argument("--benchmark", type=Path, default=DEFAULT_BENCHMARK)
+    ap.add_argument("--run", type=int, default=0)
+    ap.add_argument("--model", default=MODEL)
+    ap.add_argument("--max-steps", type=int, default=MAX_STEPS)
+    a = ap.parse_args()
+    tasks = {t["id"]: t for t in map(json.loads, a.tasks.read_text().splitlines()) if t}
+    run_dir = OUTPUT_ROOT / a.task_id / f"run{a.run}"
+    r = asyncio.run(run_task(tasks[a.task_id], run_dir, a.benchmark,
+                             model=a.model, max_steps=a.max_steps))
+    print(json.dumps({k: r[k] for k in ("task_id", "stop_reason", "error", "turns", "input_tokens",
+                                         "cached_input_tokens", "output_tokens", "seconds", "schematic")}, indent=1))
+    print(f"tool calls: {len(r['tool_calls'])} "
+          f"({sum(1 for c in r['tool_calls'] if c.get('refused'))} refused)")
+    print("\n" + (r["answer"] or "")[:1500])
+
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -44,3 +44,22 @@ source ~/.bashrc
 ```bash
 python mcp_test_client.py
 ```
+
+## Evaluation
+
+Needs [KiCAD_benchmark](https://github.com/ndremferraz/KiCAD_benchmark) (dev branch) cloned next to this repo.
+
+```bash
+python3 -m venv --system-site-packages .venv
+.venv/bin/pip install -r requirements.txt -r KiCAD-MCP-Server/requirements.txt
+```
+
+Run the agent on one task from `eval/tasks.jsonl`:
+
+```bash
+.venv/bin/python eval/agent.py b37
+```
+
+The output goes to `eval/output/b37/run0/`: the agent's schematic, plus `_run.json` with the answer, turns, tokens, latency and every tool call.
+
+The agent only sees the task's question and can only access files in its output folder.
