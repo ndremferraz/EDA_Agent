@@ -60,6 +60,14 @@ Run the agent on one task from `eval/tasks.jsonl`:
 .venv/bin/python eval/agent.py b37
 ```
 
+Or from Python:
+
+```python
+from agent import run_task  # eval/agent.py
+result = await run_task(task, "eval/output/b37/run0")  # task = one line of tasks.jsonl
+result["schematic"]  # path to the agent's .kicad_sch, or None
+```
+
 The output goes to `eval/output/b37/run0/`: the agent's schematic, plus `_run.json` with the answer, turns, tokens, latency and every tool call.
 
 The agent only sees the task's question and can only access files in its output folder.
