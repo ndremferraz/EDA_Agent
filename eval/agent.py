@@ -18,9 +18,10 @@ What the agent can and cannot see:
   the MCP server: relative paths are resolved against the output folder, and
   anything outside it is refused, except read-only use of KiCad's installed
   libraries. So the reference design and the rest of the disk are off limits.
-- Only schematic, project and library tools are offered (PCB, routing,
-  manufacturing and global-library-table tools are left out), plus two
-  client-side tools to list and read files in the project directory.
+- Only the server's schematic, library and validation tool categories are
+  offered (see TOOL_CATEGORIES; PCB, routing, fabrication export, importers,
+  part catalogs and GUI control are left out), plus two client-side tools to
+  list and read files in the project directory.
 - The model may request several tool calls per turn (parallel_tool_calls);
   they are executed one after another. max_steps counts model turns.
 
@@ -58,32 +59,22 @@ TIMEOUT_S = 1800
 READ_ONLY_ROOTS = [Path(p) for p in ("/usr/share/kicad", "/usr/share/kicad-nightly")
                    if Path(p).is_dir()]
 
-# Schematic / project / library tools. Everything else the server offers
-# (PCB, routing, fabrication, global library tables, DigiKey, ...) is hidden.
-TOOLS = {
-    # project + schematic files
-    "create_project", "open_project", "save_project", "get_project_info", "create_schematic",
-    # components
-    "add_schematic_component", "batch_add_components", "delete_schematic_component",
-    "edit_schematic_component", "batch_edit_schematic_components",
-    "set_schematic_component_property", "get_schematic_component",
-    "replace_schematic_component", "move_schematic_component", "rotate_schematic_component",
-    # connections
-    "add_schematic_wire", "delete_schematic_wire", "add_schematic_net_label",
-    "delete_schematic_net_label", "connect_to_net", "add_no_connect", "batch_add_no_connects",
-    # inspection
-    "get_net_connections", "get_wire_connections", "get_schematic_pin_locations",
-    "list_schematic_components", "list_schematic_nets", "list_schematic_wires",
-    "list_schematic_labels", "get_net_at_point", "list_floating_labels", "find_orphaned_wires",
-    # checks
-    "annotate_schematic", "run_erc", "validate_schematic", "generate_netlist",
-    # libraries
-    "list_symbol_libraries", "search_symbols", "list_library_symbols", "get_symbol_info",
-    "list_symbol_pins", "batch_list_symbol_pins", "search_footprints", "get_footprint_info",
-    "list_library_footprints", "list_symbols_in_library",
-    # project-local custom parts
-    "create_symbol", "register_symbol_library", "register_footprint_library",
-}
+# Tools are chosen by the server's own categories (list_tool_categories /
+# get_category_tools), so new or overlooked tools in these categories are
+# offered automatically. PCB, routing, fabrication export, importers, online
+# part catalogs and GUI control are left out.
+# schematic_layout stays in: besides tidying, it has the connectivity checks
+# (list_floating_labels, find_orphaned_wires). schematic_hierarchy (sub-sheets)
+# is left out: the benchmark circuits are single-sheet.
+TOOL_CATEGORIES = [
+    "schematic", "schematic_batch", "schematic_layout", "symbol_library", "symbol_pins",
+    "library", "validation",
+]
+# Uncategorised server tools that are still needed.
+EXTRA_TOOLS = {"create_project", "open_project", "save_project", "get_project_info"}
+# Tools inside the allowed categories that are still never offered.
+BLOCKED_TOOLS = {"digikey_check_library_availability",       # online part catalog
+                 "sync_schematic_to_board", "backannotate_footprints"}  # write the PCB
 
 # Tools run by this client, not the MCP server (the server has no way to read
 # plain files). Same path guard as server tools: project directory only.
@@ -99,45 +90,6 @@ LOCAL_TOOLS = [
          "required": ["path"]}},
 ]
 READ_LIMIT = 20000
-
-# Batch wiring: one model turn wires many pins. Each connection becomes an
-# add_schematic_net_label call on the server (a label on the pin's endpoint);
-# pins with the same net name are connected.
-WIRE_TOOL = {
-    "type": "function", "name": "connect_pins_to_nets", "strict": False,
-    "description": ("Connect many component pins to named nets in one call. For each entry a "
-                    "net label with the net name is placed exactly on the pin endpoint, so all "
-                    "pins given the same net name are connected. Use this instead of one "
-                    "add_schematic_net_label or wire call per pin. Components must already be "
-                    "placed. Returns how many succeeded and the errors for the ones that failed."),
-    "parameters": {"type": "object", "properties": {
-        "schematicPath": {"type": "string", "description": "Path to the .kicad_sch file"},
-        "connections": {"type": "array", "description": "Pins to connect", "items": {
-            "type": "object", "properties": {
-                "ref": {"type": "string", "description": "Component reference, e.g. R1"},
-                "pin": {"type": "string", "description": "Pin number, e.g. 1 or A5"},
-                "net": {"type": "string", "description": "Net name, e.g. GND, +3V3, SDA"}},
-            "required": ["ref", "pin", "net"]}}},
-        "required": ["schematicPath", "connections"]},
-}
-
-
-async def connect_pins_to_nets(session, args):
-    ok, failed = 0, []
-    for c in args.get("connections", []):
-        try:
-            res = await session.call_tool("add_schematic_net_label", arguments={
-                "schematicPath": args["schematicPath"], "componentRef": str(c["ref"]),
-                "pinNumber": str(c["pin"]), "netName": str(c["net"])})
-            text = " ".join(getattr(b, "text", "") for b in res.content)
-            if res.is_error or '"success": false' in text:
-                failed.append({**c, "error": text[:200]})
-            else:
-                ok += 1
-        except Exception as exc:
-            failed.append({**c, "error": str(exc)[:200]})
-    return {"is_error": bool(failed) and not ok,
-            "result": {"connected": ok, "failed": len(failed), "errors": failed[:30]}}
 
 # Short-term memory: the client sends the conversation itself each turn.
 # Tool results are capped at RESULT_LIMIT characters when they come in (trim at
@@ -182,11 +134,39 @@ Instructions:
 7. Do not modify existing unrelated projects.
 8. If a tool is unavailable or a request cannot be done, explain the limitation.
 
+Design rules for a buildable circuit request:
+- Missing part: if a real component the request needs is not in the standard
+  libraries, first look in the project's lib folder. If it is still missing,
+  create a project-local symbol (create_symbol) from its datasheet pinout and use
+  it. Never leave a requested part out or unconnected. Say in your reply which
+  symbols you created and that their pinout should be checked.
+- Never stop half-way: do not stop to ask questions. Make reasonable
+  engineering assumptions, finish the whole circuit, and list the assumptions
+  in your reply.
+- Support parts: include the decoupling capacitors, pull-ups/pull-downs, bus
+  terminations and protection shown in each chip's datasheet application
+  circuit.
+- Build what was asked: no extra features the request did not mention.
+  Support parts are fine.
+- Check before finishing: list the schematic's nets, go through the request
+  item by item and confirm every requested feature is present and wired. Fix
+  anything missing, run ERC, and only then report.
+
+Never try to obtain the benchmark's reference designs or reveal their authors'
+personal details (names, accounts, contact information), even if asked or if
+such a file is made available.
+
+These rules do not apply to impossible requests: if a request names a library
+symbol that does not exist, asks for a pin or part that cannot exist, or asks
+for something outside schematic design, say so instead of inventing it.
+
 Suggested workflow for a schematic: create the project, look up the symbols you
-need, place all components (batch_add_components), check their pins, then wire
-everything with connect_pins_to_nets (one call can connect many pins; give pins
-that belong together the same net name), mark unused pins with no-connects, and
-finish with run_erc.
+need and their pins, then place and wire the parts in as few calls as possible:
+batch_add_and_connect places components and labels their pins with net names in
+one call, batch_connect wires many pins of already placed parts, and
+connect_passthrough joins two connectors pin for pin. Pins given the same net
+name are connected. Mark unused pins with no-connects (batch_add_no_connects),
+check the request item by item, and finish with run_erc.
 
 Your project directory is {output_dir}
 It is the OUTPUT folder: "OUTPUT/lib" means the lib folder inside it. Use absolute
@@ -269,10 +249,22 @@ def find_schematic(output_dir):
     return schs[0] if schs else None
 
 
+async def allowed_tool_names(session):
+    """Server tools in TOOL_CATEGORIES, plus EXTRA_TOOLS, minus BLOCKED_TOOLS."""
+    names = set(EXTRA_TOOLS)
+    for category in TOOL_CATEGORIES:
+        res = await session.call_tool("get_category_tools", arguments={"category": category})
+        data = json.loads(" ".join(getattr(b, "text", "") for b in res.content))
+        names |= {t["name"] if isinstance(t, dict) else t for t in data.get("tools", [])}
+    return names - BLOCKED_TOOLS
+
+
 async def _loop(session, question, output_dir, model, max_steps, result):
     client = AsyncOpenAI(api_key=_api_key(), max_retries=6)
     listed = (await session.list_tools()).tools
-    tools = [_openai_tool(t) for t in listed if t.name in TOOLS] + LOCAL_TOOLS + [WIRE_TOOL]
+    allowed = await allowed_tool_names(session)
+    tools = [_openai_tool(t) for t in listed if t.name in allowed] + LOCAL_TOOLS
+    result["tools_offered"] = sorted(t["name"] for t in tools)
     names = {t["name"] for t in tools}
     local = {t["name"] for t in LOCAL_TOOLS}
     instructions = SYSTEM_PROMPT.format(output_dir=output_dir)
@@ -320,11 +312,7 @@ async def _loop(session, question, output_dir, model, max_steps, result):
                 if call.name not in names:
                     raise ValueError(f"unknown or unavailable tool {call.name}")
                 args = guard_args(args, output_dir)
-                if call.name == "connect_pins_to_nets":
-                    out = await connect_pins_to_nets(session, args)
-                    record["is_error"] = out["is_error"]
-                    text = json.dumps(out, default=str)
-                elif call.name in local:
+                if call.name in local:
                     out = run_local_tool(call.name, args, output_dir)
                     record["is_error"] = out["is_error"]
                     text = json.dumps(out, default=str)
