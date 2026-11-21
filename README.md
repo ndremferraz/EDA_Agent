@@ -39,6 +39,23 @@ echo 'export OPENAI_API_KEY="sk-..."' >> ~/.bashrc
 source ~/.bashrc
 ```
 
+## Path to KiCAD python
+```bash
+conda activate kicad-mcp
+
+conda env config vars set \
+  KICAD_PYTHON="$CONDA_PREFIX/bin/python" \
+  PYTHONPATH="$("$CONDA_PREFIX/bin/python" -B -c 'import sysconfig; print(sysconfig.get_path("purelib"))'):/usr/lib/python3/dist-packages"
+
+conda deactivate
+conda activate kicad-mcp
+```
+or if you use venv use(everytime you create a new terminal):
+```
+export KICAD_PYTHON="$VIRTUAL_ENV/bin/python"
+export PYTHONPATH="/usr/lib/python3/dist-packages"
+```
+
 ## Run
 
 ```bash
@@ -57,8 +74,13 @@ python3 -m venv --system-site-packages .venv
 Run the agent on one task from `eval/tasks.jsonl`:
 
 ```bash
-.venv/bin/python eval/agent.py b37
+python eval/prepare_dependencies.py
+python eval/agent.py b37
 ```
+
+`prepare_dependencies.py` copies only the task's named local libraries from
+`../KiCAD_benchmark/data` into `OUTPUT/<task id>/lib`. The agent copies that
+folder into its run directory before each build task.
 
 Or from Python:
 
