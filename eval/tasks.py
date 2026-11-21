@@ -5,7 +5,7 @@ import shutil
 import sys
 from pathlib import Path
 
-from fake_agent import run_agent
+from agent import run_agent
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parent
