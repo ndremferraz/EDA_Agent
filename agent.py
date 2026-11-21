@@ -36,6 +36,8 @@ Instructions:
 8. If a tool is unavailable or a request cannot be done, explain the limitation.
 
 Design rules for a buildable circuit request:
+- Use local dependencies when available: if the project supplies a custom dependency
+inspect it and attempt to use it before looking for components from the standard libraries
 - Missing part: if a real component the request needs is not in the standard
   libraries, first look in the project's lib folder. If it is still missing,
   create a project-local symbol (create_symbol) from its datasheet pinout and use
@@ -52,6 +54,7 @@ Design rules for a buildable circuit request:
 - Check before finishing: list the schematic's nets, go through the request
   item by item and confirm every requested feature is present and wired. Fix
   anything missing, run ERC, and only then report.
+- always connect GND, VCC, +3.3V, +5V, +1.8V, etc. when needed.
 
 Never try to obtain the benchmark's reference designs or reveal their authors'
 personal details (names, accounts, contact information), even if asked or if
@@ -179,6 +182,8 @@ async def _loop(session, question, output_dir, model, max_steps, result):
     instructions = SYSTEM_PROMPT.format(output_dir=output_dir)
     items = [{"role": "user", "content": question}]
     output_indexes = []
+
+    print("Running Agent!!!")
 
     async with AsyncOpenAI(api_key=_api_key(), max_retries=6) as client:
         for _ in range(max_steps):
