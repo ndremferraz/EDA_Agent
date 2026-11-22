@@ -2,11 +2,18 @@
 
     python3 eval/make_tasks.py [--benchmark ../KiCAD_benchmark]
 
-Build tasks come from KiCAD_benchmark/data/*/instructions*.txt. The agent gets
-only the "Build requirements" and "Local dependencies" lines; the "Project:"
-line names the original design, whose netlist (netlists/<repo>/<stem>.xml,
+Build task metadata comes from KiCAD_benchmark/data/*/instructions*.txt.
+Agent-facing questions are maintained in eval/build_questions.json, keyed by
+the instructions path so task sorting cannot associate a question with the
+wrong project. Instructions without an override use their original "Build
+requirements" and "Local dependencies" lines. The "Project:" line names
+the original design, whose netlist (netlists/<repo>/<stem>.xml,
 made by KiCAD_benchmark/export_ground_truth.py) is the reference the grader
 compares the agent's schematic against.
+
+Questions specify custom interfaces, firmware assignments and feature scope.
+Standard-library pinouts and routine circuit design are left to the agent;
+questions should not become reference netlists or wiring walkthroughs.
 
 Of the 64 instructions files, 25 are left out:
 - duplicates: same connectivity as a kept task
@@ -33,6 +40,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "tasks.jsonl"
+BUILD_QUESTIONS = HERE / "build_questions.json"
 
 EXCLUDE = {
     # duplicates (same nets as the kept one in brackets)
@@ -197,6 +205,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--benchmark", type=Path, default=HERE.parent.parent / "KiCAD_benchmark")
     bench = ap.parse_args().benchmark.resolve()
+    questions = json.loads(BUILD_QUESTIONS.read_text())
 
     builds = []
     for f in sorted(bench.glob("data/*/instructions*.txt")):
@@ -209,6 +218,7 @@ def main():
         question = info["requirements"]
         if info.get("dependencies"):
             question += "\nLocal dependencies: " + info["dependencies"]
+        question = questions.get(str(f.relative_to(bench)), question)
         builds.append(dict(
             type="build",
             tags=["build", "kicad5" if info["project"].endswith(".pro") else "kicad6+",
