@@ -263,7 +263,14 @@ async def allowed_tool_names(session):
     return names - BLOCKED_TOOLS
 
 
-async def _loop(session, question, output_dir, model, max_steps, result):
+async def _loop(session, question, output_dir, model, max_steps, result, on_event=None):
+    def emit(kind, data):
+        if on_event:
+            try:
+                on_event(kind, data)
+            except Exception:
+                pass  # a broken listener must never stop the run
+
     client = AsyncOpenAI(api_key=_api_key(), max_retries=6)
     listed = (await session.list_tools()).tools
     allowed = await allowed_tool_names(session)
@@ -284,6 +291,7 @@ async def _loop(session, question, output_dir, model, max_steps, result):
         result["output_tokens"] += tout
         result["model_calls"].append({"seconds": round(time.time() - t0, 2), "input_tokens": tin,
                                       "cached_input_tokens": tcached, "output_tokens": tout})
+        emit("model_call", result["model_calls"][-1])
         return resp
 
     items = [{"role": "user", "content": question}]
@@ -303,6 +311,8 @@ async def _loop(session, question, output_dir, model, max_steps, result):
     for _ in range(max_steps):
         items.extend(o.model_dump(exclude_none=True) for o in resp.output)
         calls = [item for item in resp.output if item.type == "function_call"]
+        if calls and resp.output_text:
+            emit("message", {"text": resp.output_text})
         if not calls:
             result["answer"] = resp.output_text
             result["stop_reason"] = "done"
@@ -335,6 +345,7 @@ async def _loop(session, question, output_dir, model, max_steps, result):
             record["seconds"] = round(time.time() - t0, 2)
             record["result"] = text[:4000]
             result["tool_calls"].append(record)
+            emit("tool_call", record)
             if len(text) > RESULT_LIMIT:
                 text = text[:RESULT_LIMIT] + f'... [truncated {len(text) - RESULT_LIMIT} chars]'
             outputs_seen.append(len(items))
@@ -353,12 +364,16 @@ def _api_key():
     return key
 
 
-async def run_agent(question, output_dir, model=MODEL, max_steps=MAX_STEPS, timeout=TIMEOUT_S):
+async def run_agent(question, output_dir, model=MODEL, max_steps=MAX_STEPS, timeout=TIMEOUT_S,
+                    on_event=None):
     """Run the agent once on `question`, working only inside `output_dir`.
 
     Returns a dict: answer, schematic (path or None), stop_reason
     (done / max_steps / timeout / error), turns, input_tokens, output_tokens,
     seconds, tool_calls (name, arguments, is_error, result, seconds), model_calls.
+
+    on_event(kind, data), if given, is called live with "model_call",
+    "message" (agent text sent alongside tool calls) and "tool_call" records.
     """
     output_dir = Path(output_dir).resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -379,7 +394,7 @@ async def run_agent(question, output_dir, model=MODEL, max_steps=MAX_STEPS, time
                 async with ClientSession(read, write) as session:
                     await session.initialize()
                     await asyncio.wait_for(
-                        _loop(session, question, output_dir, model, max_steps, result), timeout)
+                        _loop(session, question, output_dir, model, max_steps, result, on_event), timeout)
     except asyncio.TimeoutError:
         result["stop_reason"] = "timeout"
     except Exception as exc:
