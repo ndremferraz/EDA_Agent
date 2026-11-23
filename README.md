@@ -47,7 +47,7 @@ python mcp_test_client.py
 
 ## Evaluation
 
-Needs [KiCAD_benchmark](https://github.com/ndremferraz/KiCAD_benchmark) (dev branch) cloned next to this repo.
+Needs [KiCAD_benchmark](https://github.com/ndremferraz/KiCAD_benchmark) (dev branch) cloned next to this repo, or pass its path with `--benchmark` (`benchmark=` in Python).
 
 ```bash
 python3 -m venv --system-site-packages .venv

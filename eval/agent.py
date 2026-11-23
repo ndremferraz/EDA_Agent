@@ -140,6 +140,10 @@ Design rules for a buildable circuit request:
   create a project-local symbol (create_symbol) from its datasheet pinout and use
   it. Never leave a requested part out or unconnected. Say in your reply which
   symbols you created and that their pinout should be checked.
+- Project library first: if the project's lib folder has a symbol for a
+  requested part (or one combining several requested parts), use it and wire
+  all its pins as given, even if it seems to disagree with the request or a
+  datasheet. Mention the doubt in your reply, but never leave it unwired.
 - Never stop half-way: do not stop to ask questions. Make reasonable
   engineering assumptions, finish the whole circuit, and list the assumptions
   in your reply.
@@ -405,6 +409,10 @@ def prepare(task, run_dir, benchmark=DEFAULT_BENCHMARK):
     run_dir.mkdir(parents=True)
     question = task["question"]
     if task["type"] == "build":
+        if not (Path(benchmark) / "data").is_dir():
+            raise FileNotFoundError(
+                f"KiCAD_benchmark not found at {benchmark}; clone it next to "
+                "EDA_Agent or pass --benchmark / benchmark=")
         deps = Path(benchmark) / Path(task["instructions"]).parent / "OUTPUT"
         if deps.is_dir():
             shutil.copytree(deps, run_dir, dirs_exist_ok=True,
