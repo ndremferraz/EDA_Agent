@@ -148,7 +148,15 @@ def _clear_stale_results(items, output_indexes):
 
     return cleared
 
-async def _call_model(client, runner, instructions, items, model, result):
+def _emit(on_event, kind, data):
+    """Report live progress to an optional listener; a broken listener never stops the run."""
+    if on_event:
+        try:
+            on_event(kind, data)
+        except Exception:
+            pass
+
+async def _call_model(client, runner, instructions, items, model, result, on_event=None):
     started = time.monotonic()
 
     response = await client.responses.create(
@@ -172,10 +180,11 @@ async def _call_model(client, runner, instructions, items, model, result):
         "seconds": round(time.monotonic() - started, 2),
         **usage,
     })
+    _emit(on_event, "model_call", result["model_calls"][-1])
 
     return response
 
-async def _loop(session, question, output_dir, model, max_steps, result):
+async def _loop(session, question, output_dir, model, max_steps, result, on_event=None):
     runner = await ToolRunner.create(session, output_dir)
     result["tools_offered"] = sorted(runner.names)
 
@@ -188,7 +197,7 @@ async def _loop(session, question, output_dir, model, max_steps, result):
     async with AsyncOpenAI(api_key=_api_key(), max_retries=6) as client:
         for _ in range(max_steps):
             response = await _call_model(
-                client, runner, instructions, items, model, result
+                client, runner, instructions, items, model, result, on_event
             )
 
             items.extend(
@@ -202,6 +211,9 @@ async def _loop(session, question, output_dir, model, max_steps, result):
                 if item.type == "function_call"
             ]
 
+            if calls and response.output_text:
+                _emit(on_event, "message", {"text": response.output_text})
+
             if not calls:
                 result["stop_reason"] = "done"
                 return
@@ -212,6 +224,7 @@ async def _loop(session, question, output_dir, model, max_steps, result):
                 output_indexes.append(len(items))
                 items.append(output)
                 result["tool_calls"].append(record)
+                _emit(on_event, "tool_call", record)
 
             result["cleared_results"] += _clear_stale_results(
                 items, output_indexes
@@ -220,7 +233,10 @@ async def _loop(session, question, output_dir, model, max_steps, result):
     result["stop_reason"] = "max_steps"
     
 
-async def run_agent(question=None, output_dir=None, model=MODEL, max_steps=MAX_STEPS, timeout=TIMEOUT_S):
+async def run_agent(question=None, output_dir=None, model=MODEL, max_steps=MAX_STEPS, timeout=TIMEOUT_S,
+                    on_event=None):
+    """on_event(kind, data), if given, is called live with "model_call",
+    "message" (agent text sent alongside tool calls) and "tool_call" records."""
 
     if not MCP_SERVER.is_file():
        raise FileNotFoundError(f"MCP server not found: {MCP_SERVER}")
@@ -255,7 +271,7 @@ async def run_agent(question=None, output_dir=None, model=MODEL, max_steps=MAX_S
                 print("Connected to KiCad MCP server!")
 
                 await asyncio.wait_for(
-                    _loop(session, question, output_dir, model, max_steps, result), timeout
+                    _loop(session, question, output_dir, model, max_steps, result, on_event), timeout
                 )
     
     except asyncio.TimeoutError:

@@ -62,9 +62,17 @@ export PYTHONPATH="/usr/lib/python3/dist-packages"
 python mcp_test_client.py
 ```
 
+## Web UI
+
+```bash
+.venv/bin/python ui/server.py        # then open http://127.0.0.1:8765
+```
+
+Type a circuit request (or pick a task from `eval/tasks.jsonl`) and watch the agent's tool calls live, with a schematic preview that refreshes as the agent edits it (rendered with `kicad-cli`). Runs started from a request are saved in `ui/runs/`, task runs in `eval/output/<task>/runN/`; both can be browsed, stopped and deleted from the sidebar.
+
 ## Evaluation
 
-Needs [KiCAD_benchmark](https://github.com/ndremferraz/KiCAD_benchmark) (dev branch) cloned next to this repo.
+Needs [KiCAD_benchmark](https://github.com/ndremferraz/KiCAD_benchmark) (dev branch) cloned next to this repo, or pass its path with `--benchmark` (`benchmark=` in Python).
 
 ```bash
 python3 -m venv --system-site-packages .venv

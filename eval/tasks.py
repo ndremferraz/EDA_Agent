@@ -38,6 +38,11 @@ def prepare(task, run_dir, benchmark=DEFAULT_BENCHMARK):
 
     if task["type"] == "build":
 
+        if not (Path(benchmark) / "data").is_dir():
+            raise FileNotFoundError(
+                f"KiCAD_benchmark not found at {benchmark}; clone it next to "
+                "EDA_Agent or pass --benchmark / benchmark=")
+
         deps = Path(benchmark) / Path(task["instructions"]).parent / "OUTPUT"
 
         if deps.is_dir():
