@@ -1,0 +1,750 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KiCad Agent</title>
+<style>
+:root {
+  --bg: #f6f7f9; --panel: #ffffff; --panel-2: #f0f2f5; --line: #e2e5ea; --line-2: #cfd4dc;
+  --text: #16191f; --muted: #626b78; --faint: #8b93a0;
+  --accent: #0f7b6c; --accent-2: #0b5f54; --accent-bg: #e3f3f0;
+  --ok: #1b7f3b; --ok-bg: #e4f4e8; --err: #c2352b; --err-bg: #fbe9e7;
+  --warn: #9a6200; --warn-bg: #fdf1d8; --run: #2563c9; --run-bg: #e5eefc;
+  --mono: ui-monospace, "JetBrains Mono", "Cascadia Code", "SF Mono", Menlo, Consolas, monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", Inter, Roboto, sans-serif;
+  --radius: 8px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e1116; --panel: #151a21; --panel-2: #1b2129; --line: #252d37; --line-2: #343e4a;
+    --text: #e4e8ee; --muted: #98a2b0; --faint: #6c7684;
+    --accent: #3fc2ad; --accent-2: #6fd8c6; --accent-bg: #12302c;
+    --ok: #4cc26f; --ok-bg: #13291b; --err: #f0776c; --err-bg: #331815;
+    --warn: #e6b04f; --warn-bg: #2e2412; --run: #6ea2f5; --run-bg: #16243a;
+  }
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--bg); color: var(--text); font: 14px/1.5 var(--sans); display: grid;
+       grid-template-columns: 290px 1fr; grid-template-rows: 100vh; overflow: hidden; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+code, pre, .mono { font-family: var(--mono); font-size: 12.5px; }
+
+/* ---------- sidebar ---------- */
+aside { border-right: 1px solid var(--line); background: var(--panel); display: flex; flex-direction: column; min-height: 0; }
+.brand { display: flex; align-items: center; gap: 10px; padding: 16px 16px 12px; font-weight: 650; letter-spacing: -0.01em; }
+.brand svg { color: var(--accent); flex: none; }
+.brand small { display: block; font-weight: 400; color: var(--faint); font-size: 12px; }
+.side-actions { padding: 0 12px 10px; display: grid; gap: 8px; }
+.btn { border: 1px solid var(--line-2); background: var(--panel); border-radius: 6px; padding: 6px 12px;
+       display: inline-flex; align-items: center; gap: 6px; justify-content: center; white-space: nowrap; }
+.btn:hover { background: var(--panel-2); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 550; }
+.btn.primary:hover { background: var(--accent-2); border-color: var(--accent-2); }
+@media (prefers-color-scheme: dark) { .btn.primary { color: #06201c; } }
+.btn.danger { color: var(--err); }
+.btn.danger:hover { background: var(--err-bg); }
+.btn:disabled { opacity: .5; cursor: default; }
+.btn.sm { padding: 3px 9px; font-size: 12.5px; }
+.search { width: 100%; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel-2); }
+.runs { overflow-y: auto; flex: 1; padding: 0 8px 12px; }
+.group { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--faint); padding: 12px 8px 4px; font-weight: 600; }
+.run-item { display: block; width: 100%; text-align: left; border: 0; background: none; border-radius: 6px; padding: 7px 8px; }
+.run-item:hover { background: var(--panel-2); }
+.run-item.active { background: var(--accent-bg); }
+.run-item .t { display: flex; align-items: center; gap: 7px; font-weight: 520; overflow: hidden; }
+.run-item .t span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.run-item .m { color: var(--faint); font-size: 12px; padding-left: 15px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; flex: none; background: var(--faint); }
+.dot.done { background: var(--ok); } .dot.error, .dot.timeout { background: var(--err); }
+.dot.max_steps, .dot.stopped { background: var(--warn); }
+.dot.running { background: var(--run); animation: pulse 1.2s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .35; } }
+.env-warn { margin: 0 12px 12px; padding: 8px 10px; border-radius: 6px; background: var(--warn-bg); color: var(--warn); font-size: 12.5px; }
+
+/* ---------- main ---------- */
+main { min-width: 0; min-height: 0; overflow: hidden; display: flex; flex-direction: column; }
+.view { display: none; flex: 1; min-height: 0; }
+.view.on { display: flex; }
+
+/* new run */
+#new { overflow-y: auto; justify-content: center; }
+.new-wrap { width: 100%; max-width: 760px; padding: 56px 24px; }
+.new-wrap h1 { font-size: 26px; letter-spacing: -0.02em; margin: 0 0 6px; }
+.new-wrap p.lead { color: var(--muted); margin: 0 0 24px; }
+.seg { display: inline-flex; border: 1px solid var(--line-2); border-radius: 7px; padding: 2px; margin-bottom: 12px; background: var(--panel); }
+.seg button { border: 0; background: none; padding: 5px 14px; border-radius: 5px; color: var(--muted); }
+.seg button.on { background: var(--panel-2); color: var(--text); font-weight: 550; box-shadow: 0 0 0 1px var(--line); }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); }
+textarea#q { width: 100%; min-height: 170px; resize: vertical; border: 0; outline: 0; background: none; padding: 14px 16px; display: block; }
+.card:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); }
+.card-foot { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-top: 1px solid var(--line); flex-wrap: wrap; }
+.card-foot label { color: var(--muted); font-size: 12.5px; display: flex; align-items: center; gap: 6px; }
+.card-foot input { border: 1px solid var(--line); background: var(--panel-2); border-radius: 5px; padding: 3px 8px; }
+.card-foot .grow { flex: 1; }
+.examples { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.chip { border: 1px solid var(--line); background: var(--panel); border-radius: 999px; padding: 4px 12px; font-size: 13px; color: var(--muted); }
+.chip:hover { color: var(--text); border-color: var(--line-2); }
+.task-list { max-height: 360px; overflow-y: auto; }
+.task { display: grid; grid-template-columns: 54px 1fr; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--line); cursor: pointer; }
+.task:last-child { border-bottom: 0; }
+.task:hover { background: var(--panel-2); }
+.task.on { background: var(--accent-bg); }
+.task .id { font-family: var(--mono); font-weight: 600; }
+.task .id small { display: block; font-family: var(--sans); color: var(--faint); font-weight: 400; font-size: 11px; }
+.task .q { color: var(--muted); font-size: 13px; white-space: pre-wrap; }
+.err-msg { color: var(--err); margin-top: 10px; font-size: 13px; }
+
+/* run view */
+#run { flex-direction: column; }
+.run-head { padding: 14px 20px 12px; border-bottom: 1px solid var(--line); background: var(--panel); }
+.run-head .row { display: flex; align-items: flex-start; gap: 12px; }
+.run-head h2 { font-size: 15px; font-weight: 560; margin: 0; flex: 1; min-width: 0; white-space: pre-wrap;
+               max-height: 3em; overflow: hidden; cursor: pointer; }
+.run-head h2.open { max-height: none; }
+.pill { font-size: 12px; font-weight: 600; padding: 2px 9px; border-radius: 999px; background: var(--panel-2); color: var(--muted); white-space: nowrap; }
+.pill.done { background: var(--ok-bg); color: var(--ok); } .pill.running { background: var(--run-bg); color: var(--run); }
+.pill.error, .pill.timeout { background: var(--err-bg); color: var(--err); }
+.pill.max_steps, .pill.stopped { background: var(--warn-bg); color: var(--warn); }
+.stats { display: flex; gap: 22px; margin-top: 10px; flex-wrap: wrap; }
+.stat { font-size: 12px; color: var(--faint); }
+.stat b { display: block; font-size: 15px; color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+.stat b.bad { color: var(--err); }
+.run-body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(360px, 1fr) minmax(380px, 1.15fr); }
+.pane { min-height: 0; display: flex; flex-direction: column; }
+.pane + .pane { border-left: 1px solid var(--line); }
+.pane-head { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-bottom: 1px solid var(--line); min-height: 44px; }
+.pane-head .title { font-weight: 600; font-size: 13px; }
+.pane-head .sp { flex: 1; }
+.tabs { display: flex; gap: 2px; }
+.tabs button { border: 0; background: none; padding: 5px 10px; border-radius: 5px; color: var(--muted); font-weight: 550; font-size: 13px; }
+.tabs button.on { background: var(--panel-2); color: var(--text); }
+.scroll { overflow-y: auto; flex: 1; min-height: 0; }
+
+/* timeline */
+.timeline { padding: 10px 14px 40px; }
+.turn { display: flex; align-items: center; gap: 8px; color: var(--faint); font-size: 11.5px; margin: 14px 0 6px; }
+.turn::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.msg { background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 6px; padding: 8px 12px; margin: 6px 0; font-size: 13.5px; }
+.call { border: 1px solid var(--line); border-radius: 6px; margin: 4px 0; background: var(--panel); overflow: hidden; }
+.call > summary { list-style: none; display: grid; grid-template-columns: 26px 1fr auto auto; gap: 8px; align-items: center; padding: 6px 10px; cursor: pointer; }
+.call > summary::-webkit-details-marker { display: none; }
+.call > summary:hover { background: var(--panel-2); }
+.call .n { color: var(--faint); font-size: 11.5px; font-variant-numeric: tabular-nums; }
+.call .nm { font-family: var(--mono); font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.call .nm em { font-style: normal; color: var(--faint); }
+.call .s { font-size: 11.5px; color: var(--faint); font-variant-numeric: tabular-nums; }
+.call .ic { width: 16px; height: 16px; border-radius: 50%; display: grid; place-items: center; font-size: 10px; font-weight: 700; }
+.call .ic.ok { background: var(--ok-bg); color: var(--ok); } .call .ic.bad { background: var(--err-bg); color: var(--err); }
+.call .ic.ref { background: var(--warn-bg); color: var(--warn); }
+.call.bad { border-color: color-mix(in srgb, var(--err) 35%, var(--line)); }
+.call .body { border-top: 1px solid var(--line); padding: 8px 10px; background: var(--panel-2); }
+.call .lbl { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--faint); font-weight: 600; margin: 4px 0 3px; }
+.call pre { margin: 0 0 6px; white-space: pre-wrap; word-break: break-word; max-height: 340px; overflow: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 5px; padding: 8px; }
+.answer { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 4px 16px; margin-top: 16px; }
+.answer.final { border-color: color-mix(in srgb, var(--ok) 45%, var(--line)); }
+.answer h4 { margin: 12px 0 0; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--ok); }
+.md p, .md ul, .md ol { margin: 8px 0; } .md ul, .md ol { padding-left: 22px; }
+.md code { background: var(--panel-2); padding: 1px 5px; border-radius: 4px; }
+.md h1, .md h2, .md h3 { font-size: 15px; margin: 14px 0 6px; }
+.md a { color: var(--accent); }
+.working { display: flex; align-items: center; gap: 8px; color: var(--run); font-size: 13px; margin: 12px 2px; }
+.spinner { width: 14px; height: 14px; border: 2px solid var(--run-bg); border-top-color: var(--run); border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.empty { color: var(--faint); text-align: center; padding: 40px 20px; font-size: 13px; }
+
+/* schematic */
+.viewer { flex: 1; min-height: 0; position: relative; overflow: hidden; background: #fff; cursor: grab;
+          background-image: radial-gradient(#d9dde3 1px, transparent 1px); background-size: 18px 18px; }
+.viewer.drag { cursor: grabbing; }
+.viewer img { position: absolute; left: 0; top: 0; transform-origin: 0 0; user-select: none; -webkit-user-drag: none; max-width: none; }
+.viewer .empty { position: absolute; inset: 0; display: grid; place-items: center; color: #8b93a0; }
+.viewer .badge { position: absolute; right: 10px; bottom: 10px; background: rgba(20,24,30,.75); color: #fff; font-size: 11.5px; padding: 3px 8px; border-radius: 4px; pointer-events: none; }
+.files { padding: 6px 0; }
+.file { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; padding: 5px 14px; align-items: center; font-family: var(--mono); font-size: 12.5px; }
+.file:hover { background: var(--panel-2); }
+.file .sz { color: var(--faint); font-family: var(--sans); font-size: 12px; }
+.file a { color: var(--accent); font-family: var(--sans); font-size: 12px; text-decoration: none; }
+.raw { margin: 0; padding: 12px 14px; white-space: pre-wrap; word-break: break-word; font-size: 12px; }
+
+/* api key */
+.side-foot { border-top: 1px solid var(--line); padding: 10px 12px; }
+.key-btn { width: 100%; justify-content: flex-start; }
+.key-btn .st { margin-left: auto; color: var(--faint); font-size: 12px; font-family: var(--mono); }
+dialog { border: 1px solid var(--line-2); border-radius: 10px; background: var(--panel); color: var(--text); padding: 0; width: min(460px, calc(100vw - 32px)); }
+dialog::backdrop { background: rgba(10, 12, 16, .45); }
+.dlg { padding: 18px 20px; }
+.dlg h3 { margin: 0 0 4px; font-size: 16px; }
+.dlg p { margin: 0 0 14px; color: var(--muted); font-size: 13px; }
+.dlg .cur { background: var(--panel-2); border-radius: 6px; padding: 8px 10px; font-size: 13px; margin-bottom: 14px; display: flex; gap: 8px; align-items: center; }
+.dlg .field { display: flex; gap: 6px; }
+.dlg input { flex: 1; border: 1px solid var(--line-2); background: var(--panel); border-radius: 6px; padding: 7px 10px; font-family: var(--mono); font-size: 13px; min-width: 0; }
+.dlg input:focus { outline: 0; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); }
+.dlg .acts { display: flex; gap: 8px; margin-top: 16px; }
+.dlg .acts .sp { flex: 1; }
+.dlg .msg-line { font-size: 12.5px; margin-top: 8px; min-height: 18px; }
+.dlg .msg-line.bad { color: var(--err); } .dlg .msg-line.good { color: var(--ok); }
+
+@media (max-width: 1100px) {
+  .run-body { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+  .pane + .pane { border-left: 0; border-top: 1px solid var(--line); }
+}
+@media (max-width: 760px) {
+  body { grid-template-columns: 1fr; grid-template-rows: auto 1fr; overflow: auto; }
+  aside { max-height: 38vh; border-right: 0; border-bottom: 1px solid var(--line); }
+  .run-body { grid-template-columns: minmax(0, 1fr); }
+}
+</style>
+</head>
+<body>
+<aside>
+  <div class="brand">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+      <rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/>
+      <circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/>
+    </svg>
+    <div>KiCad Agent<small>schematic design assistant</small></div>
+  </div>
+  <div id="envWarn"></div>
+  <div class="side-actions">
+    <button class="btn primary" id="newBtn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      New design
+    </button>
+    <input class="search" id="search" placeholder="Filter runs…">
+  </div>
+  <div class="runs" id="runs"></div>
+  <div class="side-foot">
+    <button class="btn key-btn" id="keyBtn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M15 8l2 2"/></svg>
+      API key <span class="dot" id="keyDot"></span><span class="st" id="keyHint"></span>
+    </button>
+  </div>
+</aside>
+
+<dialog id="keyDlg">
+  <form class="dlg" method="dialog" id="keyForm">
+    <h3>OpenAI API key</h3>
+    <p>Stored in your system keyring (<code>KiCAD_Agent</code> / <code>OPENAI_API_KEY</code>), the same place the command-line agent reads it from. The key is checked with OpenAI before it is saved and never shown again in full.</p>
+    <div class="cur" id="keyCur"></div>
+    <div class="field">
+      <input id="keyInput" type="password" placeholder="sk-…" autocomplete="off" spellcheck="false">
+      <button type="button" class="btn sm" id="keyShow">Show</button>
+    </div>
+    <div class="msg-line" id="keyMsg"></div>
+    <div class="acts">
+      <button type="button" class="btn danger" id="keyDel">Remove saved key</button>
+      <span class="sp"></span>
+      <button type="button" class="btn" id="keyCancel">Close</button>
+      <button type="submit" class="btn primary" id="keySave">Check &amp; save</button>
+    </div>
+  </form>
+</dialog>
+
+<main>
+  <!-- new run -->
+  <section class="view on" id="new">
+    <div class="new-wrap">
+      <h1>What should the agent build?</h1>
+      <p class="lead">Describe a circuit. The agent creates a KiCad project, places and wires the parts, and runs ERC.</p>
+      <div class="seg" id="modeSeg">
+        <button class="on" data-mode="free">Custom request</button>
+        <button data-mode="task">Benchmark task</button>
+      </div>
+      <div class="card">
+        <div id="freeBox"><textarea id="q" placeholder="e.g. A 5 V LED indicator with a current-limiting resistor for about 10 mA and a 2-pin power connector."></textarea></div>
+        <div id="taskBox" hidden><input class="search" id="taskSearch" placeholder="Filter tasks…" style="border-radius:0;border:0;border-bottom:1px solid var(--line);padding:10px 14px">
+          <div class="task-list" id="tasks"></div></div>
+        <div class="card-foot">
+          <label>Model <input id="model" size="16"></label>
+          <label>Max steps <input id="maxSteps" type="number" min="1" max="500" style="width:70px"></label>
+          <span class="grow"></span>
+          <span class="stat" id="hint">Ctrl+Enter to run</span>
+          <button class="btn primary" id="runBtn">Run agent</button>
+        </div>
+      </div>
+      <div class="err-msg" id="startErr"></div>
+      <div class="examples" id="examples"></div>
+    </div>
+  </section>
+
+  <!-- run -->
+  <section class="view" id="run">
+    <div class="run-head">
+      <div class="row">
+        <h2 id="rq" title="Click to expand"></h2>
+        <span class="pill" id="rstatus"></span>
+        <button class="btn sm danger" id="stopBtn" hidden>Stop</button>
+        <button class="btn sm" id="againBtn" title="Start a new run with the same request">Run again</button>
+        <button class="btn sm danger" id="delBtn" title="Delete this run's folder">Delete</button>
+      </div>
+      <div class="stats" id="stats"></div>
+    </div>
+    <div class="run-body">
+      <div class="pane">
+        <div class="pane-head"><span class="title">Activity</span><span class="sp"></span>
+          <label class="stat" style="display:flex;gap:5px;align-items:center"><input type="checkbox" id="errOnly"> errors only</label>
+          <label class="stat" style="display:flex;gap:5px;align-items:center"><input type="checkbox" id="follow" checked> follow</label>
+        </div>
+        <div class="scroll" id="tlScroll"><div class="timeline" id="timeline"></div></div>
+      </div>
+      <div class="pane">
+        <div class="pane-head">
+          <div class="tabs" id="rtabs">
+            <button class="on" data-tab="sch">Schematic</button>
+            <button data-tab="files">Files</button>
+          </div>
+          <span class="sp"></span>
+          <span id="schTools">
+            <button class="btn sm" id="zOut" title="Zoom out">−</button>
+            <button class="btn sm" id="zIn" title="Zoom in">+</button>
+            <button class="btn sm" id="zFit">Fit</button>
+            <button class="btn sm" id="zReload" title="Re-export from the .kicad_sch">Refresh</button>
+          </span>
+        </div>
+        <div class="viewer" id="viewer"><div class="empty">No schematic yet</div></div>
+        <div class="scroll" id="filesPane" hidden></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const api = async (url, opt) => {
+  const r = await fetch(url, opt);
+  if (!r.ok) throw new Error((await r.text()) || r.statusText);
+  return r.headers.get("content-type")?.includes("json") ? r.json() : r.text();
+};
+const JSON_H = {"content-type": "application/json"};
+const errText = e => { try { return JSON.parse(e.message).detail || e.message; } catch { return e.message; } };
+const enc = id => id.split("/").map(encodeURIComponent).join("/");
+const fmtN = n => n == null ? "–" : n >= 1e6 ? (n/1e6).toFixed(2)+"M" : n >= 1e3 ? (n/1e3).toFixed(1)+"k" : String(n);
+const fmtS = s => s == null ? "–" : s < 60 ? s.toFixed(1)+"s" : Math.floor(s/60)+"m "+Math.round(s%60)+"s";
+const ago = t => { const d = Date.now()/1000 - t; return d < 60 ? "just now" : d < 3600 ? Math.round(d/60)+"m ago" : d < 86400 ? Math.round(d/3600)+"h ago" : Math.round(d/86400)+"d ago"; };
+const STATUS = {done: "Done", running: "Running", error: "Error", timeout: "Timed out", max_steps: "Step limit", stopped: "Stopped", unknown: "Unknown"};
+
+let cfg = {}, runs = [], tasks = [], mode = "free", pickedTask = null, current = null, es = null;
+
+/* ---------------- markdown (small subset) ---------------- */
+function md(src) {
+  const inline = t => esc(t)
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
+    .replace(/(^|[^*])\*([^*\s][^*]*)\*/g, "$1<i>$2</i>")
+    .replace(/\[([^\]]+)\]\(&lt;([^)]*?)&gt;\)|\[([^\]]+)\]\(([^)\s]+)\)/g, (m, a, b, c, d) => {
+      const text = a ?? c, href = b ?? d;
+      return /^file:/.test(href) ? `<code title="${href}">${text}</code>` : `<a href="${href}" target="_blank" rel="noopener">${text}</a>`;
+    });
+  const out = []; let list = null;
+  const close = () => { if (list) { out.push(`</${list}>`); list = null; } };
+  let para = [];
+  const flush = () => { if (para.length) { out.push("<p>" + inline(para.join(" ")) + "</p>"); para = []; } };
+  for (const line of String(src || "").split("\n")) {
+    let m;
+    if (!line.trim()) { flush(); close(); continue; }
+    if ((m = line.match(/^#{1,4}\s+(.*)/))) { flush(); close(); out.push("<h3>" + inline(m[1]) + "</h3>"); continue; }
+    if ((m = line.match(/^\s*[-*]\s+(.*)/)) || (m = line.match(/^\s*\d+[.)]\s+(.*)/))) {
+      flush(); const kind = /^\s*\d/.test(line) ? "ol" : "ul";
+      if (list !== kind) { close(); out.push(`<${kind}>`); list = kind; }
+      out.push("<li>" + inline(m[1]) + "</li>"); continue;
+    }
+    close(); para.push(line.trim());
+  }
+  flush(); close();
+  return out.join("");
+}
+
+/* ---------------- tool result unwrapping ---------------- */
+function pretty(x) {
+  if (typeof x !== "string") return JSON.stringify(x, null, 2);
+  try { return pretty(unwrap(JSON.parse(x))); } catch { return x; }
+}
+function unwrap(v) {
+  // {"is_error":..,"result":[{"type":"text","text":"{json}"}]} -> inner json
+  if (v && typeof v === "object" && "result" in v && Object.keys(v).length <= 3) v = v.result;
+  if (Array.isArray(v) && v.length && v.every(b => b && b.type === "text")) {
+    const parts = v.map(b => { try { return JSON.parse(b.text); } catch { return b.text; } });
+    v = parts.length === 1 ? parts[0] : parts;
+  }
+  if (v && typeof v === "object" && !Array.isArray(v)) { delete v._backend; delete v._realtime; delete v.sessionBackend; }
+  return v;
+}
+function argSummary(a) {
+  if (!a || typeof a !== "object") return "";
+  const pick = a.reference ?? a.symbol ?? a.name ?? a.lib_id ?? a.query ?? a.netName ?? a.net_name ?? a.library;
+  if (pick != null && typeof pick !== "object") return String(pick).slice(0, 60);
+  for (const [k, v] of Object.entries(a)) if (Array.isArray(v)) return `${v.length} ${k}`;
+  return "";
+}
+
+/* ---------------- sidebar ---------------- */
+async function loadRuns() {
+  try { runs = await api("/api/runs"); } catch { return; }
+  renderRuns();
+}
+function runTitle(r) { return r.task_id ? `${r.task_id} · ${firstLine(r.question)}` : firstLine(r.question); }
+function firstLine(q) {
+  q = String(q || "").replace(/^Create a new KiCad project named \S+ in the project directory and draw its schematic for the following request\.\s*/, "");
+  return q.split("\n")[0] || "(empty)";
+}
+function renderRuns() {
+  const f = $("#search").value.toLowerCase();
+  const list = runs.filter(r => !f || (r.question + " " + (r.task_id || "") + " " + r.id).toLowerCase().includes(f));
+  const groups = [["Running", list.filter(r => r.status === "running")],
+                  ["Your runs", list.filter(r => r.status !== "running" && r.source === "ui")],
+                  ["Benchmark runs", list.filter(r => r.status !== "running" && r.source === "eval")]];
+  $("#runs").innerHTML = groups.filter(g => g[1].length).map(([name, rs]) =>
+    `<div class="group">${name}</div>` + rs.map(r => `
+      <button class="run-item ${current?.id === r.id ? "active" : ""}" data-id="${esc(r.id)}">
+        <div class="t"><span class="dot ${esc(r.status)}"></span><span>${esc(runTitle(r))}</span></div>
+        <div class="m">${r.tool_calls ?? 0} tool calls · ${fmtS(r.seconds)}${r.started ? " · " + ago(r.started) : ""}</div>
+      </button>`).join("")).join("") || `<div class="empty">No runs yet</div>`;
+}
+$("#runs").addEventListener("click", e => { const b = e.target.closest(".run-item"); if (b) openRun(b.dataset.id); });
+$("#search").addEventListener("input", renderRuns);
+$("#newBtn").addEventListener("click", () => showNew());
+
+/* ---------------- new run ---------------- */
+const EXAMPLES = [
+  "A 5 V LED indicator with a current-limiting resistor for about 10 mA and a 2-pin power connector.",
+  "An NE555 astable oscillator at about 1 Hz driving an LED, powered from 9 V.",
+  "An AMS1117-3.3 regulator from a USB-C 5 V input with input and output capacitors and a power LED.",
+  "A non-inverting op-amp amplifier with a gain of 10 using an LM358, single 5 V supply, with a 3-pin header for in/out/GND.",
+];
+$("#examples").innerHTML = EXAMPLES.map(x => `<button class="chip">${esc(x.split(" with ")[0].split(",")[0])}</button>`).join("");
+$("#examples").addEventListener("click", e => {
+  const i = [...$("#examples").children].indexOf(e.target.closest(".chip"));
+  if (i >= 0) { setMode("free"); $("#q").value = EXAMPLES[i]; $("#q").focus(); }
+});
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll("#modeSeg button").forEach(b => b.classList.toggle("on", b.dataset.mode === m));
+  $("#freeBox").hidden = m !== "free"; $("#taskBox").hidden = m !== "task";
+  $("#examples").hidden = m !== "free";
+}
+$("#modeSeg").addEventListener("click", e => { const b = e.target.closest("button"); if (b) setMode(b.dataset.mode); });
+function renderTasks() {
+  const f = $("#taskSearch").value.toLowerCase();
+  $("#tasks").innerHTML = tasks.filter(t => !f || (t.id + " " + t.question).toLowerCase().includes(f)).map(t => `
+    <div class="task ${pickedTask === t.id ? "on" : ""}" data-id="${esc(t.id)}">
+      <div class="id">${esc(t.id)}<small>${esc(t.type)}</small></div><div class="q">${esc(t.question)}</div></div>`).join("")
+    || `<div class="empty">No tasks found (eval/tasks.jsonl)</div>`;
+}
+$("#tasks").addEventListener("click", e => { const t = e.target.closest(".task"); if (t) { pickedTask = t.dataset.id; renderTasks(); } });
+$("#taskSearch").addEventListener("input", renderTasks);
+
+async function startRun(body) {
+  $("#startErr").textContent = ""; $("#runBtn").disabled = true;
+  try {
+    const { id } = await api("/api/runs", { method: "POST", headers: JSON_H, body: JSON.stringify(body) });
+    await loadRuns(); openRun(id);
+  } catch (e) { showNew(); if (!keyState.configured) openKey(errText(e)); else $("#startErr").textContent = errText(e); }
+  finally { $("#runBtn").disabled = false; }
+}
+function submit() {
+  const base = { model: $("#model").value, max_steps: +$("#maxSteps").value };
+  if (mode === "task") {
+    if (!pickedTask) { $("#startErr").textContent = "Pick a task first."; return; }
+    startRun({ ...base, task_id: pickedTask });
+  } else {
+    const q = $("#q").value.trim();
+    if (!q) { $("#q").focus(); return; }
+    startRun({ ...base, question: q });
+  }
+}
+$("#runBtn").addEventListener("click", submit);
+$("#q").addEventListener("keydown", e => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) submit(); });
+
+function showNew() {
+  closeStream(); current = null;
+  $("#new").classList.add("on"); $("#run").classList.remove("on");
+  renderRuns(); history.replaceState(null, "", "#");
+  if (mode === "free") $("#q").focus();
+}
+
+/* ---------------- run view ---------------- */
+function closeStream() { if (es) { es.close(); es = null; } }
+
+async function openRun(id) {
+  closeStream();
+  $("#new").classList.remove("on"); $("#run").classList.add("on");
+  history.replaceState(null, "", "#" + id);
+  let r;
+  try { r = await api("/api/run/" + enc(id)); } catch (e) { alert("Could not open run: " + e.message); return showNew(); }
+  current = { id, run: r, events: [], live: r.status === "running" };
+  renderRuns();
+  $("#rq").textContent = (r.task_id ? r.task_id + " · " : "") + firstLine(r.question) + (String(r.question).includes("\n") ? "\n" + r.question.split("\n").slice(1).join("\n") : "");
+  $("#rq").classList.remove("open");
+  resetViewer(); setTab("sch");
+  if (current.live) {
+    current.events = [];
+    renderTimeline();
+    es = new EventSource("/api/run/" + enc(id) + "/events");
+    es.onmessage = m => onEvent(JSON.parse(m.data));
+    es.onerror = () => { /* browser reconnects; backlog is replayed */ };
+  } else {
+    current.events = r.events || synthEvents(r);
+    renderTimeline();
+  }
+  renderHead();
+  loadSchematic();
+}
+
+function synthEvents(r) {
+  // Runs from eval/agent.py CLI have no ordered event log: show tool calls in order.
+  const ev = (r.tool_calls || []).map(c => ({ kind: "tool_call", data: c }));
+  return ev;
+}
+
+let schTimer = null;
+function onEvent(ev) {
+  if (!current) return;
+  if (ev.kind === "done") {
+    closeStream(); current.live = false;
+    api("/api/run/" + enc(current.id)).then(r => { current.run = r; renderHead(); renderTimeline(); loadSchematic(); loadRuns(); });
+    return;
+  }
+  current.events.push(ev);
+  appendEvent(ev, current.events.length - 1);
+  renderHead();
+  if (ev.kind === "tool_call" && ev.schematic_changed) {
+    clearTimeout(schTimer); schTimer = setTimeout(loadSchematic, 900);
+  }
+  if (ev.kind === "tool_call") { const item = runs.find(x => x.id === current.id); if (item) { item.tool_calls++; } }
+}
+
+function liveStats() {
+  const ev = current.events;
+  const calls = ev.filter(e => e.kind === "tool_call").map(e => e.data);
+  const models = ev.filter(e => e.kind === "model_call").map(e => e.data);
+  const r = current.run;
+  if (!current.live && r.tool_calls) return {
+    turns: r.turns, calls: r.tool_calls.length, errors: r.tool_calls.filter(c => c.is_error).length,
+    refused: r.tool_calls.filter(c => c.refused).length,
+    tin: r.input_tokens, tcached: r.cached_input_tokens, tout: r.output_tokens, secs: r.seconds };
+  const t = ev.length ? ev[ev.length - 1].t : 0;
+  return { turns: models.length, calls: calls.length, errors: calls.filter(c => c.is_error).length,
+    refused: calls.filter(c => c.refused).length,
+    tin: models.reduce((a, m) => a + m.input_tokens, 0), tcached: models.reduce((a, m) => a + m.cached_input_tokens, 0),
+    tout: models.reduce((a, m) => a + m.output_tokens, 0), secs: Math.max(t, (Date.now()/1000 - r.started) || 0) };
+}
+function renderHead() {
+  const status = current.live ? "running" : (current.run.stop_reason || current.run.status || "unknown");
+  $("#rstatus").className = "pill " + status; $("#rstatus").textContent = STATUS[status] || status;
+  $("#stopBtn").hidden = !current.live; $("#delBtn").hidden = current.live; $("#againBtn").hidden = current.live;
+  const s = liveStats();
+  $("#stats").innerHTML = [
+    ["Turns", s.turns], ["Tool calls", s.calls], ["Errors", s.errors, s.errors > 0], ...(s.refused ? [["Refused paths", s.refused, true]] : []),
+    ["Input tokens", fmtN(s.tin)], ["Cached", s.tin ? Math.round(100 * s.tcached / s.tin) + "%" : "–"],
+    ["Output tokens", fmtN(s.tout)], ["Time", fmtS(s.secs)], ["Model", esc(current.run.model || "")],
+  ].map(([k, v, bad]) => `<div class="stat"><b class="${bad ? "bad" : ""}">${v}</b>${k}</div>`).join("");
+}
+$("#rq").addEventListener("click", () => $("#rq").classList.toggle("open"));
+setInterval(() => { if (current?.live) renderHead(); }, 1000);
+
+let turnNo = 0, callNo = 0;
+function renderTimeline() {
+  turnNo = 0; callNo = 0;
+  const tl = $("#timeline"); tl.innerHTML = "";
+  current.events.forEach((ev, i) => appendEvent(ev, i, true));
+  finishTimeline();
+}
+function appendEvent(ev, i, bulk) {
+  const tl = $("#timeline");
+  tl.querySelector(".working")?.remove();
+  const errOnly = $("#errOnly").checked;
+  let html = "";
+  if (ev.kind === "model_call") {
+    turnNo++;
+    const d = ev.data;
+    if (!errOnly) html = `<div class="turn">Turn ${turnNo} · ${fmtS(d.seconds)} · ${fmtN(d.input_tokens)} in / ${fmtN(d.output_tokens)} out</div>`;
+  } else if (ev.kind === "message") {
+    if (!errOnly) html = `<div class="msg md">${md(ev.data.text)}</div>`;
+  } else if (ev.kind === "tool_call") {
+    callNo++;
+    const c = ev.data, bad = c.is_error;
+    if (errOnly && !bad) return bulk || finishTimeline();
+    const ic = c.refused ? `<span class="ic ref" title="Path refused">!</span>` : bad ? `<span class="ic bad">✕</span>` : `<span class="ic ok">✓</span>`;
+    const sum = argSummary(c.arguments);
+    html = `<details class="call ${bad ? "bad" : ""}" data-i="${i}">
+      <summary><span class="n">${callNo}</span><span class="nm">${esc(c.name)}${sum ? ` <em>${esc(sum)}</em>` : ""}</span><span class="s">${fmtS(c.seconds)}</span>${ic}</summary>
+    </details>`;
+  }
+  if (html) tl.insertAdjacentHTML("beforeend", html);
+  if (!bulk) finishTimeline();
+}
+function finishTimeline() {
+  const tl = $("#timeline");
+  tl.querySelector(".working")?.remove(); tl.querySelector(".answer")?.remove();
+  if (current.live) {
+    tl.insertAdjacentHTML("beforeend", `<div class="working"><span class="spinner"></span>Agent is working…</div>`);
+  } else {
+    const r = current.run;
+    if (r.error) tl.insertAdjacentHTML("beforeend", `<div class="answer"><h4 style="color:var(--err)">Error</h4><pre class="mono" style="white-space:pre-wrap">${esc(r.error)}</pre></div>`);
+    if (r.answer) tl.insertAdjacentHTML("beforeend", `<div class="answer final"><h4>Agent's answer</h4><div class="md">${md(r.answer)}</div></div>`);
+    if (!current.events.length && !r.answer && !r.error) tl.innerHTML = `<div class="empty">Nothing recorded for this run.</div>`;
+  }
+  if ($("#follow").checked) { const s = $("#tlScroll"); s.scrollTop = s.scrollHeight; }
+}
+// Lazily fill a tool call's details when it's opened.
+$("#timeline").addEventListener("toggle", e => {
+  const d = e.target; if (!d.open || d.querySelector(".body")) return;
+  const c = current.events[+d.dataset.i].data;
+  d.insertAdjacentHTML("beforeend", `<div class="body">
+    ${c.refused ? `<div class="lbl" style="color:var(--warn)">Refused</div><pre>${esc(c.refused)}</pre>` : ""}
+    ${c.error ? `<div class="lbl" style="color:var(--err)">Error</div><pre>${esc(c.error)}</pre>` : ""}
+    <div class="lbl">Arguments</div><pre>${esc(pretty(c.arguments))}</pre>
+    ${c.result ? `<div class="lbl">Result${c.result.length >= 4000 ? " (first 4000 chars)" : ""}</div><pre>${esc(pretty(c.result))}</pre>` : ""}
+  </div>`);
+}, true);
+$("#errOnly").addEventListener("change", () => current && renderTimeline());
+
+$("#stopBtn").addEventListener("click", async () => {
+  if (!confirm("Stop this run? The agent's work so far is kept.")) return;
+  $("#stopBtn").disabled = true;
+  try { await api("/api/run/" + enc(current.id) + "/stop", { method: "POST", headers: JSON_H, body: "{}" }); } catch (e) { alert(e.message); }
+  $("#stopBtn").disabled = false;
+});
+$("#delBtn").addEventListener("click", async () => {
+  if (!confirm("Delete this run and its folder?\n" + current.run.output_dir)) return;
+  try { await api("/api/run/" + enc(current.id), { method: "DELETE", headers: JSON_H, body: "{}" }); } catch (e) { return alert(e.message); }
+  await loadRuns(); showNew();
+});
+$("#againBtn").addEventListener("click", () => {
+  const r = current.run;
+  if (r.task_id) { setMode("task"); pickedTask = r.task_id; renderTasks(); }
+  else { setMode("free"); $("#q").value = r.question; }
+  if (r.model) $("#model").value = r.model;
+  showNew();
+});
+
+/* ---------------- right pane: schematic + files ---------------- */
+function setTab(t) {
+  document.querySelectorAll("#rtabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === t));
+  $("#viewer").hidden = t !== "sch"; $("#schTools").hidden = t !== "sch"; $("#filesPane").hidden = t !== "files";
+  if (t === "files") loadFiles();
+}
+$("#rtabs").addEventListener("click", e => { const b = e.target.closest("button"); if (b) setTab(b.dataset.tab); });
+
+const view = { x: 0, y: 0, k: 1, w: 0, h: 0, fitted: false };
+function resetViewer() { view.fitted = false; $("#viewer").innerHTML = `<div class="empty">No schematic yet</div>`; }
+function applyView() { const img = $("#viewer img"); if (img) img.style.transform = `translate(${view.x}px,${view.y}px) scale(${view.k})`; }
+function fit() {
+  const v = $("#viewer"), img = $("#viewer img"); if (!img || !view.w) return;
+  const k = Math.min(v.clientWidth / view.w, v.clientHeight / view.h) * 0.94;
+  view.k = k; view.x = (v.clientWidth - view.w * k) / 2; view.y = (v.clientHeight - view.h * k) / 2; applyView();
+}
+function zoomAt(f, cx, cy) {
+  const k = Math.min(40, Math.max(0.05, view.k * f)); f = k / view.k;
+  view.x = cx - (cx - view.x) * f; view.y = cy - (cy - view.y) * f; view.k = k; applyView();
+}
+async function loadSchematic() {
+  if (!current) return;
+  const id = current.id, url = "/api/run/" + enc(id) + "/schematic.svg?t=" + Date.now();
+  const r = await fetch(url);
+  if (current?.id !== id) return;
+  if (!r.ok) {
+    if (!$("#viewer img")) $("#viewer").innerHTML = `<div class="empty">${r.status === 404 ? (current.live ? "Waiting for the agent to create a schematic…" : "This run has no schematic") : "Preview failed: " + esc((await r.text()).slice(-300))}</div>`;
+    return;
+  }
+  const blob = URL.createObjectURL(await r.blob());
+  const img = new Image();
+  img.onload = () => {
+    if (current?.id !== id) return;
+    const old = $("#viewer img"); if (old) URL.revokeObjectURL(old.src);
+    view.w = img.naturalWidth || 1200; view.h = img.naturalHeight || 850;
+    img.style.width = view.w + "px"; img.style.height = view.h + "px";
+    $("#viewer").innerHTML = ""; $("#viewer").append(img);
+    $("#viewer").insertAdjacentHTML("beforeend", `<span class="badge">updated ${new Date().toLocaleTimeString()}</span>`);
+    if (!view.fitted) { fit(); view.fitted = true; } else applyView();
+  };
+  img.src = blob;
+}
+(() => {
+  const v = $("#viewer"); let drag = null;
+  v.addEventListener("wheel", e => { e.preventDefault(); const b = v.getBoundingClientRect(); zoomAt(Math.exp(-e.deltaY * 0.0015), e.clientX - b.left, e.clientY - b.top); }, { passive: false });
+  v.addEventListener("pointerdown", e => { if (!$("#viewer img")) return; drag = { x: e.clientX - view.x, y: e.clientY - view.y }; v.classList.add("drag"); v.setPointerCapture(e.pointerId); });
+  v.addEventListener("pointermove", e => { if (drag) { view.x = e.clientX - drag.x; view.y = e.clientY - drag.y; applyView(); } });
+  v.addEventListener("pointerup", () => { drag = null; v.classList.remove("drag"); });
+  v.addEventListener("dblclick", fit);
+  const c = () => [v.clientWidth / 2, v.clientHeight / 2];
+  $("#zIn").onclick = () => zoomAt(1.4, ...c()); $("#zOut").onclick = () => zoomAt(1 / 1.4, ...c());
+  $("#zFit").onclick = fit; $("#zReload").onclick = loadSchematic;
+  new ResizeObserver(() => { if (view.fitted && view.k) fit(); }).observe(v);
+})();
+
+async function loadFiles() {
+  const id = current.id, base = "/api/run/" + enc(id) + "/file?path=";
+  let files; try { files = await api("/api/run/" + enc(id) + "/files"); } catch (e) { $("#filesPane").innerHTML = `<div class="empty">${esc(e.message)}</div>`; return; }
+  const sz = n => n < 1024 ? n + " B" : n < 1048576 ? (n/1024).toFixed(1) + " KB" : (n/1048576).toFixed(1) + " MB";
+  $("#filesPane").innerHTML = `<div class="stat" style="padding:10px 14px 4px">${esc(current.run.output_dir || "")}</div><div class="files">` +
+    files.map(f => `<div class="file"><span>${esc(f.path)}</span><span class="sz">${sz(f.size)}</span>
+      <span><a href="#" data-view="${esc(f.path)}">view</a> · <a href="${base + encodeURIComponent(f.path)}">download</a></span></div>`).join("") + "</div>";
+}
+$("#filesPane").addEventListener("click", async e => {
+  const a = e.target.closest("[data-view]"); if (!a) return; e.preventDefault();
+  const p = a.dataset.view, txt = await api("/api/run/" + enc(current.id) + "/file?view=1&path=" + encodeURIComponent(p)).catch(err => err.message);
+  $("#filesPane").innerHTML = `<div class="pane-head"><button class="btn sm" id="backFiles">← Files</button><span class="mono">${esc(p)}</span></div><pre class="raw">${esc(String(txt).slice(0, 300000))}</pre>`;
+  $("#backFiles").onclick = loadFiles;
+});
+
+
+/* ---------------- API key ---------------- */
+let keyState = {};
+async function loadKey() {
+  try { keyState = await api("/api/key"); } catch { return; }
+  $("#keyDot").className = "dot " + (keyState.configured ? "done" : "error");
+  $("#keyHint").textContent = keyState.configured ? keyState.hint || "set" : "not set";
+  $("#keyCur").innerHTML = keyState.configured
+    ? `<span class="dot done"></span>Current key <code>${esc(keyState.hint || "")}</code> from the ${esc(keyState.source)}`
+    : `<span class="dot error"></span>No key set. Runs can't start until you add one.`;
+  $("#keyDel").hidden = keyState.source !== "keyring";
+  if (keyState.source === "environment") $("#keyCur").insertAdjacentHTML("beforeend", `<span class="stat">(OPENAI_API_KEY overrides the keyring)</span>`);
+  $("#keyWarn")?.remove();
+  if (!keyState.keyring_ok) $("#keyCur").insertAdjacentHTML("afterend", `<div class="env-warn" id="keyWarn" style="margin:0 0 12px">No working system keyring was found, so saving may fail.</div>`);
+}
+function openKey(msg) {
+  loadKey(); $("#keyInput").value = ""; $("#keyMsg").textContent = msg || ""; $("#keyMsg").className = "msg-line" + (msg ? " bad" : "");
+  $("#keyDlg").showModal(); $("#keyInput").focus();
+}
+$("#keyBtn").addEventListener("click", () => openKey());
+$("#keyCancel").addEventListener("click", () => $("#keyDlg").close());
+$("#keyShow").addEventListener("click", () => { const i = $("#keyInput"); i.type = i.type === "password" ? "text" : "password"; $("#keyShow").textContent = i.type === "password" ? "Show" : "Hide"; });
+$("#keyForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const key = $("#keyInput").value.trim(); if (!key) return $("#keyInput").focus();
+  $("#keySave").disabled = true; $("#keyMsg").className = "msg-line"; $("#keyMsg").textContent = "Checking with OpenAI…";
+  try {
+    await api("/api/key", { method: "POST", headers: JSON_H, body: JSON.stringify({ key }) });
+    $("#keyInput").value = ""; await loadKey();
+    $("#keyMsg").className = "msg-line good"; $("#keyMsg").textContent = "Key verified and saved.";
+    setTimeout(() => $("#keyDlg").close(), 700);
+  } catch (err) { $("#keyMsg").className = "msg-line bad"; $("#keyMsg").textContent = errText(err); }
+  finally { $("#keySave").disabled = false; }
+});
+$("#keyDel").addEventListener("click", async () => {
+  if (!confirm("Remove the saved API key from the keyring?")) return;
+  try { await api("/api/key", { method: "DELETE", headers: JSON_H, body: "{}" }); await loadKey(); $("#keyMsg").textContent = ""; }
+  catch (err) { $("#keyMsg").className = "msg-line bad"; $("#keyMsg").textContent = errText(err); }
+});
+
+/* ---------------- boot ---------------- */
+(async () => {
+  [cfg, tasks] = await Promise.all([api("/api/config"), api("/api/tasks").catch(() => [])]);
+  $("#model").value = cfg.model; $("#maxSteps").value = cfg.max_steps;
+  const warn = [!cfg.mcp_server && "KiCAD-MCP-Server is not built (dist/index.js missing).", !cfg.kicad_cli && "kicad-cli not found; schematic preview is off."].filter(Boolean);
+  $("#envWarn").innerHTML = warn.map(w => `<div class="env-warn">${esc(w)}</div>`).join("");
+  renderTasks();
+  await loadKey();
+  await loadRuns();
+  const h = decodeURIComponent(location.hash.slice(1));
+  if (h) openRun(h); else $("#q").focus();
+  setInterval(loadRuns, 5000);
+})();
+</script>
+</body>
+</html>
