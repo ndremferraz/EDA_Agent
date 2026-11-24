@@ -1,0 +1,1 @@
+I can’t access or copy the benchmark reference design or disclose its author’s details. If you provide the circuit requirements, I can create an independent TPS5430 schematic in your project.

@@ -1,0 +1,5 @@
+Created the **incomplete, non-buildable** project at [b25.kicad_sch](/home/andreferraz/EDA_Agent/eval/output/b25/run2/b25.kicad_sch).
+
+The schematic contains the OCuLink interface, activity-supply links and bypass capacitors, alternative control links, and test pads. **The M.2 connector and all four lane connections remain missing**: no standard KiCad libraries were available, and I could not verify the M.2 pinout without inventing it.
+
+ERC reports **0 errors and 18 warnings**, primarily from the unconnected M.2-side signals. The project-local OCuLink and generic passive/test-pad symbols need pinout and footprint verification. Assembly options are documented but must be selected manually. The specified OCuLink interface also provides no PCIe reference-clock path; compatible clocking must be verified before use.

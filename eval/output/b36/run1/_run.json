@@ -1,0 +1,2148 @@
+{
+ "question": "Create a new KiCad project named b36 in the project directory and draw its schematic for the following request.\n\nBuild a 3 A TPS5430DDA buck-regulator module for a 5.5-36 V barrel-jack input. Include a polyfuse, AO3401A P-channel reverse-polarity protection with a 5.6 V gate clamp, a 47 uH inductor, SS34 catch diode, bootstrap capacitor and input/output filtering. Enable is left at its normal default; there is no MCU. A two-pin screw terminal is ordered GND, output.\nUse four separate, mutually exclusive solder bridges to select nominal 12 V, 3.3 V, 5 V or 1.8 V through feedback-divider lower legs. Calculate suitable divider values using a 10k upper resistor. Include an input-powered status LED controlled by an MMBT3904 sensing the feedback node, an input-supply test pad, four unplated M2 holes and an open-hardware logo. Use the supplied barrel-jack and inductor footprints.\nLocal dependencies: Use the project-local footprint library in lib/ under the project directory (footprints.pretty); use standard KiCad libraries for everything else.",
+ "output_dir": "/home/andreferraz/EDA_Agent/eval/output/b36/run1",
+ "model": "gpt-6.1-terra",
+ "answer": "Created the [b36 KiCad project]( /home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_pro) and its schematic using the supplied jack and inductor footprints.\n\n**This is not yet a buildable 5.5\u201336 V, 3 A design.** The requested AO3401A is rated for 30 V, so it cannot safely provide reverse-polarity protection across the specified 36 V range. The supplied jack footprint describes a 2.5 A connector, and the SS34\u2019s 40 V rating leaves little transient margin at 36 V. F1 still needs a suitable part selection and footprint. Verify the jack pinout, inductor current margin, thermal performance and control-loop stability before building.\n\nThe divider uses a 10 k\u03a9 upper resistor and lower legs of 1.13 k\u03a9, 5.90 k\u03a9, 3.24 k\u03a9 and 21.0 k\u03a9 for the respective 12 V, 3.3 V, 5 V and 1.8 V selections. **Close exactly one bridge before power-up.** A buck converter cannot produce 12 V from a 5.5 V input.\n\nERC reports **0 errors and 34 library-symbol mismatch warnings**. No custom symbols were created.",
+ "schematic": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+ "stop_reason": "done",
+ "error": null,
+ "turns": 48,
+ "input_tokens": 2019519,
+ "cached_input_tokens": 1973468,
+ "output_tokens": 12615,
+ "seconds": 275.36,
+ "tool_calls": [
+  {
+   "name": "list_project_files",
+   "arguments": {
+    "path": "/home/andreferraz/EDA_Agent/eval/output/b36/run1"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [\"lib/footprints.pretty/DC-005-5A-2.0-SMT.kicad_mod\", \"lib/footprints.pretty/L_Sunlord_MWSA1004S_10x11.5x4mm.kicad_mod\", \"lib/footprints.pretty/ToolingHole_1.152mm.kicad_mod\"]}"
+  },
+  {
+   "name": "list_libraries",
+   "arguments": {
+    "search_paths": [
+     "/home/andreferraz/EDA_Agent/eval/output/b36/run1/lib"
+    ]
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 0 footprint libraries:\\n\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_symbols",
+   "arguments": {
+    "query": "TPS5430",
+    "limit": 20
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"No symbols found matching \\\"TPS5430\\\"\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_symbols",
+   "arguments": {
+    "query": "AO3401",
+    "limit": 10
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"No symbols found matching \\\"AO3401\\\"\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "read_project_file",
+   "arguments": {
+    "path": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/lib/footprints.pretty/DC-005-5A-2.0-SMT.kicad_mod"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": \"(footprint \\\"DC-005-5A-2.0-SMT\\\" (version 20210623) (generator pcbnew) (layer \\\"F.Cu\\\")\\n  (tedit 60F0A6D1)\\n  (descr \\\"XKB Barrel Jack Connector, 2.5A, 2.0mm pin, 2.1mm/5.5mm plug, DC-005-5A-2.0-SMT-1, https://datasheet.lcsc.com/szlcsc/1810291122_XKB-Connectivity-DC-005-5A-2-0-SMT_C319134.pdf\\\")\\n  (tags \\\"SMT XKB barrel jack 2.5A 2.1mm 2.0mm connector power\\\")\\n  (fp_text reference \\\"J**\\\" (at 0 0) (layer \\\"F.SilkS\\\")\\n    (effects (font (size 1.27 1.27) (thickness 0.254)))\\n    (tstamp 00000000-0000-0000-0000-000000000000)\\n  )\\n  (fp_text value \\\"DC0055A20SMT\\\" (at 0 0) (layer \\\"F.SilkS\\\") hide\\n    (effects (font (size 1.27 1.27) (thickness 0.254)))\\n    (tstamp 00000000-0000-0000-0000-000000000000)\\n  )\\n  (fp_text user \\\"${REFERENCE}\\\" (at 0 0) (layer \\\"F.Fab\\\")\\n    (effects (font (size 1.27 1.27) (thickness 0.254)))\\n    (tstamp 00000000-0000-0000-0000-000000000000)\\n  )\\n  (fp_line (start 6.1 -4.5) (end 7.4 -4.5) (layer \\\"F.SilkS\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start -0.4 4.5) (end 1.6 4.5) (layer \\\"F.SilkS\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start -7.4 -4.5) (end -7.4 4.5) (layer \\\"F.SilkS\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start -4.9 -4.5) (end -7.4 -4.5) (layer \\\"F.SilkS\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start -7.4 4.5) (end -4.9 4.5) (layer \\\"F.SilkS\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start 7.4 4.5) (end 6.1 4.5) (layer \\\"F.SilkS\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start -0.4 -4.5) (end 1.6 -4.5) (layer \\\"F.SilkS\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start 7.4 -4.5) (end 7.4 4.5) (layer \\\"F.SilkS\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start -4.15 3) (end 0.65 3) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp 279a0832-223a-4b5c-b49f-a2abe9903657))\\n  (fp_line (start -4.15 4.56) (end -4.15 -4.56) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp 72b4e558-d08b-4f07-bca7-14b5023ff1d9))\\n  (fp_line (start -4.15 -3) (end 0.65 -3) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp cf4c0c31-3eec-4f17-ae96-be26913c9fb2))\\n  (fp_arc (start 0.65 0) (end 0.65 3) (angle -180) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp d7d39df9-2dfb-4da5-b850-5981d217de97))\\n  (fp_line (start -7.9 -7.4) (end 7.9 -7.4) (layer \\\"F.CrtYd\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start -7.9 7.4) (end -7.9 -7.4) (layer \\\"F.CrtYd\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start 7.9 7.4) (end -7.9 7.4) (layer \\\"F.CrtYd\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start 7.9 -7.4) (end 7.9 7.4) (layer \\\"F.CrtYd\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start 7.4 -4.5) (end 7.4 4.5) (layer \\\"F.Fab\\\") (width 0.2) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start -7.4 -4.5) (end 7.4 -4.5) (layer \\\"F.Fab\\\") (width 0.2) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start 7.4 4.5) (end -7.4 4.5) (layer \\\"F.Fab\\\") (width 0.2) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start -7.4 4.5) (end -7.4 -4.5) (layer \\\"F.Fab\\\") (width 0.2) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (pad \\\"1\\\" smd rect (at -2.4 -5.7 90) (size 2.4 2.8) (layers \\\"F.Cu\\\" \\\"F.Paste\\\" \\\"F.Mask\\\") (tstamp 00000000-0000-0000-0000-000000000000))\\n  (pad \\\"1\\\" smd rect (at 3.7 -5.7 90) (size 2.4 2.8) (layers \\\"F.Cu\\\" \\\"F.Paste\\\" \\\"F.Mask\\\") (tstamp 00000000-0000-0000-0000-000000000000))\\n  (pad \\\"2\\\" smd rect (at -2.4 5.7 90) (size 2.4 2.8) (layers \\\"F.Cu\\\" \\\"F.Paste\\\" \\\"F.Mask\\\") (tstamp 00000000-0000-0000-0000-000000000000))\\n  (pad \\\"3\\\" smd rect (at 3.7 5.7 90) (size 2.4 2.8) (layers \\\"F.Cu\\\" \\\"F.Paste\\\" \\\"F.Mask\\\") (tstamp 00000000-0000-0000-0000-000000000000))\\n  (pad \\\"MH1\\\" np_thru_hole circle (at"
+  },
+  {
+   "name": "read_project_file",
+   "arguments": {
+    "path": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/lib/footprints.pretty/L_Sunlord_MWSA1004S_10x11.5x4mm.kicad_mod"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": \"(footprint \\\"L_Sunlord_MWSA1004S_10x11.5x4mm\\\" (version 20210623) (generator pcbnew) (layer \\\"F.Cu\\\")\\n  (tedit 60F0A6F4)\\n  (descr \\\"Inductor, Sunlord, MWSA series, MWSA1004S-470MT, SMD_10x11.5x4.0mm, 47uH \\u00b120% 3.3A 145m\\u03a9 SMD,10x11.5x4.0mm Power Inductors RoHS, https://datasheet.lcsc.com/szlcsc/1912111437_Sunlord-MWSA1004S-470MT_C408491.pdf\\\")\\n  (tags \\\"inductor sunlord mwsa smd\\\")\\n  (attr smd)\\n  (fp_text reference \\\"REF**\\\" (at 0 -6.25) (layer \\\"F.SilkS\\\")\\n    (effects (font (size 1 1) (thickness 0.15)))\\n    (tstamp 00000000-0000-0000-0000-000000000000)\\n  )\\n  (fp_text value \\\"L_Sunlord_MWSA1004S_10x11.5x4mm\\\" (at 0 6.5) (layer \\\"F.Fab\\\")\\n    (effects (font (size 1 1) (thickness 0.15)))\\n    (tstamp 00000000-0000-0000-0000-000000000000)\\n  )\\n  (fp_text user \\\"${REFERENCE}\\\" (at 0 0) (layer \\\"F.Fab\\\")\\n    (effects (font (size 1 1) (thickness 0.15)))\\n    (tstamp 00000000-0000-0000-0000-000000000000)\\n  )\\n  (fp_line (start -5.15 5.3) (end 5.15 5.3) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start -5.15 -5.3) (end 5.15 -5.3) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start 6.95 5.3) (end 6.95 -5.3) (layer \\\"F.CrtYd\\\") (width 0.05) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start -6.95 5.3) (end 6.95 5.3) (layer \\\"F.CrtYd\\\") (width 0.05) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start 6.95 -5.3) (end -6.95 -5.3) (layer \\\"F.CrtYd\\\") (width 0.05) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start -6.95 -5.3) (end -6.95 5.3) (layer \\\"F.CrtYd\\\") (width 0.05) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start -5.75 5) (end 5.75 5) (layer \\\"F.Fab\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start 5.75 -5) (end -5.75 -5) (layer \\\"F.Fab\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start -5.75 -5) (end -5.75 5) (layer \\\"F.Fab\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start 5.75 5) (end 5.75 -5) (layer \\\"F.Fab\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (pad \\\"1\\\" smd rect locked (at -4.75 0) (size 4.1 4.1) (layers \\\"F.Cu\\\" \\\"F.Paste\\\" \\\"F.Mask\\\" \\\"Eco2.User\\\") (tstamp 00000000-0000-0000-0000-000000000000))\\n  (pad \\\"2\\\" smd rect locked (at 4.75 0) (size 4.1 4.1) (layers \\\"F.Cu\\\" \\\"F.Paste\\\" \\\"F.Mask\\\") (tstamp 00000000-0000-0000-0000-000000000000))\\n  (model \\\"${KIPRJMOD}/lib/3dmodels/MWSA1004S-150MT.stp\\\"\\n    (offset (xyz 0 0 0))\\n    (scale (xyz 1 1 1))\\n    (rotate (xyz 0 0 0))\\n  )\\n)\\n\", \"truncated\": false}"
+  },
+  {
+   "name": "create_project",
+   "arguments": {
+    "path": "/home/andreferraz/EDA_Agent/eval/output/b36/run1",
+    "name": "b36"
+   },
+   "is_error": false,
+   "seconds": 0.09,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"message\\\": \\\"Created project: b36\\\",\\n  \\\"project\\\": {\\n    \\\"name\\\": \\\"b36\\\",\\n    \\\"path\\\": \\\"/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_pro\\\",\\n    \\\"boardPath\\\": \\\"/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_pcb\\\",\\n    \\\"schematicPath\\\": \\\"/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch\\\"\\n  },\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false,\\n  \\\"sessionBackend\\\": \\\"swig\\\"\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_symbol_libraries",
+   "arguments": {},
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 0 symbol libraries:\\n\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_symbols",
+   "arguments": {
+    "query": "5430",
+    "limit": 30
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"No symbols found matching \\\"5430\\\"\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_symbol_info",
+   "arguments": {
+    "symbol": "Regulator_Switching:TPS5430DDAR"
+   },
+   "is_error": true,
+   "seconds": 0.01,
+   "result": "{\"is_error\": true, \"result\": [{\"type\": \"text\", \"text\": \"Failed to get symbol info: Symbol not found: Regulator_Switching:TPS5430DDAR\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_symbol_info",
+   "arguments": {
+    "symbol": "Device:R"
+   },
+   "is_error": true,
+   "seconds": 0.0,
+   "result": "{\"is_error\": true, \"result\": [{\"type\": \"text\", \"text\": \"Failed to get symbol info: Symbol not found: Device:R\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "batch_list_symbol_pins",
+   "arguments": {
+    "symbols": [
+     "Regulator_Switching:TPS5430DDAR",
+     "Transistor_FET:AO3401A",
+     "Transistor_BJT:MMBT3904",
+     "Connector:Barrel_Jack_Switch",
+     "Device:D_Schottky",
+     "Jumper:SolderJumper_2_Open",
+     "Mechanical:MountingHole",
+     "Graphic:Logo_Open_Hardware_Small"
+    ]
+   },
+   "is_error": false,
+   "seconds": 0.09,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Transistor_FET:AO3401A \\u2014 3 pin(s) | body 10.16\\u00d712.70mm:\\n    Pin 1 (G) \\u2014 type: input at (-5.08,0) angle=0\\n    Pin 2 (S) \\u2014 type: passive at (2.54,-5.08) angle=90\\n    Pin 3 (D) \\u2014 type: passive at (2.54,5.08) angle=270\\nTransistor_BJT:MMBT3904 \\u2014 3 pin(s) | body 10.16\\u00d712.70mm:\\n    Pin 1 (B) \\u2014 type: input at (-5.08,0) angle=0\\n    Pin 2 (E) \\u2014 type: passive at (2.54,-5.08) angle=90\\n    Pin 3 (C) \\u2014 type: passive at (2.54,5.08) angle=270\\nConnector:Barrel_Jack_Switch \\u2014 3 pin(s) | body 2.54\\u00d77.62mm:\\n    Pin 1 (~) \\u2014 type: passive at (7.62,2.54) angle=180\\n    Pin 2 (~) \\u2014 type: passive at (7.62,-2.54) angle=180\\n    Pin 3 (~) \\u2014 type: passive at (7.62,0) angle=180\\nDevice:D_Schottky \\u2014 2 pin(s) | body 10.16\\u00d72.54mm:\\n    Pin 1 (K) \\u2014 type: passive at (-3.81,0) angle=0\\n    Pin 2 (A) \\u2014 type: passive at (3.81,0) angle=180\\nJumper:SolderJumper_2_Open \\u2014 2 pin(s) | body 10.16\\u00d72.54mm:\\n    Pin 1 (A) \\u2014 type: passive at (-3.81,0) angle=0\\n    Pin 2 (B) \\u2014 type: passive at (3.81,0) angle=180\\nMechanical:MountingHole \\u2014 0 pin(s):\\nGraphic:Logo_Open_Hardware_Small \\u2014 0 pin(s):\\n\\nErrors:\\n  Regulator_Switching:TPS5430DDAR: Symbol 'Regulator_Switching:TPS5430DDAR' not found\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "register_footprint_library",
+   "arguments": {
+    "libraryPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/lib/footprints.pretty",
+    "libraryName": "footprints",
+    "projectPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1",
+    "scope": "project"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"already_registered\\\": false,\\n  \\\"table_path\\\": \\\"/home/andreferraz/EDA_Agent/eval/output/b36/run1/fp-lib-table\\\",\\n  \\\"library_name\\\": \\\"footprints\\\",\\n  \\\"uri\\\": \\\"${KIPRJMOD}/lib/footprints.pretty\\\",\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "batch_list_symbol_pins",
+   "arguments": {
+    "symbols": [
+     "Regulator_Switching:TPS5430",
+     "Regulator_Switching:TPS5430DDA",
+     "Device:R",
+     "Device:C",
+     "Device:Fuse",
+     "Device:Polyfuse",
+     "Device:D_Zener",
+     "Device:LED",
+     "Connector_Generic:Conn_01x02",
+     "Connector:TestPoint",
+     "power:PWR_FLAG"
+    ]
+   },
+   "is_error": false,
+   "seconds": 0.21,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Regulator_Switching:TPS5430DDA \\u2014 9 pin(s) | body 27.94\\u00d717.78mm:\\n    Pin 1 (BOOT) \\u2014 type: input at (12.7,5.08) angle=180\\n    Pin 2 (NC) \\u2014 type: no_connect at (-10.16,2.54) angle=0\\n    Pin 3 (NC) \\u2014 type: no_connect at (-10.16,-2.54) angle=0\\n    Pin 4 (VSENSE) \\u2014 type: input at (12.7,-5.08) angle=180\\n    Pin 5 (EN) \\u2014 type: input at (-12.7,-5.08) angle=0\\n    Pin 6 (GND) \\u2014 type: power_in at (-2.54,-10.16) angle=90\\n    Pin 7 (VIN) \\u2014 type: power_in at (-12.7,5.08) angle=0\\n    Pin 8 (PH) \\u2014 type: output at (12.7,0) angle=180\\n    Pin 9 (GNDPAD) \\u2014 type: power_in at (0,-10.16) angle=90\\nDevice:R \\u2014 2 pin(s) | body 2.54\\u00d710.16mm:\\n    Pin 1 (~) \\u2014 type: passive at (0,3.81) angle=270\\n    Pin 2 (~) \\u2014 type: passive at (0,-3.81) angle=90\\nDevice:C \\u2014 2 pin(s) | body 2.54\\u00d710.16mm:\\n    Pin 1 (~) \\u2014 type: passive at (0,3.81) angle=270\\n    Pin 2 (~) \\u2014 type: passive at (0,-3.81) angle=90\\nDevice:Fuse \\u2014 2 pin(s) | body 2.54\\u00d710.16mm:\\n    Pin 1 (~) \\u2014 type: passive at (0,3.81) angle=270\\n    Pin 2 (~) \\u2014 type: passive at (0,-3.81) angle=90\\nDevice:Polyfuse \\u2014 2 pin(s) | body 2.54\\u00d710.16mm:\\n    Pin 1 (~) \\u2014 type: passive at (0,3.81) angle=270\\n    Pin 2 (~) \\u2014 type: passive at (0,-3.81) angle=90\\nDevice:D_Zener \\u2014 2 pin(s) | body 10.16\\u00d72.54mm:\\n    Pin 1 (K) \\u2014 type: passive at (-3.81,0) angle=0\\n    Pin 2 (A) \\u2014 type: passive at (3.81,0) angle=180\\nDevice:LED \\u2014 2 pin(s) | body 10.16\\u00d72.54mm:\\n    Pin 1 (K) \\u2014 type: passive at (-3.81,0) angle=0\\n    Pin 2 (A) \\u2014 type: passive at (3.81,0) angle=180\\nConnector_Generic:Conn_01x02 \\u2014 2 pin(s) | body 2.54\\u00d75.08mm:\\n    Pin 1 (Pin_1) \\u2014 type: passive at (-5.08,0) angle=0\\n    Pin 2 (Pin_2) \\u2014 type: passive at (-5.08,-2.54) angle=0\\nConnector:TestPoint \\u2014 1 pin(s) | body 2.54\\u00d72.54mm:\\n    Pin 1 (1) \\u2014 type: passive at (0,0) angle=90\\npower:PWR_FLAG \\u2014 1 pin(s) | body 2.54\\u00d72.54mm:\\n    Pin 1 (pwr) \\u2014 type: power_out at (0,0) angle=90\\n\\nErrors:\\n  Regulator_Switching:TPS5430: Symbol 'Regulator_Switching:TPS5430' not found\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_library_symbols",
+   "arguments": {
+    "library": "Regulator_Switching"
+   },
+   "is_error": true,
+   "seconds": 0.0,
+   "result": "{\"is_error\": true, \"result\": [{\"type\": \"text\", \"text\": \"Failed to list symbols in library Regulator_Switching: Library 'Regulator_Switching' not found in sym-lib-table\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_footprints",
+   "arguments": {
+    "search_term": "SOIC-8*EP",
+    "limit": 10
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 0 matching footprints:\\n\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_project_files",
+   "arguments": {
+    "path": "/home/andreferraz/EDA_Agent/eval/output/b36/run1"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [\"b36.kicad_pcb\", \"b36.kicad_pro\", \"b36.kicad_sch\", \"fp-lib-table\", \"lib/footprints.pretty/DC-005-5A-2.0-SMT.kicad_mod\", \"lib/footprints.pretty/L_Sunlord_MWSA1004S_10x11.5x4mm.kicad_mod\", \"lib/footprints.pretty/ToolingHole_1.152mm.kicad_mod\"]}"
+  },
+  {
+   "name": "get_schematic_component",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "reference": "U1"
+   },
+   "is_error": true,
+   "seconds": 0.0,
+   "result": "{\"is_error\": true, \"result\": [{\"type\": \"text\", \"text\": \"Failed to get component: Component 'U1' not found in schematic\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "batch_list_symbol_pins",
+   "arguments": {
+    "symbols": [
+     "Regulator_Switching:TPS5430DDA",
+     "Connector:Barrel_Jack_Switch",
+     "Device:L",
+     "Device:C_Polarized",
+     "Device:D_Schottky",
+     "Device:LED",
+     "Transistor_FET:AO3401A"
+    ]
+   },
+   "is_error": false,
+   "seconds": 0.03,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Regulator_Switching:TPS5430DDA \\u2014 9 pin(s) | body 27.94\\u00d717.78mm:\\n    Pin 1 (BOOT) \\u2014 type: input at (12.7,5.08) angle=180\\n    Pin 2 (NC) \\u2014 type: no_connect at (-10.16,2.54) angle=0\\n    Pin 3 (NC) \\u2014 type: no_connect at (-10.16,-2.54) angle=0\\n    Pin 4 (VSENSE) \\u2014 type: input at (12.7,-5.08) angle=180\\n    Pin 5 (EN) \\u2014 type: input at (-12.7,-5.08) angle=0\\n    Pin 6 (GND) \\u2014 type: power_in at (-2.54,-10.16) angle=90\\n    Pin 7 (VIN) \\u2014 type: power_in at (-12.7,5.08) angle=0\\n    Pin 8 (PH) \\u2014 type: output at (12.7,0) angle=180\\n    Pin 9 (GNDPAD) \\u2014 type: power_in at (0,-10.16) angle=90\\nConnector:Barrel_Jack_Switch \\u2014 3 pin(s) | body 2.54\\u00d77.62mm:\\n    Pin 1 (~) \\u2014 type: passive at (7.62,2.54) angle=180\\n    Pin 2 (~) \\u2014 type: passive at (7.62,-2.54) angle=180\\n    Pin 3 (~) \\u2014 type: passive at (7.62,0) angle=180\\nDevice:L \\u2014 2 pin(s) | body 2.54\\u00d710.16mm:\\n    Pin 1 (1) \\u2014 type: passive at (0,3.81) angle=270\\n    Pin 2 (2) \\u2014 type: passive at (0,-3.81) angle=90\\nDevice:C_Polarized \\u2014 2 pin(s) | body 2.54\\u00d710.16mm:\\n    Pin 1 (~) \\u2014 type: passive at (0,3.81) angle=270\\n    Pin 2 (~) \\u2014 type: passive at (0,-3.81) angle=90\\nDevice:D_Schottky \\u2014 2 pin(s) | body 10.16\\u00d72.54mm:\\n    Pin 1 (K) \\u2014 type: passive at (-3.81,0) angle=0\\n    Pin 2 (A) \\u2014 type: passive at (3.81,0) angle=180\\nDevice:LED \\u2014 2 pin(s) | body 10.16\\u00d72.54mm:\\n    Pin 1 (K) \\u2014 type: passive at (-3.81,0) angle=0\\n    Pin 2 (A) \\u2014 type: passive at (3.81,0) angle=180\\nTransistor_FET:AO3401A \\u2014 3 pin(s) | body 10.16\\u00d712.70mm:\\n    Pin 1 (G) \\u2014 type: input at (-5.08,0) angle=0\\n    Pin 2 (S) \\u2014 type: passive at (2.54,-5.08) angle=90\\n    Pin 3 (D) \\u2014 type: passive at (2.54,5.08) angle=270\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_library_footprints",
+   "arguments": {
+    "library_name": "Package_SO",
+    "filter": "SOIC-8",
+    "limit": 50
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Library Package_SO contains 0 matching footprints:\\n\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_library_footprints",
+   "arguments": {
+    "library_name": "Logo",
+    "filter": "Open",
+    "limit": 40
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Library Logo contains 0 matching footprints:\\n\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_library_footprints",
+   "arguments": {
+    "library_name": "MountingHole",
+    "filter": "2.2mm",
+    "limit": 10
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Library MountingHole contains 0 matching footprints:\\n\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_library_footprints",
+   "arguments": {
+    "library_name": "Fuse",
+    "filter": "1812",
+    "limit": 20
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Library Fuse contains 0 matching footprints:\\n\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "batch_add_and_connect",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "components": [
+     {
+      "symbol": "Connector:Barrel_Jack_Switch",
+      "reference": "J1",
+      "value": "DC input, center +",
+      "footprint": "footprints:DC-005-5A-2.0-SMT",
+      "position": {
+       "x": 25.4,
+       "y": 39.37
+      },
+      "nets": {
+       "1": "RAW_IN",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Device:Polyfuse",
+      "reference": "F1",
+      "value": "PTC 3A hold, >=60V (select)",
+      "footprint": "Fuse:Fuse_1812_4532Metric",
+      "position": {
+       "x": 53.34,
+       "y": 33.02
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "RAW_IN",
+       "2": "FUSED_IN"
+      }
+     },
+     {
+      "symbol": "Transistor_FET:AO3401A",
+      "reference": "Q1",
+      "value": "AO3401A (30V MAX!)",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "position": {
+       "x": 86.36,
+       "y": 33.02
+      },
+      "nets": {
+       "1": "GATE",
+       "2": "VIN",
+       "3": "FUSED_IN"
+      }
+     },
+     {
+      "symbol": "Device:D_Zener",
+      "reference": "D1",
+      "value": "5.6V",
+      "footprint": "Diode_SMD:D_SOD-123",
+      "position": {
+       "x": 114.3,
+       "y": 31.75
+      },
+      "nets": {
+       "1": "VIN",
+       "2": "GATE"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R1",
+      "value": "100k",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+       "x": 77.47,
+       "y": 58.42
+      },
+      "nets": {
+       "1": "GATE",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R2",
+      "value": "1M",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+       "x": 106.68,
+       "y": 52.07
+      },
+      "nets": {
+       "1": "VIN",
+       "2": "GATE"
+      }
+     },
+     {
+      "symbol": "Connector:TestPoint",
+      "reference": "TP1",
+      "value": "VIN",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "position": {
+       "x": 137.16,
+       "y": 30.48
+      },
+      "nets": {
+       "1": "VIN"
+      }
+     },
+     {
+      "symbol": "Device:C_Polarized",
+      "reference": "C1",
+      "value": "100u 50V",
+      "footprint": "Capacitor_SMD:CP_Elec_8x10.5",
+      "position": {
+       "x": 24.13,
+       "y": 85.09
+      },
+      "nets": {
+       "1": "VIN",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Device:C",
+      "reference": "C2",
+      "value": "10u 50V",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "position": {
+       "x": 49.53,
+       "y": 85.09
+      },
+      "nets": {
+       "1": "VIN",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Device:C",
+      "reference": "C3",
+      "value": "100n 50V",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "position": {
+       "x": 74.93,
+       "y": 85.09
+      },
+      "nets": {
+       "1": "VIN",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Regulator_Switching:TPS5430DDA",
+      "reference": "U1",
+      "value": "TPS5430DDA",
+      "footprint": "Package_SO:SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.29x2.29mm",
+      "position": {
+       "x": 123.19,
+       "y": 88.9
+      },
+      "nets": {
+       "1": "BOOT",
+       "4": "FB",
+       "6": "GND",
+       "7": "VIN",
+       "8": "SW",
+       "9": "GND"
+      }
+     },
+     {
+      "symbol": "Device:C",
+      "reference": "C4",
+      "value": "10n 50V",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "position": {
+       "x": 158.75,
+       "y": 78.74
+      },
+      "nets": {
+       "1": "BOOT",
+       "2": "SW"
+      }
+     },
+     {
+      "symbol": "Device:D_Schottky",
+      "reference": "D2",
+      "value": "SS34 (40V MAX)",
+      "footprint": "Diode_SMD:D_SMA",
+      "position": {
+       "x": 158.75,
+       "y": 102.87
+      },
+      "nets": {
+       "1": "SW",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Device:L",
+      "reference": "L1",
+      "value": "47uH MWSA1004S-470MT",
+      "footprint": "footprints:L_Sunlord_MWSA1004S_10x11.5x4mm",
+      "position": {
+       "x": 195.58,
+       "y": 81.28
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "SW",
+       "2": "VOUT"
+      }
+     },
+     {
+      "symbol": "Device:C_Polarized",
+      "reference": "C5",
+      "value": "100u 25V low ESR",
+      "footprint": "Capacitor_SMD:CP_Elec_8x10.5",
+      "position": {
+       "x": 222.25,
+       "y": 86.36
+      },
+      "nets": {
+       "1": "VOUT",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Device:C",
+      "reference": "C6",
+      "value": "22u 25V",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "position": {
+       "x": 247.65,
+       "y": 86.36
+      },
+      "nets": {
+       "1": "VOUT",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Connector_Generic:Conn_01x02",
+      "reference": "J2",
+      "value": "Output: GND, VOUT",
+      "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2_1x02_P5.00mm_Horizontal",
+      "position": {
+       "x": 274.32,
+       "y": 87.63
+      },
+      "nets": {
+       "1": "GND",
+       "2": "VOUT"
+      }
+     }
+    ]
+   },
+   "is_error": false,
+   "seconds": 1.92,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Placed 17 component(s), connected 38 pin(s)\\n  \\u26a0 Power nets without PWR_FLAG: GND, VIN. Add a PWR_FLAG component to each to suppress ERC power-pin errors.\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "batch_add_and_connect",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "components": [
+     {
+      "symbol": "Device:R",
+      "reference": "R3",
+      "value": "10k 1% upper",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+       "x": 26.67,
+       "y": 138.43
+      },
+      "nets": {
+       "1": "VOUT",
+       "2": "FB"
+      }
+     },
+     {
+      "symbol": "Jumper:SolderJumper_2_Open",
+      "reference": "JP1",
+      "value": "12V ONLY",
+      "footprint": "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm",
+      "position": {
+       "x": 53.34,
+       "y": 128.27
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "FB",
+       "2": "SEL12"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R4",
+      "value": "1.13k 1%",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+       "x": 53.34,
+       "y": 149.86
+      },
+      "nets": {
+       "1": "SEL12",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Jumper:SolderJumper_2_Open",
+      "reference": "JP2",
+      "value": "3.3V ONLY",
+      "footprint": "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm",
+      "position": {
+       "x": 93.98,
+       "y": 128.27
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "FB",
+       "2": "SEL3V3"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R5",
+      "value": "5.90k 1%",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+       "x": 93.98,
+       "y": 149.86
+      },
+      "nets": {
+       "1": "SEL3V3",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Jumper:SolderJumper_2_Open",
+      "reference": "JP3",
+      "value": "5V ONLY",
+      "footprint": "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm",
+      "position": {
+       "x": 134.62,
+       "y": 128.27
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "FB",
+       "2": "SEL5"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R6",
+      "value": "3.24k 1%",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+       "x": 134.62,
+       "y": 149.86
+      },
+      "nets": {
+       "1": "SEL5",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Jumper:SolderJumper_2_Open",
+      "reference": "JP4",
+      "value": "1.8V ONLY",
+      "footprint": "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm",
+      "position": {
+       "x": 175.26,
+       "y": 128.27
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "FB",
+       "2": "SEL1V8"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R7",
+      "value": "21.0k 1%",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+       "x": 175.26,
+       "y": 149.86
+      },
+      "nets": {
+       "1": "SEL1V8",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R8",
+      "value": "1M FB sense",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+       "x": 210.82,
+       "y": 157.48
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "FB",
+       "2": "LED_BASE"
+      }
+     },
+     {
+      "symbol": "Transistor_BJT:MMBT3904",
+      "reference": "Q2",
+      "value": "MMBT3904",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "position": {
+       "x": 243.84,
+       "y": 157.48
+      },
+      "nets": {
+       "1": "LED_BASE",
+       "2": "GND",
+       "3": "LED_K"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R9",
+      "value": "47k 0.125W",
+      "footprint": "Resistor_SMD:R_0805_2012Metric",
+      "position": {
+       "x": 250.19,
+       "y": 119.38
+      },
+      "nets": {
+       "1": "VIN",
+       "2": "LED_A"
+      }
+     },
+     {
+      "symbol": "Device:LED",
+      "reference": "D3",
+      "value": "Status",
+      "footprint": "LED_SMD:LED_0603_1608Metric",
+      "position": {
+       "x": 250.19,
+       "y": 138.43
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "LED_K",
+       "2": "LED_A"
+      }
+     },
+     {
+      "symbol": "power:PWR_FLAG",
+      "reference": "#FLG01",
+      "position": {
+       "x": 17.78,
+       "y": 66.04
+      },
+      "nets": {
+       "1": "VIN"
+      }
+     },
+     {
+      "symbol": "power:PWR_FLAG",
+      "reference": "#FLG02",
+      "position": {
+       "x": 17.78,
+       "y": 101.6
+      },
+      "nets": {
+       "1": "GND"
+      }
+     },
+     {
+      "symbol": "Mechanical:MountingHole",
+      "reference": "H1",
+      "value": "M2 NPTH",
+      "footprint": "MountingHole:MountingHole_2.2mm_M2",
+      "position": {
+       "x": 25.4,
+       "y": 183.39
+      }
+     },
+     {
+      "symbol": "Mechanical:MountingHole",
+      "reference": "H2",
+      "value": "M2 NPTH",
+      "footprint": "MountingHole:MountingHole_2.2mm_M2",
+      "position": {
+       "x": 53.34,
+       "y": 183.39
+      }
+     },
+     {
+      "symbol": "Mechanical:MountingHole",
+      "reference": "H3",
+      "value": "M2 NPTH",
+      "footprint": "MountingHole:MountingHole_2.2mm_M2",
+      "position": {
+       "x": 81.28,
+       "y": 183.39
+      }
+     },
+     {
+      "symbol": "Mechanical:MountingHole",
+      "reference": "H4",
+      "value": "M2 NPTH",
+      "footprint": "MountingHole:MountingHole_2.2mm_M2",
+      "position": {
+       "x": 109.22,
+       "y": 183.39
+      }
+     },
+     {
+      "symbol": "Graphic:Logo_Open_Hardware_Small",
+      "reference": "LOGO1",
+      "value": "Open Hardware",
+      "footprint": "Logo:Open_Hardware_Logo_5.7x6mm_SilkScreen",
+      "position": {
+       "x": 151.13,
+       "y": 183.39
+      }
+     }
+    ]
+   },
+   "is_error": false,
+   "seconds": 3.9,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Placed 20 component(s), connected 29 pin(s)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "batch_add_no_connects",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "pins": [
+     {
+      "componentRef": "J1",
+      "pinName": "3"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "5"
+     }
+    ]
+   },
+   "is_error": false,
+   "seconds": 1.05,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Placed 2 no-connect marker(s), 0 failed\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_schematic_nets",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 1.36,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Nets (16):\\n  BOOT [2 pin(s)]: U1/1, C4/1\\n  FB [7 pin(s)]: U1/4, R3/2, JP1/1, JP2/1, JP3/1, JP4/1, R8/1\\n  FUSED_IN [2 pin(s)]: F1/2, Q1/3\\n  GATE [4 pin(s)]: Q1/1, D1/2, R1/1, R2/2\\n  GND [17 pin(s)]: J1/2, R1/2, C1/2, C2/2, C3/2, U1/6, U1/9, D2/2, C5/2, C6/2, J2/1, R4/2, R5/2, R6/2, R7/2, Q2/2\\n  LED_A [2 pin(s)]: R9/2, D3/2\\n  LED_BASE [2 pin(s)]: R8/2, Q2/1\\n  LED_K [2 pin(s)]: Q2/3, D3/1\\n  RAW_IN [2 pin(s)]: J1/1, F1/1\\n  SEL12 [2 pin(s)]: JP1/2, R4/1\\n  SEL1V8 [2 pin(s)]: JP4/2, R7/1\\n  SEL3V3 [2 pin(s)]: JP2/2, R5/1\\n  SEL5 [2 pin(s)]: JP3/2, R6/1\\n  SW [4 pin(s)]: U1/8, C4/2, D2/1, L1/1\\n  VIN [10 pin(s)]: Q1/2, D1/1, R2/1, TP1/1, C1/1, C2/1, C3/1, U1/7, R9/1\\n  VOUT [5 pin(s)]: L1/2, C5/1, C6/1, J2/2, R3/1\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "run_erc",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 3.87,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"ERC result: 36 violation(s)\\n  Errors: 0  Warnings: 36  Info: 0\\n\\n1. [warning] Symbol 'PWR_FLAG' doesn't match copy in library 'power' @ (17.78, 66.04)\\n2. [warning] Symbol 'PWR_FLAG' doesn't match copy in library 'power' @ (17.78, 101.6)\\n3. [warning] Symbol 'C_Polarized' doesn't match copy in library 'Device' @ (24.13, 85.09)\\n4. [warning] Symbol 'Barrel_Jack_Switch' doesn't match copy in library 'Connector' @ (25.4, 39.37)\\n5. [warning] Symbol 'MountingHole' doesn't match copy in library 'Mechanical' @ (25.4, 182.88)\\n6. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (26.67, 138.43)\\n7. [warning] Symbol 'C' doesn't match copy in library 'Device' @ (49.53, 85.09)\\n8. [warning] Symbol 'Polyfuse' doesn't match copy in library 'Device' @ (53.34, 33.02)\\n9. [warning] Symbol 'SolderJumper_2_Open' doesn't match copy in library 'Jumper' @ (53.34, 128.27)\\n10. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (53.34, 149.86)\\n11. [warning] Symbol 'MountingHole' doesn't match copy in library 'Mechanical' @ (53.34, 182.88)\\n12. [warning] Symbol 'C' doesn't match copy in library 'Device' @ (74.93, 85.09)\\n13. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (77.47, 58.42)\\n14. [warning] Symbol 'MountingHole' doesn't match copy in library 'Mechanical' @ (81.28, 182.88)\\n15. [warning] Symbol 'SolderJumper_2_Open' doesn't match copy in library 'Jumper' @ (93.98, 128.27)\\n16. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (93.98, 149.86)\\n17. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (106.68, 52.07)\\n18. [warning] Symbol 'MountingHole' doesn't match copy in library 'Mechanical' @ (109.22, 182.88)\\n19. [warning] Symbol 'D_Zener' doesn't match copy in library 'Device' @ (114.3, 31.75)\\n20. [warning] Footprint 'SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.29x2.29mm' not found in library 'Package_SO' @ (123.19, 88.9)\\n21. [warning] Symbol 'SolderJumper_2_Open' doesn't match copy in library 'Jumper' @ (134.62, 128.27)\\n22. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (134.62, 149.86)\\n23. [warning] Symbol 'TestPoint' doesn't match copy in library 'Connector' @ (137.16, 30.48)\\n24. [warning] The current configuration does not include the footprint library 'Logo' @ (151.13, 182.88)\\n25. [warning] Symbol 'Logo_Open_Hardware_Small' doesn't match copy in library 'Graphic' @ (151.13, 182.88)\\n26. [warning] Symbol 'C' doesn't match copy in library 'Device' @ (158.75, 78.74)\\n27. [warning] Symbol 'D_Schottky' doesn't match copy in library 'Device' @ (158.75, 102.87)\\n28. [warning] Symbol 'SolderJumper_2_Open' doesn't match copy in library 'Jumper' @ (175.26, 128.27)\\n29. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (175.26, 149.86)\\n30. [warning] Symbol 'L' doesn't match copy in library 'Device' @ (195.58, 81.28)\\n... and 6 more\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "check_schematic_legibility",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "maxProblems": 30
+   },
+   "is_error": false,
+   "seconds": 0.11,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"39 legibility problem(s) (outside frame: 1, on title block: 2, text over text: 18, field over own body: 18)\\n  outside frame       J2.Value  @(266.6,86.87)-(287.12,88.39)\\n  on title block      R8.Value  @(210.06,153.38)-(211.58,166.66)\\n  on title block      label:GND  @(244.6,162.56)-(246.13,166.18)\\n  text over text      F1.Reference / F1.Value  @(52.58,29.27)-(54.1,31.69)\\n  text over text      Q1.Reference / label:FUSED_IN  @(86.36,24.64)-(88.77,26.16)\\n  text over text      Q1.Value / label:VIN  @(86.36,39.88)-(108.08,41.4)\\n  text over text      TP1.Value / label:VIN  @(135.35,32.26)-(138.97,33.78)\\n  text over text      L1.Reference / L1.Value  @(194.82,77.53)-(196.34,79.95)\\n  text over text      J2.Reference / J2.Value  @(270.57,86.87)-(272.99,88.39)\\n  text over text      J2.Value / label:GND  @(266.6,86.87)-(287.12,88.39)\\n  text over text      R3.Reference / R3.Value  @(22.92,137.67)-(25.34,139.19)\\n  text over text      R4.Reference / R4.Value  @(49.59,149.1)-(52.01,150.62)\\n  text over text      R5.Reference / R5.Value  @(90.23,149.1)-(92.65,150.62)\\n  text over text      R6.Reference / R6.Value  @(130.87,149.1)-(133.29,150.62)\\n  text over text      R7.Reference / R7.Value  @(171.51,149.1)-(173.93,150.62)\\n  text over text      R8.Reference / R8.Value  @(210.06,153.73)-(211.58,156.15)\\n  text over text      Q2.Reference / label:LED_K  @(243.84,149.1)-(246.25,150.62)\\n  text over text      Q2.Value / label:GND  @(243.84,164.34)-(253.49,165.86)\\n  text over text      R9.Reference / R9.Value  @(246.44,118.62)-(248.86,120.14)\\n  text over text      #FLG01.Value / label:VIN  @(12.95,67.82)-(22.61,69.34)\\n  text over text      #FLG02.Value / label:GND  @(12.95,103.38)-(22.61,104.9)\\n  field over own body F1.Value  @(52.58,19.27)-(54.1,51.85)\\n  field over own body R1.Value  @(77.6,57.66)-(82.42,59.18)\\n  field over own body TP1.Reference  @(135.35,27.18)-(138.97,28.7)\\n  field over own body U1.Reference  @(123.19,80.52)-(125.6,82.04)\\n  field over own body L1.Value  @(194.82,71.75)-(196.34,95.88)\\n  field over own body J2.Reference  @(270.57,86.87)-(272.99,88.39)\\n  field over own body J2.Value  @(266.6,86.87)-(287.12,88.39)\\n  field over own body R3.Value  @(21.97,137.67)-(36.45,139.19)\\n  field over own body R4.Value  @(51.05,149.1)-(60.71,150.62)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_schematic_component",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "reference": "U1"
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Component U1 at (123.19, 88.9, angle=0\\u00b0)\\nFields:\\n  Reference: \\\"U1\\\" @ (123.19, 81.28, angle=0\\u00b0)\\n  Value: \\\"TPS5430DDA\\\" @ (123.19, 101.6, angle=0\\u00b0)\\n  Footprint: \\\"Package_SO:SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.29x2.29mm\\\" @ (124.46, 80.01, angle=0\\u00b0)\\n  Datasheet: \\\"http://www.ti.com/lit/ds/symlink/tps5430.pdf\\\" @ (123.19, 88.9, angle=0\\u00b0)\\n  Description: \\\"\\\" @ (123.19, 88.9, angle=0\\u00b0)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_footprint_info",
+   "arguments": {
+    "library_name": "Package_SO",
+    "footprint_name": "SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.29x2.29mm"
+   },
+   "is_error": true,
+   "seconds": 0.0,
+   "result": "{\"is_error\": true, \"result\": [{\"type\": \"text\", \"text\": \"Failed to get footprint info: Failed to get footprint info\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_footprint_libraries",
+   "arguments": {},
+   "is_error": false,
+   "seconds": 0.06,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"library_count\\\": 142,\\n  \\\"libraries\\\": {\\n    \\\"Audio_Module\\\": {\\n      \\\"path\\\": \\\"/usr/share/kicad/footprints/Audio_Module.pretty\\\",\\n      \\\"count\\\": 2,\\n      \\\"footprints\\\": [\\n        \\\"Reverb_BTDR-1H\\\",\\n        \\\"Reverb_BTDR-1V\\\"\\n      ]\\n    },\\n    \\\"Battery\\\": {\\n      \\\"path\\\": \\\"/usr/share/kicad/footprints/Battery.pretty\\\",\\n      \\\"count\\\": 49,\\n      \\\"footprints\\\": [\\n        \\\"BatteryClip_Keystone_54_D16-19mm\\\",\\n        \\\"BatteryHolder_Bulgin_BX0036_1xC\\\",\\n        \\\"BatteryHolder_ComfortableElectronic_CH273-2450_1x2450\\\",\\n        \\\"BatteryHolder_Eagle_12BH611-GR\\\",\\n        \\\"BatteryHolder_Keystone_103_1x20mm\\\",\\n        \\\"BatteryHolder_Keystone_1042_1x18650\\\",\\n        \\\"BatteryHolder_Keystone_104_1x23mm\\\",\\n        \\\"BatteryHolder_Keystone_1057_1x2032\\\",\\n        \\\"BatteryHolder_Keystone_1058_1x2032\\\",\\n        \\\"BatteryHolder_Keystone_105_1x2430\\\",\\n        \\\"BatteryHolder_Keystone_1060_1x2032\\\",\\n        \\\"BatteryHolder_Keystone_106_1x20mm\\\",\\n        \\\"BatteryHolder_Keystone_107_1x23mm\\\",\\n        \\\"BatteryHolder_Keystone_2460_1xAA\\\",\\n        \\\"BatteryHolder_Keystone_2462_2xAA\\\",\\n        \\\"BatteryHolder_Keystone_2466_1xAAA\\\",\\n        \\\"BatteryHolder_Keystone_2468_2xAAA\\\",\\n        \\\"BatteryHolder_Keystone_2479_3xAAA\\\",\\n        \\\"BatteryHolder_Keystone_2993\\\",\\n        \\\"BatteryHolder_Keystone_2998_1x6.8mm\\\"\\n      ]\\n    },\\n    \\\"Button_Switch_Keyboard\\\": {\\n      \\\"path\\\": \\\"/usr/share/kicad/footprints/Button_Switch_Keyboard.pretty\\\",\\n      \\\"count\\\": 29,\\n      \\\"footprints\\\": [\\n        \\\"SW_Cherry_MX_1.00u_PCB\\\",\\n        \\\"SW_Cherry_MX_1.00u_Plate\\\",\\n        \\\"SW_Cherry_MX_1.25u_PCB\\\",\\n        \\\"SW_Cherry_MX_1.25u_Plate\\\",\\n        \\\"SW_Cherry_MX_1.50u_PCB\\\",\\n        \\\"SW_Cherry_MX_1.50u_Plate\\\",\\n        \\\"SW_Cherry_MX_1.75u_PCB\\\",\\n        \\\"SW_Cherry_MX_1.75u_Plate\\\",\\n        \\\"SW_Cherry_MX_2.00u_PCB\\\",\\n        \\\"SW_Cherry_MX_2.00u_Plate\\\",\\n        \\\"SW_Cherry_MX_2.00u_Vertical_PCB\\\",\\n        \\\"SW_Cherry_MX_2.00u_Vertical_Plate\\\",\\n        \\\"SW_Cherry_MX_2.25u_PCB\\\",\\n        \\\"SW_Cherry_MX_2.25u_Plate\\\",\\n        \\\"SW_Cherry_MX_2.75u_PCB\\\",\\n        \\\"SW_Cherry_MX_2.75u_Plate\\\",\\n        \\\"SW_Cherry_MX_6.25u_PCB\\\",\\n        \\\"SW_Cherry_MX_6.25u_Plate\\\",\\n        \\\"SW_Cherry_MX_ISOEnter_PCB\\\",\\n        \\\"SW_Cherry_MX_ISOEnter_Plate\\\"\\n      ]\\n    },\\n    \\\"Button_Switch_SMD\\\": {\\n      \\\"path\\\": \\\"/usr/share/kicad/footprints/Button_Switch_SMD.pretty\\\",\\n      \\\"count\\\": 154,\\n      \\\"footprints\\\": [\\n        \\\"Nidec_Copal_CAS-120A\\\",\\n        \\\"Nidec_Copal_SH-7010A\\\",\\n        \\\"Nidec_Copal_SH-7010B\\\",\\n        \\\"Nidec_Copal_SH-7040B\\\",\\n        \\\"Panasonic_EVQPUJ_EVQPUA\\\",\\n        \\\"Panasonic_EVQPUK_EVQPUB\\\",\\n        \\\"Panasonic_EVQPUL_EVQPUC\\\",\\n        \\\"Panasonic_EVQPUM_EVQPUD\\\",\\n        \\\"SW_DIP_SPSTx01_Slide_6.7x4.1mm_W6.73mm_P2.54mm_LowProfile_JPin\\\",\\n        \\\"SW_DIP_SPSTx01_Slide_6.7x4.1mm_W8.61mm_P2.54mm_LowProfile\\\",\\n        \\\"SW_DIP_SPSTx01_Slide_9.78x4.72mm_W8.61mm_P2.54mm\\\",\\n        \\\"SW_DIP_SPSTx01_Slide_Copal_CHS-01A_W5.08mm_P1.27mm_JPin\\\",\\n        \\\"SW_DIP_SPSTx01_Slide_Copal_CHS-01B_W7.62mm_P1.27mm\\\",\\n        \\\"SW_DIP_SPSTx01_Slide_Copal_CVS-01xB_W5.9mm_P1mm\\\",\\n        \\\"SW_DIP_SPSTx01_Slide_Omron_A6S-110x_W8.9mm_P2.54mm\\\",\\n        \\\"SW_DIP_SPSTx02_Slide_6.7x6.64mm_W6.73mm_P2.54mm_LowProfile_JPin\\\",\\n        \\\"SW_DIP_SPSTx02_Slide_6.7x6.64mm_W8.61mm_P2.54mm_LowProfile\\\",\\n        \\\"SW_DIP_SPSTx02_Slide_9.78x7.26mm_W8.61mm_P2.54mm\\\",\\n        \\\"SW_DIP_SPSTx02_Slide_Copal_CHS-02A_W5.08mm_P1.27mm_JPin\\\",\\n        \\\"SW_DIP_SPSTx02_Slide_Copal_CHS-02B_W7.62mm_P1.27mm\\\"\\n      ]\\n    },\\n    \\\"Button_Switch_THT\\\": {\\n      \\\"path\\\": \\\"/usr/share/kicad/footprints/Button_Switch_THT.pretty\\\",\\n      \\\"count\\\": 101,\\n      \\\"footprints\\\": [\\n        \\\"KSA_Tactile_SPST\\\",\\n        \\\"Nidec_Copal_SH-7010C\\\",\\n        \\\"Push_E-Switch_KS01Q01\\\",\\n        \\\"SW_CK_JS202011AQN_DPDT_A"
+  },
+  {
+   "name": "generate_netlist",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 1.09,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"=== Netlist for /home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch ===\\n\\nComponents (35):\\n  C1: 100u 50V (Capacitor_SMD:CP_Elec_8x10.5)\\n  C2: 10u 50V (Capacitor_SMD:C_1210_3225Metric)\\n  C3: 100n 50V (Capacitor_SMD:C_0805_2012Metric)\\n  C4: 10n 50V (Capacitor_SMD:C_0603_1608Metric)\\n  C5: 100u 25V low ESR (Capacitor_SMD:CP_Elec_8x10.5)\\n  C6: 22u 25V (Capacitor_SMD:C_1210_3225Metric)\\n  D1: 5.6V (Diode_SMD:D_SOD-123)\\n  D2: SS34 (40V MAX) (Diode_SMD:D_SMA)\\n  D3: Status (LED_SMD:LED_0603_1608Metric)\\n  F1: PTC 3A hold, >=60V (select) (Fuse:Fuse_1812_4532Metric)\\n  H1: M2 NPTH (MountingHole:MountingHole_2.2mm_M2)\\n  H2: M2 NPTH (MountingHole:MountingHole_2.2mm_M2)\\n  H3: M2 NPTH (MountingHole:MountingHole_2.2mm_M2)\\n  H4: M2 NPTH (MountingHole:MountingHole_2.2mm_M2)\\n  J1: DC input, center + (footprints:DC-005-5A-2.0-SMT)\\n  J2: Output: GND, VOUT (TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2_1x02_P5.00mm_Horizontal)\\n  JP1: 12V ONLY (Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm)\\n  JP2: 3.3V ONLY (Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm)\\n  JP3: 5V ONLY (Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm)\\n  JP4: 1.8V ONLY (Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm)\\n  L1: 47uH MWSA1004S-470MT (footprints:L_Sunlord_MWSA1004S_10x11.5x4mm)\\n  LOGO1: Open Hardware (Logo:Open_Hardware_Logo_5.7x6mm_SilkScreen)\\n  Q1: AO3401A (30V MAX!) (Package_TO_SOT_SMD:SOT-23)\\n  Q2: MMBT3904 (Package_TO_SOT_SMD:SOT-23)\\n  R1: 100k (Resistor_SMD:R_0603_1608Metric)\\n  R2: 1M (Resistor_SMD:R_0603_1608Metric)\\n  R3: 10k 1% upper (Resistor_SMD:R_0603_1608Metric)\\n  R4: 1.13k 1% (Resistor_SMD:R_0603_1608Metric)\\n  R5: 5.90k 1% (Resistor_SMD:R_0603_1608Metric)\\n  R6: 3.24k 1% (Resistor_SMD:R_0603_1608Metric)\\n  R7: 21.0k 1% (Resistor_SMD:R_0603_1608Metric)\\n  R8: 1M FB sense (Resistor_SMD:R_0603_1608Metric)\\n  R9: 47k 0.125W (Resistor_SMD:R_0805_2012Metric)\\n  TP1: VIN (TestPoint:TestPoint_Pad_D1.5mm)\\n  U1: TPS5430DDA (Package_SO:SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.29x2.29mm)\\n\\nNets (20):\\n  /BOOT: C4/1, U1/1\\n  /FB: JP1/1, JP2/1, JP3/1, JP4/1, R3/2, R8/1, U1/4\\n  /FUSED_IN: F1/2, Q1/3\\n  /GATE: D1/2, Q1/1, R1/1, R2/2\\n  /GND: C1/2, C2/2, C3/2, C5/2, C6/2, D2/2, J1/2, J2/1, Q2/2, R1/2, R4/2, R5/2, R6/2, R7/2, U1/6, U1/9\\n  /LED_A: D3/2, R9/2\\n  /LED_BASE: Q2/1, R8/2\\n  /LED_K: D3/1, Q2/3\\n  /RAW_IN: F1/1, J1/1\\n  /SEL1V8: JP4/2, R7/1\\n  /SEL3V3: JP2/2, R5/1\\n  /SEL5: JP3/2, R6/1\\n  /SEL12: JP1/2, R4/1\\n  /SW: C4/2, D2/1, L1/1, U1/8\\n  /VIN: C1/1, C2/1, C3/1, D1/1, Q1/2, R2/1, R9/1, TP1/1, U1/7\\n  /VOUT: C5/1, C6/1, J2/2, L1/2, R3/1\\n  unconnected-(J1-~-Pad3): J1/3\\n  unconnected-(U1-EN-Pad5): U1/5\\n  unconnected-(U1-NC-Pad2): U1/2\\n  unconnected-(U1-NC-Pad3): U1/3\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "validate_schematic",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.91,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"valid\\\": true,\\n  \\\"path\\\": \\\"/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch\\\",\\n  \\\"message\\\": \\\"b36.kicad_sch is valid\\\",\\n  \\\"errorCount\\\": 0,\\n  \\\"warningCount\\\": 0,\\n  \\\"issues\\\": [],\\n  \\\"kicadCli\\\": {\\n    \\\"ran\\\": true,\\n    \\\"ok\\\": true,\\n    \\\"exitCode\\\": 0,\\n    \\\"output\\\": \\\"Successfully saved schematic file using the latest format\\\"\\n  },\\n  \\\"componentCount\\\": 37,\\n  \\\"semanticChecksRan\\\": true,\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "find_wires_crossing_symbols",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.07,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 0 wire(s) crossing symbols:\\nFound 0 pin(s) on a wire's interior, not connected to it:\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_libraries",
+   "arguments": {
+    "search_paths": [
+     "/usr/share/kicad/footprints"
+    ]
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 0 footprint libraries:\\n\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_library_table",
+   "arguments": {
+    "tableType": "footprint",
+    "scope": "global"
+   },
+   "is_error": true,
+   "refused": "scope='global': only project-scope library tables are allowed",
+   "seconds": 0.0,
+   "result": "{\"is_error\": true, \"error\": \"Refused: scope='global': only project-scope library tables are allowed\"}"
+  },
+  {
+   "name": "list_library_table",
+   "arguments": {
+    "tableType": "symbol",
+    "scope": "global"
+   },
+   "is_error": true,
+   "refused": "scope='global': only project-scope library tables are allowed",
+   "seconds": 0.0,
+   "result": "{\"is_error\": true, \"error\": \"Refused: scope='global': only project-scope library tables are allowed\"}"
+  },
+  {
+   "name": "read_project_file",
+   "arguments": {
+    "path": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/fp-lib-table"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": \"(fp_lib_table\\n  (version 7)\\n  (lib (name \\\"footprints\\\")(type \\\"KiCad\\\")(uri \\\"${KIPRJMOD}/lib/footprints.pretty\\\")(options \\\"\\\")(descr \\\"\\\"))\\n)\\n\", \"truncated\": false}"
+  },
+  {
+   "name": "autoplace_schematic_fields",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 1.48,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Failed: name 'text_height' is not defined\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "add_schematic_component",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "symbol": "Regulator_Switching:TPS5430DDA",
+    "reference": "U2",
+    "position": {
+     "x": 185.42,
+     "y": 182.88
+    }
+   },
+   "is_error": false,
+   "seconds": 0.11,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Successfully added U2 (Regulator_Switching:TPS5430DDA) to schematic\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_schematic_component",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "reference": "U2"
+   },
+   "is_error": false,
+   "seconds": 0.02,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Component U2 at (185.42, 182.88, angle=0\\u00b0)\\nFields:\\n  Reference: \\\"U2\\\" @ (175.26, 191.77, angle=0\\u00b0)\\n  Value: \\\"TPS5430DDA\\\" @ (184.15, 191.77, angle=0\\u00b0)\\n  Footprint: \\\"Package_SO:TI_SO-PowerPAD-8_ThermalVias\\\" @ (186.69, 173.99, angle=0\\u00b0)\\n  Datasheet: \\\"http://www.ti.com/lit/ds/symlink/tps5430.pdf\\\" @ (185.42, 182.88, angle=0\\u00b0)\\n  Description: \\\"\\\" @ (185.42, 182.88, angle=0\\u00b0)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "delete_schematic_component",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "reference": "U2"
+   },
+   "is_error": false,
+   "seconds": 0.07,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Successfully removed U2 from schematic\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_schematic_component",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "reference": "LOGO1"
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Component LOGO1 at (151.13, 182.88, angle=0\\u00b0)\\nFields:\\n  Reference: \\\"LOGO1\\\" @ (151.13, 180.34, angle=0\\u00b0)\\n  Value: \\\"Open Hardware\\\" @ (151.13, 185.42, angle=0\\u00b0)\\n  Footprint: \\\"Logo:Open_Hardware_Logo_5.7x6mm_SilkScreen\\\" @ (151.13, 182.88, angle=0\\u00b0)\\n  Datasheet: \\\"\\\" @ (151.13, 182.88, angle=0\\u00b0)\\n  Description: \\\"\\\" @ (151.13, 182.88, angle=0\\u00b0)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_schematic_component",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "reference": "J1"
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Component J1 at (25.4, 39.37, angle=0\\u00b0)\\nFields:\\n  Reference: \\\"J1\\\" @ (25.4, 34.29, angle=0\\u00b0)\\n  Value: \\\"DC input, center +\\\" @ (25.4, 44.45, angle=0\\u00b0)\\n  Footprint: \\\"footprints:DC-005-5A-2.0-SMT\\\" @ (26.67, 38.354, angle=0\\u00b0)\\n  Datasheet: \\\"\\\" @ (26.67, 38.354, angle=0\\u00b0)\\n  Description: \\\"\\\" @ (25.4, 39.37, angle=0\\u00b0)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_footprint_libraries",
+   "arguments": {
+    "searchPaths": [
+     "/usr/share/kicad/footprints/Symbol.pretty"
+    ]
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"library_count\\\": 0,\\n  \\\"libraries\\\": {},\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "batch_edit_schematic_components",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "components": {
+     "U1": {
+      "footprint": "Package_SO:TI_SO-PowerPAD-8_ThermalVias"
+     },
+     "LOGO1": {
+      "footprint": "Symbol:OSHW-Logo2_5.7x6mm_SilkScreen"
+     },
+     "F1": {
+      "value": "PTC 3A >=60V",
+      "footprint": ""
+     },
+     "L1": {
+      "value": "47uH"
+     },
+     "Q1": {
+      "value": "AO3401A"
+     },
+     "J2": {
+      "value": "GND / OUT"
+     },
+     "R3": {
+      "value": "10k"
+     },
+     "R4": {
+      "value": "1.13k"
+     },
+     "R5": {
+      "value": "5.90k"
+     },
+     "R6": {
+      "value": "3.24k"
+     },
+     "R7": {
+      "value": "21.0k"
+     },
+     "R8": {
+      "value": "1M"
+     },
+     "R9": {
+      "value": "47k"
+     },
+     "C1": {
+      "value": "100u 50V"
+     },
+     "C5": {
+      "value": "100u 25V"
+     },
+     "D2": {
+      "value": "SS34"
+     }
+    }
+   },
+   "is_error": false,
+   "seconds": 0.18,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Updated 16, 0 error(s).\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "move_schematic_component",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "reference": "Q2",
+    "position": {
+     "x": 243.84,
+     "y": 146.05
+    }
+   },
+   "is_error": false,
+   "seconds": 0.21,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Moved Q2 from (243.84, 157.48) to (243.84, 146.05), 3 net label(s) moved to stay attached\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "move_schematic_component",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "reference": "R8",
+    "position": {
+     "x": 210.82,
+     "y": 146.05
+    }
+   },
+   "is_error": false,
+   "seconds": 0.23,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Moved R8 from (210.82, 157.48) to (210.82, 146.05), 2 net label(s) moved to stay attached\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "move_schematic_component",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "reference": "R9",
+    "position": {
+     "x": 250.19,
+     "y": 111.76
+    }
+   },
+   "is_error": false,
+   "seconds": 0.38,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Moved R9 from (250.19, 119.38) to (250.19, 111.76), 1 wire endpoint(s) updated, 2 net label(s) moved to stay attached\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "move_schematic_component",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "reference": "D3",
+    "position": {
+     "x": 250.19,
+     "y": 127
+    }
+   },
+   "is_error": false,
+   "seconds": 0.24,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Moved D3 from (250.19, 138.43) to (250.19, 127), 1 wire endpoint(s) updated, 1 net label(s) moved to stay attached\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "add_schematic_text",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "text": "SELECT EXACTLY ONE BRIDGE BEFORE POWER-UP; NEVER CHANGE WHILE ENERGIZED",
+    "position": {
+     "x": 20,
+     "y": 115
+    },
+    "fontSize": 1.27,
+    "bold": true
+   },
+   "is_error": false,
+   "seconds": 0.1,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Added text 'SELECT EXACTLY ONE BRIDGE BEFORE POWER-UP; NEVER CHANGE WHILE ENERGIZED' at (20, 115)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "add_schematic_text",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "text": "CAUTION: AO3401A is 30 V rated, NOT suitable for 36 V input. F1 requires selection.",
+    "position": {
+     "x": 20,
+     "y": 18
+    },
+    "fontSize": 1.27,
+    "bold": true
+   },
+   "is_error": false,
+   "seconds": 0.1,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Added text 'CAUTION: AO3401A is 30 V rated, NOT suitable for 36 V input. F1 requires selection.' at (20, 18)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "run_erc",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 3.91,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"ERC result: 35 violation(s)\\n  Errors: 0  Warnings: 35  Info: 0\\n\\n1. [warning] Symbol 'PWR_FLAG' doesn't match copy in library 'power' @ (17.78, 66.04)\\n2. [warning] Symbol 'PWR_FLAG' doesn't match copy in library 'power' @ (17.78, 101.6)\\n3. [warning] Symbol 'C_Polarized' doesn't match copy in library 'Device' @ (24.13, 85.09)\\n4. [warning] Symbol 'Barrel_Jack_Switch' doesn't match copy in library 'Connector' @ (25.4, 39.37)\\n5. [warning] Symbol 'MountingHole' doesn't match copy in library 'Mechanical' @ (25.4, 182.88)\\n6. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (26.67, 138.43)\\n7. [warning] Symbol 'C' doesn't match copy in library 'Device' @ (49.53, 85.09)\\n8. [warning] Symbol 'Polyfuse' doesn't match copy in library 'Device' @ (53.34, 33.02)\\n9. [warning] Symbol 'SolderJumper_2_Open' doesn't match copy in library 'Jumper' @ (53.34, 128.27)\\n10. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (53.34, 149.86)\\n11. [warning] Symbol 'MountingHole' doesn't match copy in library 'Mechanical' @ (53.34, 182.88)\\n12. [warning] Symbol 'C' doesn't match copy in library 'Device' @ (74.93, 85.09)\\n13. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (77.47, 58.42)\\n14. [warning] Symbol 'MountingHole' doesn't match copy in library 'Mechanical' @ (81.28, 182.88)\\n15. [warning] Symbol 'SolderJumper_2_Open' doesn't match copy in library 'Jumper' @ (93.98, 128.27)\\n16. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (93.98, 149.86)\\n17. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (106.68, 52.07)\\n18. [warning] Symbol 'MountingHole' doesn't match copy in library 'Mechanical' @ (109.22, 182.88)\\n19. [warning] Symbol 'D_Zener' doesn't match copy in library 'Device' @ (114.3, 31.75)\\n20. [warning] Symbol 'SolderJumper_2_Open' doesn't match copy in library 'Jumper' @ (134.62, 128.27)\\n21. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (134.62, 149.86)\\n22. [warning] Symbol 'TestPoint' doesn't match copy in library 'Connector' @ (137.16, 30.48)\\n23. [warning] Footprint 'OSHW-Logo2_5.7x6mm_SilkScreen' not found in library 'Symbol' @ (151.13, 182.88)\\n24. [warning] Symbol 'Logo_Open_Hardware_Small' doesn't match copy in library 'Graphic' @ (151.13, 182.88)\\n25. [warning] Symbol 'C' doesn't match copy in library 'Device' @ (158.75, 78.74)\\n26. [warning] Symbol 'D_Schottky' doesn't match copy in library 'Device' @ (158.75, 102.87)\\n27. [warning] Symbol 'SolderJumper_2_Open' doesn't match copy in library 'Jumper' @ (175.26, 128.27)\\n28. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (175.26, 149.86)\\n29. [warning] Symbol 'L' doesn't match copy in library 'Device' @ (195.58, 81.28)\\n30. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (210.82, 146.05)\\n... and 5 more\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "check_schematic_legibility",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "maxProblems": 100
+   },
+   "is_error": false,
+   "seconds": 0.12,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"23 legibility problem(s) (text over text: 9, field over own body: 14)\\n  text over text      F1.Reference / F1.Value  @(52.58,29.27)-(54.1,31.69)\\n  text over text      Q1.Reference / label:FUSED_IN  @(86.36,24.64)-(88.77,26.16)\\n  text over text      Q1.Value / label:VIN  @(86.36,39.88)-(94.81,41.4)\\n  text over text      TP1.Value / label:VIN  @(135.35,32.26)-(138.97,33.78)\\n  text over text      J2.Reference / J2.Value  @(270.57,86.87)-(272.99,88.39)\\n  text over text      Q2.Reference / label:LED_K  @(243.84,137.67)-(246.25,139.19)\\n  text over text      Q2.Value / label:GND  @(243.84,152.91)-(253.49,154.43)\\n  text over text      #FLG01.Value / label:VIN  @(12.95,67.82)-(22.61,69.34)\\n  text over text      #FLG02.Value / label:GND  @(12.95,103.38)-(22.61,104.9)\\n  field over own body F1.Value  @(52.58,28.32)-(54.1,42.8)\\n  field over own body R1.Value  @(77.6,57.66)-(82.42,59.18)\\n  field over own body TP1.Reference  @(135.35,27.18)-(138.97,28.7)\\n  field over own body U1.Reference  @(123.19,80.52)-(125.6,82.04)\\n  field over own body J2.Reference  @(270.57,86.87)-(272.99,88.39)\\n  field over own body J2.Value  @(271.43,86.87)-(282.29,88.39)\\n  field over own body R4.Value  @(52.86,149.1)-(58.9,150.62)\\n  field over own body R5.Value  @(93.5,149.1)-(99.54,150.62)\\n  field over own body R6.Value  @(134.14,149.1)-(140.18,150.62)\\n  field over own body R7.Value  @(174.78,149.1)-(180.82,150.62)\\n  field over own body D3.Value  @(251.97,123.38)-(253.49,130.62)\\n  field over own body #FLG01.Reference  @(14.16,62.74)-(21.4,64.26)\\n  field over own body #FLG02.Reference  @(14.16,98.3)-(21.4,99.82)\\n  field over own body LOGO1.Value  @(143.29,184.66)-(158.97,186.18)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_schematic_nets",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 1.29,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Nets (16):\\n  BOOT [2 pin(s)]: U1/1, C4/1\\n  FB [7 pin(s)]: U1/4, R3/2, JP1/1, JP2/1, JP3/1, JP4/1, R8/1\\n  FUSED_IN [2 pin(s)]: F1/2, Q1/3\\n  GATE [4 pin(s)]: Q1/1, D1/2, R1/1, R2/2\\n  GND [17 pin(s)]: J1/2, R1/2, C1/2, C2/2, C3/2, U1/6, U1/9, D2/2, C5/2, C6/2, J2/1, R4/2, R5/2, R6/2, R7/2, Q2/2\\n  LED_A [2 pin(s)]: R9/2, D3/2\\n  LED_BASE [2 pin(s)]: R8/2, Q2/1\\n  LED_K [2 pin(s)]: Q2/3, D3/1\\n  RAW_IN [2 pin(s)]: J1/1, F1/1\\n  SEL12 [2 pin(s)]: JP1/2, R4/1\\n  SEL1V8 [2 pin(s)]: JP4/2, R7/1\\n  SEL3V3 [2 pin(s)]: JP2/2, R5/1\\n  SEL5 [2 pin(s)]: JP3/2, R6/1\\n  SW [4 pin(s)]: U1/8, C4/2, D2/1, L1/1\\n  VIN [10 pin(s)]: Q1/2, D1/1, R2/1, TP1/1, C1/1, C2/1, C3/1, U1/7, R9/1\\n  VOUT [5 pin(s)]: L1/2, C5/1, C6/1, J2/2, R3/1\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "find_orphaned_wires",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 1.11,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"No orphaned wires found.\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "add_schematic_component",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "symbol": "Graphic:Logo_Open_Hardware_Small",
+    "reference": "LOGO2",
+    "position": {
+     "x": 177.8,
+     "y": 182.88
+    }
+   },
+   "is_error": false,
+   "seconds": 0.1,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Successfully added LOGO2 (Graphic:Logo_Open_Hardware_Small) to schematic\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_schematic_component",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "reference": "LOGO2"
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Component LOGO2 at (177.8, 182.88, angle=0\\u00b0)\\nFields:\\n  Reference: \\\"LOGO2\\\" @ (177.8, 189.865, angle=0\\u00b0)\\n  Value: \\\"Logo_Open_Hardware_Small\\\" @ (177.8, 177.165, angle=0\\u00b0)\\n  Footprint: \\\"\\\" @ (177.8, 182.88, angle=0\\u00b0)\\n  Datasheet: \\\"\\\" @ (177.8, 182.88, angle=0\\u00b0)\\n  Description: \\\"\\\" @ (177.8, 182.88, angle=0\\u00b0)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "register_footprint_library",
+   "arguments": {
+    "libraryPath": "/usr/share/kicad/footprints/Symbol.pretty",
+    "libraryName": "Symbol",
+    "scope": "project",
+    "projectPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"already_registered\\\": false,\\n  \\\"table_path\\\": \\\"/home/andreferraz/EDA_Agent/eval/output/b36/run1/fp-lib-table\\\",\\n  \\\"library_name\\\": \\\"Symbol\\\",\\n  \\\"uri\\\": \\\"/usr/share/kicad/footprints/Symbol.pretty\\\",\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_library_footprints",
+   "arguments": {
+    "library_name": "Symbol",
+    "filter": "OSHW",
+    "limit": 100
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Library Symbol contains 0 matching footprints:\\n\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_footprint_info",
+   "arguments": {
+    "library_name": "Symbol",
+    "footprint_name": "OSHW-Logo_5.7x6mm_SilkScreen"
+   },
+   "is_error": true,
+   "seconds": 0.0,
+   "result": "{\"is_error\": true, \"result\": [{\"type\": \"text\", \"text\": \"Failed to get footprint info: Failed to get footprint info\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_footprints",
+   "arguments": {
+    "search_term": "OSHW",
+    "library": "Symbol",
+    "limit": 100
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 0 matching footprints:\\n\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_library_footprints",
+   "arguments": {
+    "library_name": "Symbol",
+    "limit": 200
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Library Symbol contains 0 matching footprints:\\n\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_project_info",
+   "arguments": {},
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"project\\\": {\\n    \\\"name\\\": \\\"b36\\\",\\n    \\\"path\\\": \\\"/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_pcb\\\",\\n    \\\"title\\\": \\\"b36\\\",\\n    \\\"date\\\": \\\"2026-11-20\\\",\\n    \\\"revision\\\": \\\"\\\",\\n    \\\"company\\\": \\\"\\\",\\n    \\\"comment1\\\": \\\"\\\",\\n    \\\"comment2\\\": \\\"\\\",\\n    \\\"comment3\\\": \\\"\\\",\\n    \\\"comment4\\\": \\\"\\\"\\n  },\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "delete_schematic_component",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "reference": "LOGO2"
+   },
+   "is_error": false,
+   "seconds": 0.06,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Successfully removed LOGO2 from schematic\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_project_files",
+   "arguments": {
+    "path": "/usr/share/kicad/footprints/Symbol.pretty"
+   },
+   "is_error": true,
+   "refused": "path='/usr/share/kicad/footprints/Symbol.pretty' is outside the project directory /home/andreferraz/EDA_Agent/eval/output/b36/run1",
+   "seconds": 0.0,
+   "result": "{\"is_error\": true, \"error\": \"Refused: path='/usr/share/kicad/footprints/Symbol.pretty' is outside the project directory /home/andreferraz/EDA_Agent/eval/output/b36/run1\"}"
+  },
+  {
+   "name": "edit_schematic_component",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "reference": "LOGO1",
+    "footprint": "Symbol:OSHW-Logo_5.7x6mm_SilkScreen"
+   },
+   "is_error": false,
+   "seconds": 0.08,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Successfully updated LOGO1: footprint=Symbol:OSHW-Logo_5.7x6mm_SilkScreen\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "run_erc",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 3.88,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"ERC result: 34 violation(s)\\n  Errors: 0  Warnings: 34  Info: 0\\n\\n1. [warning] Symbol 'PWR_FLAG' doesn't match copy in library 'power' @ (17.78, 66.04)\\n2. [warning] Symbol 'PWR_FLAG' doesn't match copy in library 'power' @ (17.78, 101.6)\\n3. [warning] Symbol 'C_Polarized' doesn't match copy in library 'Device' @ (24.13, 85.09)\\n4. [warning] Symbol 'Barrel_Jack_Switch' doesn't match copy in library 'Connector' @ (25.4, 39.37)\\n5. [warning] Symbol 'MountingHole' doesn't match copy in library 'Mechanical' @ (25.4, 182.88)\\n6. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (26.67, 138.43)\\n7. [warning] Symbol 'C' doesn't match copy in library 'Device' @ (49.53, 85.09)\\n8. [warning] Symbol 'Polyfuse' doesn't match copy in library 'Device' @ (53.34, 33.02)\\n9. [warning] Symbol 'SolderJumper_2_Open' doesn't match copy in library 'Jumper' @ (53.34, 128.27)\\n10. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (53.34, 149.86)\\n11. [warning] Symbol 'MountingHole' doesn't match copy in library 'Mechanical' @ (53.34, 182.88)\\n12. [warning] Symbol 'C' doesn't match copy in library 'Device' @ (74.93, 85.09)\\n13. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (77.47, 58.42)\\n14. [warning] Symbol 'MountingHole' doesn't match copy in library 'Mechanical' @ (81.28, 182.88)\\n15. [warning] Symbol 'SolderJumper_2_Open' doesn't match copy in library 'Jumper' @ (93.98, 128.27)\\n16. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (93.98, 149.86)\\n17. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (106.68, 52.07)\\n18. [warning] Symbol 'MountingHole' doesn't match copy in library 'Mechanical' @ (109.22, 182.88)\\n19. [warning] Symbol 'D_Zener' doesn't match copy in library 'Device' @ (114.3, 31.75)\\n20. [warning] Symbol 'SolderJumper_2_Open' doesn't match copy in library 'Jumper' @ (134.62, 128.27)\\n21. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (134.62, 149.86)\\n22. [warning] Symbol 'TestPoint' doesn't match copy in library 'Connector' @ (137.16, 30.48)\\n23. [warning] Symbol 'Logo_Open_Hardware_Small' doesn't match copy in library 'Graphic' @ (151.13, 182.88)\\n24. [warning] Symbol 'C' doesn't match copy in library 'Device' @ (158.75, 78.74)\\n25. [warning] Symbol 'D_Schottky' doesn't match copy in library 'Device' @ (158.75, 102.87)\\n26. [warning] Symbol 'SolderJumper_2_Open' doesn't match copy in library 'Jumper' @ (175.26, 128.27)\\n27. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (175.26, 149.86)\\n28. [warning] Symbol 'L' doesn't match copy in library 'Device' @ (195.58, 81.28)\\n29. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (210.82, 146.05)\\n30. [warning] Symbol 'C_Polarized' doesn't match copy in library 'Device' @ (222.25, 86.36)\\n... and 4 more\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "update_symbol_from_library",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "libraryName": "Device"
+   },
+   "is_error": false,
+   "seconds": 0.16,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Updated 1 schematic(s): 8 symbol(s) updated, 0 injected, 0 skipped, 0 mirror block(s) restored\\n  /home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch: 8 updated\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "update_symbol_from_library",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "libraryName": "Connector"
+   },
+   "is_error": false,
+   "seconds": 0.12,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Updated 1 schematic(s): 2 symbol(s) updated, 0 injected, 0 skipped, 0 mirror block(s) restored\\n  /home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch: 2 updated\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "update_symbol_from_library",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "libraryName": "Connector_Generic"
+   },
+   "is_error": false,
+   "seconds": 0.14,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Updated 1 schematic(s): 1 symbol(s) updated, 0 injected, 0 skipped, 0 mirror block(s) restored\\n  /home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch: 1 updated\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "update_symbol_from_library",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "libraryName": "Mechanical"
+   },
+   "is_error": false,
+   "seconds": 0.12,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Updated 1 schematic(s): 1 symbol(s) updated, 0 injected, 0 skipped, 0 mirror block(s) restored\\n  /home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch: 1 updated\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "update_symbol_from_library",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "libraryName": "Jumper"
+   },
+   "is_error": false,
+   "seconds": 0.1,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Updated 1 schematic(s): 1 symbol(s) updated, 0 injected, 0 skipped, 0 mirror block(s) restored\\n  /home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch: 1 updated\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "update_symbol_from_library",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "libraryName": "Graphic"
+   },
+   "is_error": false,
+   "seconds": 0.13,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Updated 1 schematic(s): 1 symbol(s) updated, 0 injected, 0 skipped, 0 mirror block(s) restored\\n  /home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch: 1 updated\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "update_symbol_from_library",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "libraryName": "power"
+   },
+   "is_error": false,
+   "seconds": 0.14,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Updated 1 schematic(s): 1 symbol(s) updated, 0 injected, 0 skipped, 0 mirror block(s) restored\\n  /home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch: 1 updated\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "run_erc",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 4.4,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"ERC result: 34 violation(s)\\n  Errors: 0  Warnings: 34  Info: 0\\n\\n1. [warning] Symbol 'PWR_FLAG' doesn't match copy in library 'power' @ (17.78, 66.04)\\n2. [warning] Symbol 'PWR_FLAG' doesn't match copy in library 'power' @ (17.78, 101.6)\\n3. [warning] Symbol 'C_Polarized' doesn't match copy in library 'Device' @ (24.13, 85.09)\\n4. [warning] Symbol 'Barrel_Jack_Switch' doesn't match copy in library 'Connector' @ (25.4, 39.37)\\n5. [warning] Symbol 'MountingHole' doesn't match copy in library 'Mechanical' @ (25.4, 182.88)\\n6. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (26.67, 138.43)\\n7. [warning] Symbol 'C' doesn't match copy in library 'Device' @ (49.53, 85.09)\\n8. [warning] Symbol 'Polyfuse' doesn't match copy in library 'Device' @ (53.34, 33.02)\\n9. [warning] Symbol 'SolderJumper_2_Open' doesn't match copy in library 'Jumper' @ (53.34, 128.27)\\n10. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (53.34, 149.86)\\n11. [warning] Symbol 'MountingHole' doesn't match copy in library 'Mechanical' @ (53.34, 182.88)\\n12. [warning] Symbol 'C' doesn't match copy in library 'Device' @ (74.93, 85.09)\\n13. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (77.47, 58.42)\\n14. [warning] Symbol 'MountingHole' doesn't match copy in library 'Mechanical' @ (81.28, 182.88)\\n15. [warning] Symbol 'SolderJumper_2_Open' doesn't match copy in library 'Jumper' @ (93.98, 128.27)\\n16. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (93.98, 149.86)\\n17. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (106.68, 52.07)\\n18. [warning] Symbol 'MountingHole' doesn't match copy in library 'Mechanical' @ (109.22, 182.88)\\n19. [warning] Symbol 'D_Zener' doesn't match copy in library 'Device' @ (114.3, 31.75)\\n20. [warning] Symbol 'SolderJumper_2_Open' doesn't match copy in library 'Jumper' @ (134.62, 128.27)\\n21. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (134.62, 149.86)\\n22. [warning] Symbol 'TestPoint' doesn't match copy in library 'Connector' @ (137.16, 30.48)\\n23. [warning] Symbol 'Logo_Open_Hardware_Small' doesn't match copy in library 'Graphic' @ (151.13, 182.88)\\n24. [warning] Symbol 'C' doesn't match copy in library 'Device' @ (158.75, 78.74)\\n25. [warning] Symbol 'D_Schottky' doesn't match copy in library 'Device' @ (158.75, 102.87)\\n26. [warning] Symbol 'SolderJumper_2_Open' doesn't match copy in library 'Jumper' @ (175.26, 128.27)\\n27. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (175.26, 149.86)\\n28. [warning] Symbol 'L' doesn't match copy in library 'Device' @ (195.58, 81.28)\\n29. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (210.82, 146.05)\\n30. [warning] Symbol 'C_Polarized' doesn't match copy in library 'Device' @ (222.25, 86.36)\\n... and 4 more\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "batch_set_schematic_property_positions",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "updates": [
+     {
+      "reference": "F1",
+      "property": "Reference",
+      "x": 53.34,
+      "y": 26,
+      "angle": 0
+     },
+     {
+      "reference": "F1",
+      "property": "Value",
+      "x": 53.34,
+      "y": 28.5,
+      "angle": 0
+     },
+     {
+      "reference": "Q1",
+      "property": "Reference",
+      "x": 95,
+      "y": 32,
+      "angle": 0
+     },
+     {
+      "reference": "Q1",
+      "property": "Value",
+      "x": 98,
+      "y": 35,
+      "angle": 0
+     },
+     {
+      "reference": "R1",
+      "property": "Reference",
+      "x": 83,
+      "y": 56.7
+     },
+     {
+      "reference": "R1",
+      "property": "Value",
+      "x": 83,
+      "y": 59.1
+     },
+     {
+      "reference": "TP1",
+      "property": "Reference",
+      "x": 140.5,
+      "y": 27
+     },
+     {
+      "reference": "TP1",
+      "property": "Value",
+      "x": 137.16,
+      "y": 30,
+      "visible": false
+     },
+     {
+      "reference": "U1",
+      "property": "Reference",
+      "x": 123,
+      "y": 76
+     },
+     {
+      "reference": "J2",
+      "property": "Reference",
+      "x": 270,
+      "y": 78
+     },
+     {
+      "reference": "J2",
+      "property": "Value",
+      "x": 270,
+      "y": 81
+     },
+     {
+      "reference": "R4",
+      "property": "Reference",
+      "x": 59.5,
+      "y": 148
+     },
+     {
+      "reference": "R4",
+      "property": "Value",
+      "x": 59.5,
+      "y": 151
+     },
+     {
+      "reference": "R5",
+      "property": "Reference",
+      "x": 100,
+      "y": 148
+     },
+     {
+      "reference": "R5",
+      "property": "Value",
+      "x": 100,
+      "y": 151
+     },
+     {
+      "reference": "R6",
+      "property": "Reference",
+      "x": 140.7,
+      "y": 148
+     },
+     {
+      "reference": "R6",
+      "property": "Value",
+      "x": 140.7,
+      "y": 151
+     },
+     {
+      "reference": "R7",
+      "property": "Reference",
+      "x": 181.3,
+      "y": 148
+     },
+     {
+      "reference": "R7",
+      "property": "Value",
+      "x": 181.3,
+      "y": 151
+     },
+     {
+      "reference": "Q2",
+      "property": "Reference",
+      "x": 254,
+      "y": 145
+     },
+     {
+      "reference": "Q2",
+      "property": "Value",
+      "x": 257,
+      "y": 148
+     },
+     {
+      "reference": "D3",
+      "property": "Reference",
+      "x": 257,
+      "y": 125,
+      "angle": 0
+     },
+     {
+      "reference": "D3",
+      "property": "Value",
+      "x": 257,
+      "y": 128,
+      "angle": 0
+     },
+     {
+      "reference": "#FLG01",
+      "property": "Reference",
+      "x": 17.78,
+      "y": 63,
+      "visible": false
+     },
+     {
+      "reference": "#FLG01",
+      "property": "Value",
+      "x": 17.78,
+      "y": 68,
+      "visible": false
+     },
+     {
+      "reference": "#FLG02",
+      "property": "Reference",
+      "x": 17.78,
+      "y": 98,
+      "visible": false
+     },
+     {
+      "reference": "#FLG02",
+      "property": "Value",
+      "x": 17.78,
+      "y": 103,
+      "visible": false
+     },
+     {
+      "reference": "LOGO1",
+      "property": "Value",
+      "x": 151,
+      "y": 190,
+      "visible": false
+     }
+    ]
+   },
+   "is_error": false,
+   "seconds": 0.23,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Applied 28 field move(s), 0 failed.\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "validate_schematic",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 1.27,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"valid\\\": true,\\n  \\\"path\\\": \\\"/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch\\\",\\n  \\\"message\\\": \\\"b36.kicad_sch is valid\\\",\\n  \\\"errorCount\\\": 0,\\n  \\\"warningCount\\\": 0,\\n  \\\"issues\\\": [],\\n  \\\"kicadCli\\\": {\\n    \\\"ran\\\": true,\\n    \\\"ok\\\": true,\\n    \\\"exitCode\\\": 0,\\n    \\\"output\\\": \\\"Successfully saved schematic file using the latest format\\\"\\n  },\\n  \\\"componentCount\\\": 37,\\n  \\\"semanticChecksRan\\\": true,\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "run_erc",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 3.83,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"ERC result: 34 violation(s)\\n  Errors: 0  Warnings: 34  Info: 0\\n\\n1. [warning] Symbol 'PWR_FLAG' doesn't match copy in library 'power' @ (17.78, 66.04)\\n2. [warning] Symbol 'PWR_FLAG' doesn't match copy in library 'power' @ (17.78, 101.6)\\n3. [warning] Symbol 'C_Polarized' doesn't match copy in library 'Device' @ (24.13, 85.09)\\n4. [warning] Symbol 'Barrel_Jack_Switch' doesn't match copy in library 'Connector' @ (25.4, 39.37)\\n5. [warning] Symbol 'MountingHole' doesn't match copy in library 'Mechanical' @ (25.4, 182.88)\\n6. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (26.67, 138.43)\\n7. [warning] Symbol 'C' doesn't match copy in library 'Device' @ (49.53, 85.09)\\n8. [warning] Symbol 'Polyfuse' doesn't match copy in library 'Device' @ (53.34, 33.02)\\n9. [warning] Symbol 'SolderJumper_2_Open' doesn't match copy in library 'Jumper' @ (53.34, 128.27)\\n10. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (53.34, 149.86)\\n11. [warning] Symbol 'MountingHole' doesn't match copy in library 'Mechanical' @ (53.34, 182.88)\\n12. [warning] Symbol 'C' doesn't match copy in library 'Device' @ (74.93, 85.09)\\n13. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (77.47, 58.42)\\n14. [warning] Symbol 'MountingHole' doesn't match copy in library 'Mechanical' @ (81.28, 182.88)\\n15. [warning] Symbol 'SolderJumper_2_Open' doesn't match copy in library 'Jumper' @ (93.98, 128.27)\\n16. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (93.98, 149.86)\\n17. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (106.68, 52.07)\\n18. [warning] Symbol 'MountingHole' doesn't match copy in library 'Mechanical' @ (109.22, 182.88)\\n19. [warning] Symbol 'D_Zener' doesn't match copy in library 'Device' @ (114.3, 31.75)\\n20. [warning] Symbol 'SolderJumper_2_Open' doesn't match copy in library 'Jumper' @ (134.62, 128.27)\\n21. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (134.62, 149.86)\\n22. [warning] Symbol 'TestPoint' doesn't match copy in library 'Connector' @ (137.16, 30.48)\\n23. [warning] Symbol 'Logo_Open_Hardware_Small' doesn't match copy in library 'Graphic' @ (151.13, 182.88)\\n24. [warning] Symbol 'C' doesn't match copy in library 'Device' @ (158.75, 78.74)\\n25. [warning] Symbol 'D_Schottky' doesn't match copy in library 'Device' @ (158.75, 102.87)\\n26. [warning] Symbol 'SolderJumper_2_Open' doesn't match copy in library 'Jumper' @ (175.26, 128.27)\\n27. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (175.26, 149.86)\\n28. [warning] Symbol 'L' doesn't match copy in library 'Device' @ (195.58, 81.28)\\n29. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (210.82, 146.05)\\n30. [warning] Symbol 'C_Polarized' doesn't match copy in library 'Device' @ (222.25, 86.36)\\n... and 4 more\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "check_schematic_legibility",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "maxProblems": 60
+   },
+   "is_error": false,
+   "seconds": 0.14,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"3 legibility problem(s) (text over text: 2, field over own body: 1)\\n  text over text      F1.Reference / F1.Value  @(52.58,24.79)-(54.1,27.21)\\n  text over text      D3.Reference / D3.Value  @(256.24,123.79)-(257.76,126.21)\\n  field over own body F1.Value  @(52.58,21.26)-(54.1,35.74)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "generate_netlist",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.85,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"=== Netlist for /home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch ===\\n\\nComponents (35):\\n  C1: 100u 50V (Capacitor_SMD:CP_Elec_8x10.5)\\n  C2: 10u 50V (Capacitor_SMD:C_1210_3225Metric)\\n  C3: 100n 50V (Capacitor_SMD:C_0805_2012Metric)\\n  C4: 10n 50V (Capacitor_SMD:C_0603_1608Metric)\\n  C5: 100u 25V (Capacitor_SMD:CP_Elec_8x10.5)\\n  C6: 22u 25V (Capacitor_SMD:C_1210_3225Metric)\\n  D1: 5.6V (Diode_SMD:D_SOD-123)\\n  D2: SS34 (Diode_SMD:D_SMA)\\n  D3: Status (LED_SMD:LED_0603_1608Metric)\\n  F1: PTC 3A >=60V (No footprint)\\n  H1: M2 NPTH (MountingHole:MountingHole_2.2mm_M2)\\n  H2: M2 NPTH (MountingHole:MountingHole_2.2mm_M2)\\n  H3: M2 NPTH (MountingHole:MountingHole_2.2mm_M2)\\n  H4: M2 NPTH (MountingHole:MountingHole_2.2mm_M2)\\n  J1: DC input, center + (footprints:DC-005-5A-2.0-SMT)\\n  J2: GND / OUT (TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2_1x02_P5.00mm_Horizontal)\\n  JP1: 12V ONLY (Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm)\\n  JP2: 3.3V ONLY (Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm)\\n  JP3: 5V ONLY (Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm)\\n  JP4: 1.8V ONLY (Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm)\\n  L1: 47uH (footprints:L_Sunlord_MWSA1004S_10x11.5x4mm)\\n  LOGO1: Open Hardware (Symbol:OSHW-Logo_5.7x6mm_SilkScreen)\\n  Q1: AO3401A (Package_TO_SOT_SMD:SOT-23)\\n  Q2: MMBT3904 (Package_TO_SOT_SMD:SOT-23)\\n  R1: 100k (Resistor_SMD:R_0603_1608Metric)\\n  R2: 1M (Resistor_SMD:R_0603_1608Metric)\\n  R3: 10k (Resistor_SMD:R_0603_1608Metric)\\n  R4: 1.13k (Resistor_SMD:R_0603_1608Metric)\\n  R5: 5.90k (Resistor_SMD:R_0603_1608Metric)\\n  R6: 3.24k (Resistor_SMD:R_0603_1608Metric)\\n  R7: 21.0k (Resistor_SMD:R_0603_1608Metric)\\n  R8: 1M (Resistor_SMD:R_0603_1608Metric)\\n  R9: 47k (Resistor_SMD:R_0805_2012Metric)\\n  TP1: VIN (TestPoint:TestPoint_Pad_D1.5mm)\\n  U1: TPS5430DDA (Package_SO:TI_SO-PowerPAD-8_ThermalVias)\\n\\nNets (20):\\n  /BOOT: C4/1, U1/1\\n  /FB: JP1/1, JP2/1, JP3/1, JP4/1, R3/2, R8/1, U1/4\\n  /FUSED_IN: F1/2, Q1/3\\n  /GATE: D1/2, Q1/1, R1/1, R2/2\\n  /GND: C1/2, C2/2, C3/2, C5/2, C6/2, D2/2, J1/2, J2/1, Q2/2, R1/2, R4/2, R5/2, R6/2, R7/2, U1/6, U1/9\\n  /LED_A: D3/2, R9/2\\n  /LED_BASE: Q2/1, R8/2\\n  /LED_K: D3/1, Q2/3\\n  /RAW_IN: F1/1, J1/1\\n  /SEL1V8: JP4/2, R7/1\\n  /SEL3V3: JP2/2, R5/1\\n  /SEL5: JP3/2, R6/1\\n  /SEL12: JP1/2, R4/1\\n  /SW: C4/2, D2/1, L1/1, U1/8\\n  /VIN: C1/1, C2/1, C3/1, D1/1, Q1/2, R2/1, R9/1, TP1/1, U1/7\\n  /VOUT: C5/1, C6/1, J2/2, L1/2, R3/1\\n  unconnected-(J1-~-Pad3): J1/3\\n  unconnected-(U1-EN-Pad5): U1/5\\n  unconnected-(U1-NC-Pad2): U1/2\\n  unconnected-(U1-NC-Pad3): U1/3\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_floating_labels",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 1.14,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"No floating labels found.\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_schematic_component",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "reference": "F1"
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Component F1 at (53.34, 33.02, angle=90\\u00b0)\\nFields:\\n  Reference: \\\"F1\\\" @ (53.34, 26, angle=0\\u00b0)\\n  Value: \\\"PTC 3A >=60V\\\" @ (53.34, 28.5, angle=0\\u00b0)\\n  Footprint: \\\"\\\" @ (48.26, 31.75, angle=0\\u00b0)\\n  Datasheet: \\\"\\\" @ (53.34, 33.02, angle=0\\u00b0)\\n  Description: \\\"\\\" @ (53.34, 33.02, angle=0\\u00b0)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "batch_set_schematic_property_positions",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "updates": [
+     {
+      "reference": "F1",
+      "property": "Reference",
+      "x": 53.34,
+      "y": 26,
+      "angle": 90
+     },
+     {
+      "reference": "F1",
+      "property": "Value",
+      "x": 53.34,
+      "y": 28.5,
+      "angle": 90
+     },
+     {
+      "reference": "D3",
+      "property": "Reference",
+      "x": 257,
+      "y": 125,
+      "angle": 90
+     },
+     {
+      "reference": "D3",
+      "property": "Value",
+      "x": 257,
+      "y": 128,
+      "angle": 90
+     }
+    ]
+   },
+   "is_error": false,
+   "seconds": 0.11,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Applied 4 field move(s), 0 failed.\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "check_schematic_legibility",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.14,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"0 legibility problem(s)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "remove_library_table_entry",
+   "arguments": {
+    "tableType": "footprint",
+    "scope": "project",
+    "projectPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1",
+    "libraryName": "Symbol"
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"message\\\": \\\"Removed Symbol from fp-lib-table\\\",\\n  \\\"tablePath\\\": \\\"/home/andreferraz/EDA_Agent/eval/output/b36/run1/fp-lib-table\\\",\\n  \\\"tableType\\\": \\\"footprint\\\",\\n  \\\"dryRun\\\": false,\\n  \\\"backup\\\": \\\"/home/andreferraz/EDA_Agent/eval/output/b36/run1/.mcp-backups/fp-lib-table.20261120-225112-221\\\",\\n  \\\"removed\\\": [\\n    {\\n      \\\"name\\\": \\\"Symbol\\\",\\n      \\\"type\\\": \\\"KiCad\\\",\\n      \\\"uri\\\": \\\"/usr/share/kicad/footprints/Symbol.pretty\\\",\\n      \\\"options\\\": \\\"\\\",\\n      \\\"descr\\\": \\\"\\\"\\n    }\\n  ],\\n  \\\"notFound\\\": [],\\n  \\\"tableReferencesRemoved\\\": [],\\n  \\\"referencedLibraryCount\\\": 0,\\n  \\\"remainingCount\\\": 1,\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_schematic_view_region",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch",
+    "x1": 15,
+    "y1": 28,
+    "x2": 43,
+    "y2": 52,
+    "width": 850,
+    "height": 700
+   },
+   "is_error": false,
+   "seconds": 1.02,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"image\", \"data\": \"iVBORw0KGgoAAAANSUhEUgAAA1IAAAK8CAIAAABqfRkWAAAACXBIWXMAAA7EAAAOxAGVKw4bAABVAklEQVR4nOzdd3wTV8KoYQghkE02AVMMhOJAIIEkhJQN6UAaIclmEwjpCUs33YDpzfTee+/N9N57Mb33Xl1wAdv4fnfv3v3uPYnyDQfJlkayNEfSefV7/gB7zsxoxh691kijHBn37wIAACDo5VC+BgAAALAA2QcAAKAFsg8AAEALZB8AAIAWyD4AAAAtkH0AAABaIPsAAAC0QPYBAABogewDAADQAtkHAACgBbIPAABAC2QfAACAFsg+AAAALZB9AAAAWiD7AAAAtED2AQAAaIHsAwAA0ALZBwAAoAWyDwAAQAtkHwAAgBbIPgAAAC2QfQAAAFog+wAAALRA9gEAAGiB7AMAANAC2QcAAKAFsg8AAEALZB8AAIAWyD4AAAAtkH0AAABaIPsAAAC0QPYBAABogewDAADQAtkHAACgBbIPAABAC2QfAACAFsg+AAAALZB9AAAAWiD7AAAAtED2AQAAaIHsAwAA0ALZBwAAoAWyDwAAQAtkHwAAgBbIPgAAAC2QfQAAAFog+wAAALRA9gEAAGiB7AMAANAC2QcAAKAFsg8AAEALZB8AAIAWyD4AAAAtkH0AAABaIPsAAAC0QPYBAABogewDAADQAtkHAACgBbIPAABAC2QfAACAFsg+AAAALZB9AAAAWiD7AAAAtED2AQAAaIHsAwAA0ALZBwAAoAWyDwAAQAtkHwAAgBbIPgAAAC2QfQAAAFog+wAAALRA9gEAAGiB7AMAANAC2QcAAKAFsg8AAEALZB8AAIAWyD4AAAAtkH0AAABaIPsAAAC0QPYBAABogewDAADQAtkHAACgBbIPAABAC2QfAACAFsg+AAAALZB9AAAAWiD7AAAAtED2AQAAaIHsAwAA0ALZBwAAoAWyDwAAQAtkHwAAQICZMnlC+fIvPPPMM+XLl3/55ZecqFChfLFiRStVqjR82GCyDwAAIJAkxN/Mly/f0+7fyD4AAIBAMnBgPw+aj+wDAAAIMLNmTiP7AAAAgt+c2TPkmGvYoF7TpuFZadCg3ssvv2Q7KUz2AQAABBK77IuLve5yyLGjB2vXrkX2AQAABBIPss+G7AMAAAgkZB8AAIAWyD4AAAAtkH0AAABaIPsAAAC0QPYBAABogewDAADQAtkHAACgBbIPAABAC2QfAACAFsg+AAAALZB9AAAAWvAg+1LvJY4dM4rsAwAACCR22TdixNCJE8Yaxo0d1alTh379etv+O37c6Hp165QrV05MSfYBAAAEErvsM38j+wAAAALJwAF9yT4AAIDgN2H8GLIPAAAg+HlwkrdgwYLffluL7AMAAAgkzt/Je+LE4SJFisgTLF60wPYtsg8AACCQuLyAi91Z4LBSpa5euZBB9gEAAAQWl9l3Pz2lVs1v5Gm+/vor8UWyDwAAIJCYuVzztasXypQpI082evQIsg8AACCQmPyUjqVLo+XJQkMLk30AAACBxPyHszVtGi5PSfYBAAAEEvPZl3jndqVKr5B9AAAAAcl89gm7dm4NCQkh+wAAAAKPW9kn9O4dRfYBAAAEHnezLy01qWrVKmQfAABAgHE3+4RTJ48WLVqU7AMAAAgkHmSfMGXyBLIPAAAgkHiWfRl8OBsAAEBgIfsAAAC0QPYBAABoYe2aFUbzFSxYMCkxzuRAsg8AACCQpKclly9f3pZ9v/36i/mBZB8AAECAOX/uZNeunYYPGxIfd8P8KLIPAABAC2QfAACAFsg+AAAALZB9AAAAWiD7AAAAtED2AQAAaIHsAwAA0ALZBwAAoAWyDwAAQAtkHwAAgBbIPgAAAC2QfQAAAFog+wAAALRA9gEAAGiB7AMAANAC2QcAAKAFsg8AAEALZB8AAIAWyD4AAAAtkH0AAABaIPsAAAC0QPYBAABogewDAADQAtkHAACgBbIPAABAC2QfAACAFsg+AAAALZB9gN8ZvXHd33r3ipg359ad29mf29qjB4tHti0cEdFv1XLldw0AoBDZB/iXbaeO5WjQwKb9wvnZnNvVuJu5GzWyzS1ngwZnb1xRfgcBAKqQfYB/aTprhpF9L3Xvls25fTZsqDE3YczGdcrvIABAFbIP8C8Npk81Ku3Fbl2zM6sZO7fJzSdEx+xWfgcBAKqQfYB/8Vb2XYm9XqBVS7vsW7J/r/I7CABQhewD/Iu3sq/KwP52zUf2AYDmyD7Av3gl+xpKMyH7AAA2ZB/gX7KffQPXrMy0+cg+ANAc2Qf4l2xmn5PmI/sAQHNkH+BfPM6+K3E3Ph4yyK7znolsS/YBAGzIPsC/eJB9l29fbzZ7Rt7wcLvme7tvn8OXzpJ9AAAbsg/wL+5m37X4m6U7dnA8n/taz6j4pLhzN6+QfQAAG7IP8C/uZl/kgnmOzfdsh/ai+cR3yT4AgIHsA/yLu9nXe8VSOeyKR0ZGLVt8Pz3F9l2yDwBgIPsA/+Ju9iUkx386dEjuxo2f69Rx3OYNqalJ8nfJPgCAgewD/IsXP5M3g+wDAEjIPsC/kH0AAB8h+wD/QvYBAHyE7AP8C9kHAPARsg/wL2QfAMBHyD7Av5B9AAAfIfsA/0L2AQB8hOwD/AvZBwDwEbIP8C9kHwDAR8g+wL+QfQAAHyH7AP9C9gEAfITsA/wL2QcA8BGyD/AvP0+aYFRaiXaR2Zwb2QcAMJB9gH95sVtXo9Keat4sm3Mj+wAABrIP8CPpacn5W7YwKq10xw7ZnCHZBwAwkH2AH1l/7JBcab1XLMnmDMk+AICB7AP8SKMZ04xEy9Wo0fX4W9mcIdkHADCQfYC/uHcv8fEmTYxEqzZoQPbnSfYBAAxkH+AX0tKSPx48SE60MRvXZX+2ZB8AwED2AeqJ5qs5ZpTcZ8Ll2zeyP2eyDwBgIPsAxU5fv1Qpqodd8303bqxXZk72AQAMZB+gxqlrl/quXPZazyi74BPqTp18Pz3FK0sh+wAABrIPsMK91KQBq1e82jMqrEP7Eu0i84SHO9aeTfjM6W41n23OlaJ6iDk7Kh7ZVp554dYRmU5WvmuXDtHzr8XfVL6hAAC+Q/YBVpi7Z0dWnSf7auQId5/nMzlnM5rNnqF8QwEAfIfsA6wQPnO68+TKEx7efPZMD87tupyzea9E9VC+oQAAvkP2AVbYc/ZkzoYNHUurcOvWjWdM23TiSHpasnfn7IFh61Yr31AAAN8h+wCLnL5+ufvSRa3nzWk1d9bHQwZ/M3rk8oMxaZ7WnuzE1Ytdl0SLOWcqYu7sv48c8cmQwc1nz8xqmsgF87adOqZ8EwEAfIrsA4Bgdnv39jXlyi4rXOhQmwjlK2Nz+FBMjRrVK1asWP3TT7784nMnPq/xWcWKL1ev/sniRfO9uw7Xrl746qsvq1f/9MD+3R4Mv5+eMnrU8G7dOu/YscUXm+jihTMD+vft2rVTfJwXrt/prnt378ybN6tVy+Z79+wwP2rvnp1il4l9evbMcQ8WGhd7XWzSjh3aneZPUF8i+wAgaKUlxi5+4omFOXLY3NjkhY9+yb5ixYo97f6tRo3PNntp/dNSk0qWLGGbbcGCBS9fOuvuHNq0ibANL1GixPlzJ72811KTRI/a5v/aa69Zv4OGDBloW3q+fPnOnDbVcHdTEkJDQ22jxD/uJLj9eeK//fqLbXhYWFhKcrz191oTZB8ABK394Q2N5hMOtmiqfJU2bVznQfMZt1cqVrx44Uw212HjhrXyPLt16+zuHCpXftMY3r5dW+9uog3r18ird+vmVYv3UcWKLxtL79e3t5khK1cslde5ZYtmbi0x9vZ10d/G8KVLoy2+y/og+wAgON3asmHhI4/I2XdiQF/la7Vt68bsZJ+4lSxZ4vKlc9lZhxbNm8ozrFrlA3fn8O677xjDP/jgfe9uol69ehgzz58/vw"
+  },
+  {
+   "name": "run_erc",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 3.67,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"ERC result: 34 violation(s)\\n  Errors: 0  Warnings: 34  Info: 0\\n\\n1. [warning] Symbol 'PWR_FLAG' doesn't match copy in library 'power' @ (17.78, 66.04)\\n2. [warning] Symbol 'PWR_FLAG' doesn't match copy in library 'power' @ (17.78, 101.6)\\n3. [warning] Symbol 'C_Polarized' doesn't match copy in library 'Device' @ (24.13, 85.09)\\n4. [warning] Symbol 'Barrel_Jack_Switch' doesn't match copy in library 'Connector' @ (25.4, 39.37)\\n5. [warning] Symbol 'MountingHole' doesn't match copy in library 'Mechanical' @ (25.4, 182.88)\\n6. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (26.67, 138.43)\\n7. [warning] Symbol 'C' doesn't match copy in library 'Device' @ (49.53, 85.09)\\n8. [warning] Symbol 'Polyfuse' doesn't match copy in library 'Device' @ (53.34, 33.02)\\n9. [warning] Symbol 'SolderJumper_2_Open' doesn't match copy in library 'Jumper' @ (53.34, 128.27)\\n10. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (53.34, 149.86)\\n11. [warning] Symbol 'MountingHole' doesn't match copy in library 'Mechanical' @ (53.34, 182.88)\\n12. [warning] Symbol 'C' doesn't match copy in library 'Device' @ (74.93, 85.09)\\n13. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (77.47, 58.42)\\n14. [warning] Symbol 'MountingHole' doesn't match copy in library 'Mechanical' @ (81.28, 182.88)\\n15. [warning] Symbol 'SolderJumper_2_Open' doesn't match copy in library 'Jumper' @ (93.98, 128.27)\\n16. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (93.98, 149.86)\\n17. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (106.68, 52.07)\\n18. [warning] Symbol 'MountingHole' doesn't match copy in library 'Mechanical' @ (109.22, 182.88)\\n19. [warning] Symbol 'D_Zener' doesn't match copy in library 'Device' @ (114.3, 31.75)\\n20. [warning] Symbol 'SolderJumper_2_Open' doesn't match copy in library 'Jumper' @ (134.62, 128.27)\\n21. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (134.62, 149.86)\\n22. [warning] Symbol 'TestPoint' doesn't match copy in library 'Connector' @ (137.16, 30.48)\\n23. [warning] Symbol 'Logo_Open_Hardware_Small' doesn't match copy in library 'Graphic' @ (151.13, 182.88)\\n24. [warning] Symbol 'C' doesn't match copy in library 'Device' @ (158.75, 78.74)\\n25. [warning] Symbol 'D_Schottky' doesn't match copy in library 'Device' @ (158.75, 102.87)\\n26. [warning] Symbol 'SolderJumper_2_Open' doesn't match copy in library 'Jumper' @ (175.26, 128.27)\\n27. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (175.26, 149.86)\\n28. [warning] Symbol 'L' doesn't match copy in library 'Device' @ (195.58, 81.28)\\n29. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (210.82, 146.05)\\n30. [warning] Symbol 'C_Polarized' doesn't match copy in library 'Device' @ (222.25, 86.36)\\n... and 4 more\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "validate_schematic",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.89,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"valid\\\": true,\\n  \\\"path\\\": \\\"/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch\\\",\\n  \\\"message\\\": \\\"b36.kicad_sch is valid\\\",\\n  \\\"errorCount\\\": 0,\\n  \\\"warningCount\\\": 0,\\n  \\\"issues\\\": [],\\n  \\\"kicadCli\\\": {\\n    \\\"ran\\\": true,\\n    \\\"ok\\\": true,\\n    \\\"exitCode\\\": 0,\\n    \\\"output\\\": \\\"Successfully saved schematic file using the latest format\\\"\\n  },\\n  \\\"componentCount\\\": 37,\\n  \\\"semanticChecksRan\\\": true,\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_schematic_nets",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 1.42,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Nets (16):\\n  BOOT [2 pin(s)]: U1/1, C4/1\\n  FB [7 pin(s)]: U1/4, R3/2, JP1/1, JP2/1, JP3/1, JP4/1, R8/1\\n  FUSED_IN [2 pin(s)]: F1/2, Q1/3\\n  GATE [4 pin(s)]: Q1/1, D1/2, R1/1, R2/2\\n  GND [17 pin(s)]: J1/2, R1/2, C1/2, C2/2, C3/2, U1/6, U1/9, D2/2, C5/2, C6/2, J2/1, R4/2, R5/2, R6/2, R7/2, Q2/2\\n  LED_A [2 pin(s)]: R9/2, D3/2\\n  LED_BASE [2 pin(s)]: R8/2, Q2/1\\n  LED_K [2 pin(s)]: Q2/3, D3/1\\n  RAW_IN [2 pin(s)]: J1/1, F1/1\\n  SEL12 [2 pin(s)]: JP1/2, R4/1\\n  SEL1V8 [2 pin(s)]: JP4/2, R7/1\\n  SEL3V3 [2 pin(s)]: JP2/2, R5/1\\n  SEL5 [2 pin(s)]: JP3/2, R6/1\\n  SW [4 pin(s)]: U1/8, C4/2, D2/1, L1/1\\n  VIN [10 pin(s)]: Q1/2, D1/1, R2/1, TP1/1, C1/1, C2/1, C3/1, U1/7, R9/1\\n  VOUT [5 pin(s)]: L1/2, C5/1, C6/1, J2/2, R3/1\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "find_wires_crossing_symbols",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b36/run1/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.13,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 0 wire(s) crossing symbols:\\nFound 0 pin(s) on a wire's interior, not connected to it:\", \"annotations\": null, \"meta\": null}]}"
+  }
+ ],
+ "model_calls": [
+  {
+   "seconds": 3.08,
+   "input_tokens": 16693,
+   "cached_input_tokens": 16690,
+   "output_tokens": 136
+  },
+  {
+   "seconds": 3.32,
+   "input_tokens": 17068,
+   "cached_input_tokens": 16690,
+   "output_tokens": 212
+  },
+  {
+   "seconds": 5.77,
+   "input_tokens": 21181,
+   "cached_input_tokens": 17065,
+   "output_tokens": 390
+  },
+  {
+   "seconds": 3.58,
+   "input_tokens": 22442,
+   "cached_input_tokens": 21178,
+   "output_tokens": 203
+  },
+  {
+   "seconds": 11.47,
+   "input_tokens": 23914,
+   "cached_input_tokens": 22439,
+   "output_tokens": 956
+  },
+  {
+   "seconds": 19.33,
+   "input_tokens": 26017,
+   "cached_input_tokens": 23911,
+   "output_tokens": 1620
+  },
+  {
+   "seconds": 16.93,
+   "input_tokens": 27726,
+   "cached_input_tokens": 26014,
+   "output_tokens": 1423
+  },
+  {
+   "seconds": 6.14,
+   "input_tokens": 29204,
+   "cached_input_tokens": 27723,
+   "output_tokens": 423
+  },
+  {
+   "seconds": 5.09,
+   "input_tokens": 32202,
+   "cached_input_tokens": 29201,
+   "output_tokens": 325
+  },
+  {
+   "seconds": 4.98,
+   "input_tokens": 37765,
+   "cached_input_tokens": 32199,
+   "output_tokens": 280
+  },
+  {
+   "seconds": 6.26,
+   "input_tokens": 38302,
+   "cached_input_tokens": 37762,
+   "output_tokens": 429
+  },
+  {
+   "seconds": 2.52,
+   "input_tokens": 38794,
+   "cached_input_tokens": 38299,
+   "output_tokens": 50
+  },
+  {
+   "seconds": 3.77,
+   "input_tokens": 39079,
+   "cached_input_tokens": 38791,
+   "output_tokens": 199
+  },
+  {
+   "seconds": 2.21,
+   "input_tokens": 39759,
+   "cached_input_tokens": 39076,
+   "output_tokens": 93
+  },
+  {
+   "seconds": 8.1,
+   "input_tokens": 39941,
+   "cached_input_tokens": 39756,
+   "output_tokens": 615
+  },
+  {
+   "seconds": 2.3,
+   "input_tokens": 40610,
+   "cached_input_tokens": 39938,
+   "output_tokens": 79
+  },
+  {
+   "seconds": 2.1,
+   "input_tokens": 40768,
+   "cached_input_tokens": 40607,
+   "output_tokens": 64
+  },
+  {
+   "seconds": 2.91,
+   "input_tokens": 40911,
+   "cached_input_tokens": 40765,
+   "output_tokens": 64
+  },
+  {
+   "seconds": 2.35,
+   "input_tokens": 41062,
+   "cached_input_tokens": 40908,
+   "output_tokens": 62
+  },
+  {
+   "seconds": 2.75,
+   "input_tokens": 41209,
+   "cached_input_tokens": 41059,
+   "output_tokens": 103
+  },
+  {
+   "seconds": 2.8,
+   "input_tokens": 41383,
+   "cached_input_tokens": 41206,
+   "output_tokens": 94
+  },
+  {
+   "seconds": 4.21,
+   "input_tokens": 41556,
+   "cached_input_tokens": 41380,
+   "output_tokens": 208
+  },
+  {
+   "seconds": 2.4,
+   "input_tokens": 44086,
+   "cached_input_tokens": 41553,
+   "output_tokens": 96
+  },
+  {
+   "seconds": 1.88,
+   "input_tokens": 44243,
+   "cached_input_tokens": 44083,
+   "output_tokens": 51
+  },
+  {
+   "seconds": 3.74,
+   "input_tokens": 44499,
+   "cached_input_tokens": 44240,
+   "output_tokens": 187
+  },
+  {
+   "seconds": 3.97,
+   "input_tokens": 44823,
+   "cached_input_tokens": 44496,
+   "output_tokens": 31
+  },
+  {
+   "seconds": 2.14,
+   "input_tokens": 44908,
+   "cached_input_tokens": 44820,
+   "output_tokens": 68
+  },
+  {
+   "seconds": 4.71,
+   "input_tokens": 45032,
+   "cached_input_tokens": 44905,
+   "output_tokens": 305
+  },
+  {
+   "seconds": 10.0,
+   "input_tokens": 45675,
+   "cached_input_tokens": 45029,
+   "output_tokens": 160
+  },
+  {
+   "seconds": 3.0,
+   "input_tokens": 45897,
+   "cached_input_tokens": 45672,
+   "output_tokens": 125
+  },
+  {
+   "seconds": 2.34,
+   "input_tokens": 46090,
+   "cached_input_tokens": 45894,
+   "output_tokens": 44
+  },
+  {
+   "seconds": 3.04,
+   "input_tokens": 47144,
+   "cached_input_tokens": 46087,
+   "output_tokens": 131
+  },
+  {
+   "seconds": 2.59,
+   "input_tokens": 47377,
+   "cached_input_tokens": 47141,
+   "output_tokens": 81
+  },
+  {
+   "seconds": 2.11,
+   "input_tokens": 47560,
+   "cached_input_tokens": 47374,
+   "output_tokens": 51
+  },
+  {
+   "seconds": 2.22,
+   "input_tokens": 47713,
+   "cached_input_tokens": 47557,
+   "output_tokens": 50
+  },
+  {
+   "seconds": 3.05,
+   "input_tokens": 47865,
+   "cached_input_tokens": 47710,
+   "output_tokens": 51
+  },
+  {
+   "seconds": 2.33,
+   "input_tokens": 48018,
+   "cached_input_tokens": 47862,
+   "output_tokens": 50
+  },
+  {
+   "seconds": 2.0,
+   "input_tokens": 48170,
+   "cached_input_tokens": 48015,
+   "output_tokens": 50
+  },
+  {
+   "seconds": 2.16,
+   "input_tokens": 48322,
+   "cached_input_tokens": 48167,
+   "output_tokens": 56
+  },
+  {
+   "seconds": 9.74,
+   "input_tokens": 49388,
+   "cached_input_tokens": 48319,
+   "output_tokens": 767
+  },
+  {
+   "seconds": 10.07,
+   "input_tokens": 50211,
+   "cached_input_tokens": 49385,
+   "output_tokens": 796
+  },
+  {
+   "seconds": 3.44,
+   "input_tokens": 53896,
+   "cached_input_tokens": 50208,
+   "output_tokens": 86
+  },
+  {
+   "seconds": 3.56,
+   "input_tokens": 54185,
+   "cached_input_tokens": 53893,
+   "output_tokens": 178
+  },
+  {
+   "seconds": 1.72,
+   "input_tokens": 54419,
+   "cached_input_tokens": 54182,
+   "output_tokens": 46
+  },
+  {
+   "seconds": 2.53,
+   "input_tokens": 54515,
+   "cached_input_tokens": 54416,
+   "output_tokens": 82
+  },
+  {
+   "seconds": 3.43,
+   "input_tokens": 54874,
+   "cached_input_tokens": 54512,
+   "output_tokens": 150
+  },
+  {
+   "seconds": 5.39,
+   "input_tokens": 60423,
+   "cached_input_tokens": 54871,
+   "output_tokens": 361
+  },
+  {
+   "seconds": 9.89,
+   "input_tokens": 62600,
+   "cached_input_tokens": 60420,
+   "output_tokens": 534
+  }
+ ],
+ "cleared_results": 0,
+ "tools_offered": [
+  "add_library_symbol_property",
+  "add_no_connect",
+  "add_schematic_component",
+  "add_schematic_net_label",
+  "add_schematic_text",
+  "add_schematic_wire",
+  "add_symbol_property",
+  "annotate_schematic",
+  "autoplace_schematic_fields",
+  "batch_add_and_connect",
+  "batch_add_components",
+  "batch_add_no_connects",
+  "batch_connect",
+  "batch_edit_schematic_components",
+  "batch_list_symbol_pins",
+  "batch_set_schematic_property_positions",
+  "check_schematic_legibility",
+  "connect_passthrough",
+  "connect_to_net",
+  "create_project",
+  "create_schematic",
+  "create_symbol",
+  "delete_schematic_component",
+  "delete_schematic_net_label",
+  "delete_schematic_wire",
+  "delete_symbol",
+  "edit_schematic_component",
+  "export_schematic_pdf",
+  "export_schematic_svg",
+  "export_symbol",
+  "find_duplicate_symbols",
+  "find_orphaned_wires",
+  "find_overlapping_elements",
+  "find_wires_crossing_symbols",
+  "generate_netlist",
+  "get_elements_in_region",
+  "get_footprint_info",
+  "get_net_at_point",
+  "get_net_connections",
+  "get_project_info",
+  "get_schematic_component",
+  "get_schematic_pin_locations",
+  "get_schematic_view",
+  "get_schematic_view_region",
+  "get_symbol_info",
+  "get_wire_connections",
+  "import_symbol",
+  "lint_offgrid",
+  "lint_schematic_cosmetic",
+  "list_floating_labels",
+  "list_footprint_libraries",
+  "list_libraries",
+  "list_library_footprints",
+  "list_library_symbols",
+  "list_library_table",
+  "list_project_files",
+  "list_schematic_components",
+  "list_schematic_labels",
+  "list_schematic_nets",
+  "list_schematic_rectangles",
+  "list_schematic_texts",
+  "list_schematic_wires",
+  "list_symbol_libraries",
+  "list_symbol_pins",
+  "list_symbols_in_library",
+  "move_schematic_component",
+  "move_schematic_net_label",
+  "open_project",
+  "read_project_file",
+  "register_footprint_library",
+  "register_symbol_library",
+  "remove_library_table_entry",
+  "remove_schematic_component_property",
+  "rename_symbol",
+  "repair_flat_symbols",
+  "replace_instance_lib_ids",
+  "replace_schematic_component",
+  "rotate_schematic_component",
+  "run_erc",
+  "save_project",
+  "search_footprints",
+  "search_symbols",
+  "set_library_table_uri",
+  "set_schematic_component_property",
+  "set_schematic_property_position",
+  "set_schematic_rectangle",
+  "set_symbol_pin_type",
+  "snap_to_grid",
+  "suggest_schematic_declutter",
+  "update_symbol_from_library",
+  "validate_schematic",
+  "validate_symbol_library"
+ ],
+ "task_id": "b36"
+}

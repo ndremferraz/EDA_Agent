@@ -1,0 +1,1113 @@
+{
+ "question": "Create a new KiCad project named b29 in the project directory and draw its schematic for the following request.\n\nBuild an NFC access-controller carrier for an ESP32-C3 Super Mini and a PN532 module in SPI mode. These are complete modules, including their onboard support circuitry. Use four common-cathode RGB LEDs controlled together by color: three BC547 emitter followers from 5 V, each with a 1k base resistor, feed the red/green/blue anodes through individual resistors (150 ohms red, 100 ohms green/blue). All LED cathodes go to GND. Include a GPIO-driven buzzer with a 100 ohm series resistor.\nFirmware uses GPIO1 = NFC SCK, GPIO2 = MISO, GPIO3 = MOSI, GPIO4 = SS, GPIO9 = red, GPIO10 = green, GPIO20 = blue, GPIO7 = buzzer and GPIO5 = output. Power the PN532 from the Super Mini's 3.3 V output. The external 1x3 header is 5 V, GND, GPIO5. No custom module libraries are supplied; represent the modules with labeled connector/module symbols. The project's Super Mini module numbering is 1-16 = 5 V, GND, 3.3 V, GPIO4, GPIO3, GPIO2, GPIO1, GPIO0, GPIO5, GPIO6, GPIO7, GPIO8, GPIO9, GPIO10, GPIO20, GPIO21. PN532's used SPI header pins are 5 SCK, 6 MISO, 7 MOSI, 8 SS, 9 VCC, 10 GND; its other header functions are unused.\nLocal dependencies: No project-local module libraries are supplied. Use standard KiCad libraries and labeled module/connector symbols for the interfaces specified above.",
+ "output_dir": "/home/andreferraz/EDA_Agent/eval/output/b29/run2",
+ "model": "gpt-6.1-terra",
+ "answer": "Created the [b29 KiCad project]( /home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_pro ) and its [schematic]( /home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch ).\n\nThe requested module connections, four RGB LEDs, emitter followers, buzzer and external header are wired. ERC reports **0 errors and 24 symbol-library mismatch warnings**.\n\nKey assumptions and cautions:\n- J1 supplies regulated 5 V; set the PN532 module to SPI mode. Verify the physical module pinouts before wiring.\n- The specified emitter-follower circuit limits LED drive to roughly GPIO-high minus Vbe. Green and blue LEDs may be dim or fail to light.\n- Use a low-current, non-inductive 3.3 V buzzer compatible with the GPIO drive limit. GPIO9 is a boot-strapping pin; check startup behavior.\n- Module and most component footprints remain unassigned; this is a schematic-only project.",
+ "schematic": "/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch",
+ "stop_reason": "done",
+ "error": null,
+ "turns": 18,
+ "input_tokens": 473241,
+ "cached_input_tokens": 436561,
+ "output_tokens": 5671,
+ "seconds": 117.18,
+ "tool_calls": [
+  {
+   "name": "create_project",
+   "arguments": {
+    "path": "/home/andreferraz/EDA_Agent/eval/output/b29/run2",
+    "name": "b29"
+   },
+   "is_error": false,
+   "seconds": 0.08,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"message\\\": \\\"Created project: b29\\\",\\n  \\\"project\\\": {\\n    \\\"name\\\": \\\"b29\\\",\\n    \\\"path\\\": \\\"/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_pro\\\",\\n    \\\"boardPath\\\": \\\"/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_pcb\\\",\\n    \\\"schematicPath\\\": \\\"/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch\\\"\\n  },\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false,\\n  \\\"sessionBackend\\\": \\\"swig\\\"\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "batch_list_symbol_pins",
+   "arguments": {
+    "symbols": [
+     "Connector_Generic:Conn_01x16",
+     "Connector_Generic:Conn_01x10",
+     "Connector_Generic:Conn_01x03",
+     "Device:LED_RGB",
+     "Transistor_BJT:BC547",
+     "Device:R",
+     "Device:Buzzer"
+    ],
+    "compact": false
+   },
+   "is_error": false,
+   "seconds": 0.12,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Connector_Generic:Conn_01x16 \\u2014 16 pin(s) | body 2.54\\u00d740.64mm:\\n    Pin 1 (Pin_1) \\u2014 type: passive at (-5.08,17.78) angle=0\\n    Pin 2 (Pin_2) \\u2014 type: passive at (-5.08,15.24) angle=0\\n    Pin 3 (Pin_3) \\u2014 type: passive at (-5.08,12.7) angle=0\\n    Pin 4 (Pin_4) \\u2014 type: passive at (-5.08,10.16) angle=0\\n    Pin 5 (Pin_5) \\u2014 type: passive at (-5.08,7.62) angle=0\\n    Pin 6 (Pin_6) \\u2014 type: passive at (-5.08,5.08) angle=0\\n    Pin 7 (Pin_7) \\u2014 type: passive at (-5.08,2.54) angle=0\\n    Pin 8 (Pin_8) \\u2014 type: passive at (-5.08,0) angle=0\\n    Pin 9 (Pin_9) \\u2014 type: passive at (-5.08,-2.54) angle=0\\n    Pin 10 (Pin_10) \\u2014 type: passive at (-5.08,-5.08) angle=0\\n    Pin 11 (Pin_11) \\u2014 type: passive at (-5.08,-7.62) angle=0\\n    Pin 12 (Pin_12) \\u2014 type: passive at (-5.08,-10.16) angle=0\\n    Pin 13 (Pin_13) \\u2014 type: passive at (-5.08,-12.7) angle=0\\n    Pin 14 (Pin_14) \\u2014 type: passive at (-5.08,-15.24) angle=0\\n    Pin 15 (Pin_15) \\u2014 type: passive at (-5.08,-17.78) angle=0\\n    Pin 16 (Pin_16) \\u2014 type: passive at (-5.08,-20.32) angle=0\\nConnector_Generic:Conn_01x10 \\u2014 10 pin(s) | body 2.54\\u00d725.40mm:\\n    Pin 1 (Pin_1) \\u2014 type: passive at (-5.08,10.16) angle=0\\n    Pin 2 (Pin_2) \\u2014 type: passive at (-5.08,7.62) angle=0\\n    Pin 3 (Pin_3) \\u2014 type: passive at (-5.08,5.08) angle=0\\n    Pin 4 (Pin_4) \\u2014 type: passive at (-5.08,2.54) angle=0\\n    Pin 5 (Pin_5) \\u2014 type: passive at (-5.08,0) angle=0\\n    Pin 6 (Pin_6) \\u2014 type: passive at (-5.08,-2.54) angle=0\\n    Pin 7 (Pin_7) \\u2014 type: passive at (-5.08,-5.08) angle=0\\n    Pin 8 (Pin_8) \\u2014 type: passive at (-5.08,-7.62) angle=0\\n    Pin 9 (Pin_9) \\u2014 type: passive at (-5.08,-10.16) angle=0\\n    Pin 10 (Pin_10) \\u2014 type: passive at (-5.08,-12.7) angle=0\\nConnector_Generic:Conn_01x03 \\u2014 3 pin(s) | body 2.54\\u00d77.62mm:\\n    Pin 1 (Pin_1) \\u2014 type: passive at (-5.08,2.54) angle=0\\n    Pin 2 (Pin_2) \\u2014 type: passive at (-5.08,0) angle=0\\n    Pin 3 (Pin_3) \\u2014 type: passive at (-5.08,-2.54) angle=0\\nDevice:LED_RGB \\u2014 6 pin(s) | body 12.70\\u00d712.70mm:\\n    Pin 1 (RK) \\u2014 type: passive at (-5.08,5.08) angle=0\\n    Pin 2 (GK) \\u2014 type: passive at (-5.08,0) angle=0\\n    Pin 3 (BK) \\u2014 type: passive at (-5.08,-5.08) angle=0\\n    Pin 4 (BA) \\u2014 type: passive at (5.08,-5.08) angle=180\\n    Pin 5 (GA) \\u2014 type: passive at (5.08,0) angle=180\\n    Pin 6 (RA) \\u2014 type: passive at (5.08,5.08) angle=180\\nTransistor_BJT:BC547 \\u2014 3 pin(s) | body 10.16\\u00d712.70mm:\\n    Pin 1 (C) \\u2014 type: passive at (2.54,5.08) angle=270\\n    Pin 2 (B) \\u2014 type: input at (-5.08,0) angle=0\\n    Pin 3 (E) \\u2014 type: passive at (2.54,-5.08) angle=90\\nDevice:R \\u2014 2 pin(s) | body 2.54\\u00d710.16mm:\\n    Pin 1 (~) \\u2014 type: passive at (0,3.81) angle=270\\n    Pin 2 (~) \\u2014 type: passive at (0,-3.81) angle=90\\nDevice:Buzzer \\u2014 2 pin(s) | body 2.54\\u00d77.62mm:\\n    Pin 1 (+) \\u2014 type: passive at (-2.54,2.54) angle=0\\n    Pin 2 (-) \\u2014 type: passive at (-2.54,-2.54) angle=0\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_symbols",
+   "arguments": {
+    "query": "LED_CACB",
+    "library": "Device",
+    "limit": 20
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"No symbols found matching \\\"LED_CACB\\\" in libraries matching \\\"Device\\\"\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_symbols",
+   "arguments": {
+    "query": "LED_ARGB",
+    "library": "Device",
+    "limit": 20
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"No symbols found matching \\\"LED_ARGB\\\" in libraries matching \\\"Device\\\"\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_project_files",
+   "arguments": {
+    "path": "/home/andreferraz/EDA_Agent/eval/output/b29/run2"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [\"b29.kicad_pcb\", \"b29.kicad_pro\", \"b29.kicad_sch\"]}"
+  },
+  {
+   "name": "get_project_info",
+   "arguments": {},
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"project\\\": {\\n    \\\"name\\\": \\\"b29\\\",\\n    \\\"path\\\": \\\"/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_pcb\\\",\\n    \\\"title\\\": \\\"b29\\\",\\n    \\\"date\\\": \\\"2026-11-20\\\",\\n    \\\"revision\\\": \\\"\\\",\\n    \\\"company\\\": \\\"\\\",\\n    \\\"comment1\\\": \\\"\\\",\\n    \\\"comment2\\\": \\\"\\\",\\n    \\\"comment3\\\": \\\"\\\",\\n    \\\"comment4\\\": \\\"\\\"\\n  },\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_symbols",
+   "arguments": {
+    "query": "LED_RGB",
+    "limit": 50
+   },
+   "is_error": false,
+   "seconds": 0.02,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"No symbols found matching \\\"LED_RGB\\\"\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_library_symbols",
+   "arguments": {
+    "library": "Device"
+   },
+   "is_error": true,
+   "seconds": 0.0,
+   "result": "{\"is_error\": true, \"result\": [{\"type\": \"text\", \"text\": \"Failed to list symbols in library Device: Library 'Device' not found in sym-lib-table\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "batch_list_symbol_pins",
+   "arguments": {
+    "symbols": [
+     "Device:LED_ARGB",
+     "Device:LED_KRGB",
+     "Device:LED_RGB_CA",
+     "Device:LED_RGB_CC",
+     "Device:LED_RAGABAK",
+     "Device:LED_RKGB",
+     "Device:LED_RAGABACC",
+     "Device:LED_RKGB_A",
+     "Device:LED_RKGB_K"
+    ]
+   },
+   "is_error": false,
+   "seconds": 0.18,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Device:LED_ARGB \\u2014 4 pin(s) | body 12.70\\u00d712.70mm:\\n    Pin 1 (A) \\u2014 type: passive at (5.08,0) angle=180\\n    Pin 2 (RK) \\u2014 type: passive at (-5.08,5.08) angle=0\\n    Pin 3 (GK) \\u2014 type: passive at (-5.08,0) angle=0\\n    Pin 4 (BK) \\u2014 type: passive at (-5.08,-5.08) angle=0\\nDevice:LED_KRGB \\u2014 4 pin(s) | body 12.70\\u00d712.70mm:\\n    Pin 1 (K) \\u2014 type: passive at (-5.08,0) angle=0\\n    Pin 2 (RA) \\u2014 type: passive at (5.08,5.08) angle=180\\n    Pin 3 (GA) \\u2014 type: passive at (5.08,0) angle=180\\n    Pin 4 (BA) \\u2014 type: passive at (5.08,-5.08) angle=180\\nDevice:LED_RKGB \\u2014 4 pin(s) | body 12.70\\u00d712.70mm:\\n    Pin 1 (RA) \\u2014 type: passive at (5.08,5.08) angle=180\\n    Pin 2 (K) \\u2014 type: passive at (-5.08,0) angle=0\\n    Pin 3 (GA) \\u2014 type: passive at (5.08,0) angle=180\\n    Pin 4 (BA) \\u2014 type: passive at (5.08,-5.08) angle=180\\n\\nErrors:\\n  Device:LED_RGB_CA: Symbol 'Device:LED_RGB_CA' not found\\n  Device:LED_RGB_CC: Symbol 'Device:LED_RGB_CC' not found\\n  Device:LED_RAGABAK: Symbol 'Device:LED_RAGABAK' not found\\n  Device:LED_RAGABACC: Symbol 'Device:LED_RAGABACC' not found\\n  Device:LED_RKGB_A: Symbol 'Device:LED_RKGB_A' not found\\n  Device:LED_RKGB_K: Symbol 'Device:LED_RKGB_K' not found\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "batch_add_and_connect",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch",
+    "components": [
+     {
+      "symbol": "Connector_Generic:Conn_01x16",
+      "reference": "U1",
+      "value": "ESP32-C3 Super Mini (module)",
+      "position": {
+       "x": 60.96,
+       "y": 48.26
+      },
+      "nets": {
+       "1": "+5V",
+       "2": "GND",
+       "3": "+3V3",
+       "4": "NFC_SS",
+       "5": "NFC_MOSI",
+       "6": "NFC_MISO",
+       "7": "NFC_SCK",
+       "9": "GPIO5_OUT",
+       "11": "BUZZ_GPIO7",
+       "13": "RED_GPIO9",
+       "14": "GREEN_GPIO10",
+       "15": "BLUE_GPIO20"
+      }
+     },
+     {
+      "symbol": "Connector_Generic:Conn_01x10",
+      "reference": "U2",
+      "value": "PN532 module (SPI header)",
+      "position": {
+       "x": 137.16,
+       "y": 45.72
+      },
+      "nets": {
+       "5": "NFC_SCK",
+       "6": "NFC_MISO",
+       "7": "NFC_MOSI",
+       "8": "NFC_SS",
+       "9": "+3V3",
+       "10": "GND"
+      }
+     },
+     {
+      "symbol": "Connector_Generic:Conn_01x03",
+      "reference": "J1",
+      "value": "5V / GND / GPIO5",
+      "position": {
+       "x": 220.98,
+       "y": 43.18
+      },
+      "nets": {
+       "1": "+5V",
+       "2": "GND",
+       "3": "GPIO5_OUT"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R1",
+      "value": "1k",
+      "position": {
+       "x": 41.91,
+       "y": 101.6
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "RED_GPIO9",
+       "2": "RED_BASE"
+      }
+     },
+     {
+      "symbol": "Transistor_BJT:BC547",
+      "reference": "Q1",
+      "value": "BC547",
+      "position": {
+       "x": 62.23,
+       "y": 101.6
+      },
+      "nets": {
+       "1": "+5V",
+       "2": "RED_BASE",
+       "3": "RED_DRV"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R2",
+      "value": "1k",
+      "position": {
+       "x": 105.41,
+       "y": 101.6
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "GREEN_GPIO10",
+       "2": "GREEN_BASE"
+      }
+     },
+     {
+      "symbol": "Transistor_BJT:BC547",
+      "reference": "Q2",
+      "value": "BC547",
+      "position": {
+       "x": 125.73,
+       "y": 101.6
+      },
+      "nets": {
+       "1": "+5V",
+       "2": "GREEN_BASE",
+       "3": "GREEN_DRV"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R3",
+      "value": "1k",
+      "position": {
+       "x": 168.91,
+       "y": 101.6
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "BLUE_GPIO20",
+       "2": "BLUE_BASE"
+      }
+     },
+     {
+      "symbol": "Transistor_BJT:BC547",
+      "reference": "Q3",
+      "value": "BC547",
+      "position": {
+       "x": 189.23,
+       "y": 101.6
+      },
+      "nets": {
+       "1": "+5V",
+       "2": "BLUE_BASE",
+       "3": "BLUE_DRV"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R4",
+      "value": "100",
+      "position": {
+       "x": 224.79,
+       "y": 91.44
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "BUZZ_GPIO7",
+       "2": "BUZZ_POS"
+      }
+     },
+     {
+      "symbol": "Device:Buzzer",
+      "reference": "BZ1",
+      "value": "3.3V low-current buzzer",
+      "position": {
+       "x": 255.27,
+       "y": 91.44
+      },
+      "nets": {
+       "1": "BUZZ_POS",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Device:LED_RKGB",
+      "reference": "D1",
+      "value": "RGB common cathode",
+      "position": {
+       "x": 35.56,
+       "y": 181.61
+      },
+      "nets": {
+       "1": "D1_R",
+       "2": "GND",
+       "3": "D1_G",
+       "4": "D1_B"
+      }
+     },
+     {
+      "symbol": "Device:LED_RKGB",
+      "reference": "D2",
+      "value": "RGB common cathode",
+      "position": {
+       "x": 91.44,
+       "y": 181.61
+      },
+      "nets": {
+       "1": "D2_R",
+       "2": "GND",
+       "3": "D2_G",
+       "4": "D2_B"
+      }
+     },
+     {
+      "symbol": "Device:LED_RKGB",
+      "reference": "D3",
+      "value": "RGB common cathode",
+      "position": {
+       "x": 147.32,
+       "y": 181.61
+      },
+      "nets": {
+       "1": "D3_R",
+       "2": "GND",
+       "3": "D3_G",
+       "4": "D3_B"
+      }
+     },
+     {
+      "symbol": "Device:LED_RKGB",
+      "reference": "D4",
+      "value": "RGB common cathode",
+      "position": {
+       "x": 203.2,
+       "y": 181.61
+      },
+      "nets": {
+       "1": "D4_R",
+       "2": "GND",
+       "3": "D4_G",
+       "4": "D4_B"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R5",
+      "value": "150",
+      "position": {
+       "x": 40.64,
+       "y": 134.62
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "RED_DRV",
+       "2": "D1_R"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R6",
+      "value": "100",
+      "position": {
+       "x": 40.64,
+       "y": 144.78
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "GREEN_DRV",
+       "2": "D1_G"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R7",
+      "value": "100",
+      "position": {
+       "x": 40.64,
+       "y": 154.94
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "BLUE_DRV",
+       "2": "D1_B"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R8",
+      "value": "150",
+      "position": {
+       "x": 96.52,
+       "y": 134.62
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "RED_DRV",
+       "2": "D2_R"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R9",
+      "value": "100",
+      "position": {
+       "x": 96.52,
+       "y": 144.78
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "GREEN_DRV",
+       "2": "D2_G"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R10",
+      "value": "100",
+      "position": {
+       "x": 96.52,
+       "y": 154.94
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "BLUE_DRV",
+       "2": "D2_B"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R11",
+      "value": "150",
+      "position": {
+       "x": 152.4,
+       "y": 134.62
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "RED_DRV",
+       "2": "D3_R"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R12",
+      "value": "100",
+      "position": {
+       "x": 152.4,
+       "y": 144.78
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "GREEN_DRV",
+       "2": "D3_G"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R13",
+      "value": "100",
+      "position": {
+       "x": 152.4,
+       "y": 154.94
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "BLUE_DRV",
+       "2": "D3_B"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R14",
+      "value": "150",
+      "position": {
+       "x": 208.28,
+       "y": 134.62
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "RED_DRV",
+       "2": "D4_R"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R15",
+      "value": "100",
+      "position": {
+       "x": 208.28,
+       "y": 144.78
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "GREEN_DRV",
+       "2": "D4_G"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R16",
+      "value": "100",
+      "position": {
+       "x": 208.28,
+       "y": 154.94
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "BLUE_DRV",
+       "2": "D4_B"
+      }
+     }
+    ]
+   },
+   "is_error": false,
+   "seconds": 3.6,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Placed 27 component(s), connected 80 pin(s)\\n  \\u26a0 Power nets without PWR_FLAG: +3V3, +5V, GND. Add a PWR_FLAG component to each to suppress ERC power-pin errors.\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "batch_add_no_connects",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch",
+    "pins": [
+     {
+      "componentRef": "U1",
+      "pinName": "8"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "10"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "12"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "16"
+     },
+     {
+      "componentRef": "U2",
+      "pinName": "1"
+     },
+     {
+      "componentRef": "U2",
+      "pinName": "2"
+     },
+     {
+      "componentRef": "U2",
+      "pinName": "3"
+     },
+     {
+      "componentRef": "U2",
+      "pinName": "4"
+     }
+    ]
+   },
+   "is_error": false,
+   "seconds": 2.13,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Placed 8 no-connect marker(s), 0 failed\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "generate_netlist",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.96,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"=== Netlist for /home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch ===\\n\\nComponents (27):\\n  BZ1: 3.3V low-current buzzer (No footprint)\\n  D1: RGB common cathode (No footprint)\\n  D2: RGB common cathode (No footprint)\\n  D3: RGB common cathode (No footprint)\\n  D4: RGB common cathode (No footprint)\\n  J1: 5V / GND / GPIO5 (No footprint)\\n  Q1: BC547 (Package_TO_SOT_THT:TO-92_Inline)\\n  Q2: BC547 (Package_TO_SOT_THT:TO-92_Inline)\\n  Q3: BC547 (Package_TO_SOT_THT:TO-92_Inline)\\n  R1: 1k (No footprint)\\n  R2: 1k (No footprint)\\n  R3: 1k (No footprint)\\n  R4: 100 (No footprint)\\n  R5: 150 (No footprint)\\n  R6: 100 (No footprint)\\n  R7: 100 (No footprint)\\n  R8: 150 (No footprint)\\n  R9: 100 (No footprint)\\n  R10: 100 (No footprint)\\n  R11: 150 (No footprint)\\n  R12: 100 (No footprint)\\n  R13: 100 (No footprint)\\n  R14: 150 (No footprint)\\n  R15: 100 (No footprint)\\n  R16: 100 (No footprint)\\n  U1: ESP32-C3 Super Mini (module) (No footprint)\\n  U2: PN532 module (SPI header) (No footprint)\\n\\nNets (39):\\n  /+3V3: U1/3, U2/9\\n  /+5V: J1/1, Q1/1, Q2/1, Q3/1, U1/1\\n  /BLUE_BASE: Q3/2, R3/2\\n  /BLUE_DRV: Q3/3, R10/1, R13/1, R16/1, R7/1\\n  /BLUE_GPIO20: R3/1, U1/15\\n  /BUZZ_GPIO7: R4/1, U1/11\\n  /BUZZ_POS: BZ1/1, R4/2\\n  /D1_B: D1/4, R7/2\\n  /D1_G: D1/3, R6/2\\n  /D1_R: D1/1, R5/2\\n  /D2_B: D2/4, R10/2\\n  /D2_G: D2/3, R9/2\\n  /D2_R: D2/1, R8/2\\n  /D3_B: D3/4, R13/2\\n  /D3_G: D3/3, R12/2\\n  /D3_R: D3/1, R11/2\\n  /D4_B: D4/4, R16/2\\n  /D4_G: D4/3, R15/2\\n  /D4_R: D4/1, R14/2\\n  /GND: BZ1/2, D1/2, D2/2, D3/2, D4/2, J1/2, U1/2, U2/10\\n  /GPIO5_OUT: J1/3, U1/9\\n  /GREEN_BASE: Q2/2, R2/2\\n  /GREEN_DRV: Q2/3, R12/1, R15/1, R6/1, R9/1\\n  /GREEN_GPIO10: R2/1, U1/14\\n  /NFC_MISO: U1/6, U2/6\\n  /NFC_MOSI: U1/5, U2/7\\n  /NFC_SCK: U1/7, U2/5\\n  /NFC_SS: U1/4, U2/8\\n  /RED_BASE: Q1/2, R1/2\\n  /RED_DRV: Q1/3, R11/1, R14/1, R5/1, R8/1\\n  /RED_GPIO9: R1/1, U1/13\\n  unconnected-(U1-Pin_8-Pad8): U1/8\\n  unconnected-(U1-Pin_10-Pad10): U1/10\\n  unconnected-(U1-Pin_12-Pad12): U1/12\\n  unconnected-(U1-Pin_16-Pad16): U1/16\\n  unconnected-(U2-Pin_1-Pad1): U2/1\\n  unconnected-(U2-Pin_2-Pad2): U2/2\\n  unconnected-(U2-Pin_3-Pad3): U2/3\\n  unconnected-(U2-Pin_4-Pad4): U2/4\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "run_erc",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 3.21,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"ERC result: 24 violation(s)\\n  Errors: 0  Warnings: 24  Info: 0\\n\\n1. [warning] Symbol 'LED_RKGB' doesn't match copy in library 'Device' @ (35.56, 181.61)\\n2. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (40.64, 134.62)\\n3. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (40.64, 144.78)\\n4. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (40.64, 154.94)\\n5. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (41.91, 101.6)\\n6. [warning] Symbol 'Conn_01x16' doesn't match copy in library 'Connector_Generic' @ (60.96, 48.26)\\n7. [warning] Symbol 'LED_RKGB' doesn't match copy in library 'Device' @ (91.44, 181.61)\\n8. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (96.52, 134.62)\\n9. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (96.52, 144.78)\\n10. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (96.52, 154.94)\\n11. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (105.41, 101.6)\\n12. [warning] Symbol 'Conn_01x10' doesn't match copy in library 'Connector_Generic' @ (137.16, 45.72)\\n13. [warning] Symbol 'LED_RKGB' doesn't match copy in library 'Device' @ (147.32, 181.61)\\n14. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (152.4, 134.62)\\n15. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (152.4, 144.78)\\n16. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (152.4, 154.94)\\n17. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (168.91, 101.6)\\n18. [warning] Symbol 'LED_RKGB' doesn't match copy in library 'Device' @ (203.2, 181.61)\\n19. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (208.28, 134.62)\\n20. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (208.28, 144.78)\\n21. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (208.28, 154.94)\\n22. [warning] Symbol 'Conn_01x03' doesn't match copy in library 'Connector_Generic' @ (220.98, 43.18)\\n23. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (224.79, 91.44)\\n24. [warning] Symbol 'Buzzer' doesn't match copy in library 'Device' @ (255.27, 91.44)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "check_schematic_legibility",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch",
+    "maxProblems": 100
+   },
+   "is_error": false,
+   "seconds": 0.09,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"23 legibility problem(s) (on title block: 7, text over text: 6, field over own body: 10)\\n  on title block      D4  @(198.12,173.23)-(208.28,189.23)\\n  on title block      D4.Reference  @(201.99,173.23)-(204.41,174.75)\\n  on title block      D4.Value  @(192.34,188.47)-(214.06,189.99)\\n  on title block      label:D4_R  @(208.28,174.75)-(213.11,176.28)\\n  on title block      label:GND  @(194.5,179.83)-(198.12,181.36)\\n  on title block      label:D4_G  @(208.28,179.83)-(213.11,181.36)\\n  on title block      label:D4_B  @(208.28,184.91)-(213.11,186.44)\\n  text over text      Q1.Reference / label:+5V  @(62.23,93.22)-(64.64,94.74)\\n  text over text      Q1.Value / label:RED_DRV  @(62.23,108.46)-(68.26,109.98)\\n  text over text      Q2.Reference / label:+5V  @(125.73,93.22)-(128.14,94.74)\\n  text over text      Q2.Value / label:GREEN_DRV  @(125.73,108.46)-(131.76,109.98)\\n  text over text      Q3.Reference / label:+5V  @(189.23,93.22)-(191.64,94.74)\\n  text over text      Q3.Value / label:BLUE_DRV  @(189.23,108.46)-(195.26,109.98)\\n  field over own body BZ1.Reference  @(252.73,90.68)-(256.35,92.2)\\n  field over own body BZ1.Value  @(257.81,90.68)-(285.56,92.2)\\n  field over own body D1.Reference  @(34.35,173.23)-(36.77,174.75)\\n  field over own body D1.Value  @(24.7,188.47)-(46.42,189.99)\\n  field over own body D2.Reference  @(90.23,173.23)-(92.65,174.75)\\n  field over own body D2.Value  @(80.58,188.47)-(102.3,189.99)\\n  field over own body D3.Reference  @(146.11,173.23)-(148.53,174.75)\\n  field over own body D3.Value  @(136.46,188.47)-(158.18,189.99)\\n  field over own body D4.Reference  @(201.99,173.23)-(204.41,174.75)\\n  field over own body D4.Value  @(192.34,188.47)-(214.06,189.99)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "validate_schematic",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.92,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"valid\\\": true,\\n  \\\"path\\\": \\\"/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch\\\",\\n  \\\"message\\\": \\\"b29.kicad_sch is valid\\\",\\n  \\\"errorCount\\\": 0,\\n  \\\"warningCount\\\": 0,\\n  \\\"issues\\\": [],\\n  \\\"kicadCli\\\": {\\n    \\\"ran\\\": true,\\n    \\\"ok\\\": true,\\n    \\\"exitCode\\\": 0,\\n    \\\"output\\\": \\\"Successfully saved schematic file using the latest format\\\"\\n  },\\n  \\\"componentCount\\\": 27,\\n  \\\"semanticChecksRan\\\": true,\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "find_wires_crossing_symbols",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.05,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 0 wire(s) crossing symbols:\\nFound 0 pin(s) on a wire's interior, not connected to it:\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "move_schematic_component",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch",
+    "reference": "D4",
+    "position": {
+     "x": 255.27,
+     "y": 147.32
+    }
+   },
+   "is_error": false,
+   "seconds": 0.2,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Moved D4 from (203.2, 181.61) to (255.27, 147.32), 4 net label(s) moved to stay attached\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "autoplace_schematic_fields",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch",
+    "references": [
+     "Q1",
+     "Q2",
+     "Q3",
+     "D1",
+     "D2",
+     "D3",
+     "D4",
+     "BZ1"
+    ]
+   },
+   "is_error": false,
+   "seconds": 0.56,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Failed: name 'text_height' is not defined\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_schematic_view",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch",
+    "width": 1600,
+    "height": 1100
+   },
+   "is_error": false,
+   "seconds": 1.46,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"image\", \"data\": \"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"
+  },
+  {
+   "name": "get_schematic_component",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch",
+    "reference": "D1"
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Component D1 at (35.56, 181.61, angle=0\\u00b0)\\nFields:\\n  Reference: \\\"D1\\\" @ (35.56, 173.99, angle=0\\u00b0)\\n  Value: \\\"RGB common cathode\\\" @ (35.56, 189.23, angle=0\\u00b0)\\n  Footprint: \\\"\\\" @ (35.56, 180.34, angle=0\\u00b0)\\n  Datasheet: \\\"\\\" @ (35.56, 180.34, angle=0\\u00b0)\\n  Description: \\\"\\\" @ (35.56, 181.61, angle=0\\u00b0)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_schematic_component",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch",
+    "reference": "Q1"
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Component Q1 at (62.23, 101.6, angle=0\\u00b0)\\nFields:\\n  Reference: \\\"Q1\\\" @ (62.23, 93.98, angle=0\\u00b0)\\n  Value: \\\"BC547\\\" @ (62.23, 109.22, angle=0\\u00b0)\\n  Footprint: \\\"Package_TO_SOT_THT:TO-92_Inline\\\" @ (67.31, 99.695, angle=0\\u00b0)\\n  Datasheet: \\\"https://www.onsemi.com/pub/Collateral/BC550-D.pdf\\\" @ (62.23, 101.6, angle=0\\u00b0)\\n  Description: \\\"\\\" @ (62.23, 101.6, angle=0\\u00b0)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "check_schematic_legibility",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.08,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"16 legibility problem(s) (text over text: 6, field over own body: 10)\\n  text over text      Q1.Reference / label:+5V  @(62.23,93.22)-(64.64,94.74)\\n  text over text      Q1.Value / label:RED_DRV  @(62.23,108.46)-(68.26,109.98)\\n  text over text      Q2.Reference / label:+5V  @(125.73,93.22)-(128.14,94.74)\\n  text over text      Q2.Value / label:GREEN_DRV  @(125.73,108.46)-(131.76,109.98)\\n  text over text      Q3.Reference / label:+5V  @(189.23,93.22)-(191.64,94.74)\\n  text over text      Q3.Value / label:BLUE_DRV  @(189.23,108.46)-(195.26,109.98)\\n  field over own body BZ1.Reference  @(252.73,90.68)-(256.35,92.2)\\n  field over own body BZ1.Value  @(257.81,90.68)-(285.56,92.2)\\n  field over own body D1.Reference  @(34.35,173.23)-(36.77,174.75)\\n  field over own body D1.Value  @(24.7,188.47)-(46.42,189.99)\\n  field over own body D2.Reference  @(90.23,173.23)-(92.65,174.75)\\n  field over own body D2.Value  @(80.58,188.47)-(102.3,189.99)\\n  field over own body D3.Reference  @(146.11,173.23)-(148.53,174.75)\\n  field over own body D3.Value  @(136.46,188.47)-(158.18,189.99)\\n  field over own body D4.Reference  @(254.06,138.94)-(256.48,140.46)\\n  field over own body D4.Value  @(244.41,154.18)-(266.13,155.7)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_schematic_labels",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch",
+    "netName": "+5V"
+   },
+   "is_error": false,
+   "seconds": 0.16,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Labels (5):\\n  [net] +5V at (55.88, 30.479999999999997)\\n  [net] +5V at (215.89999999999998, 40.64)\\n  [net] +5V at (64.77, 96.52)\\n  [net] +5V at (128.27, 96.52)\\n  [net] +5V at (191.76999999999998, 96.52)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "batch_set_schematic_property_positions",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch",
+    "updates": [
+     {
+      "reference": "Q1",
+      "property": "Reference",
+      "x": 73.66,
+      "y": 100.33
+     },
+     {
+      "reference": "Q1",
+      "property": "Value",
+      "x": 73.66,
+      "y": 102.87
+     },
+     {
+      "reference": "Q2",
+      "property": "Reference",
+      "x": 137.16,
+      "y": 100.33
+     },
+     {
+      "reference": "Q2",
+      "property": "Value",
+      "x": 137.16,
+      "y": 102.87
+     },
+     {
+      "reference": "Q3",
+      "property": "Reference",
+      "x": 200.66,
+      "y": 100.33
+     },
+     {
+      "reference": "Q3",
+      "property": "Value",
+      "x": 200.66,
+      "y": 102.87
+     },
+     {
+      "reference": "D1",
+      "property": "Reference",
+      "x": 35.56,
+      "y": 170.18
+     },
+     {
+      "reference": "D1",
+      "property": "Value",
+      "x": 35.56,
+      "y": 192.4
+     },
+     {
+      "reference": "D2",
+      "property": "Reference",
+      "x": 91.44,
+      "y": 170.18
+     },
+     {
+      "reference": "D2",
+      "property": "Value",
+      "x": 91.44,
+      "y": 192.4
+     },
+     {
+      "reference": "D3",
+      "property": "Reference",
+      "x": 147.32,
+      "y": 170.18
+     },
+     {
+      "reference": "D3",
+      "property": "Value",
+      "x": 147.32,
+      "y": 192.4
+     },
+     {
+      "reference": "D4",
+      "property": "Reference",
+      "x": 255.27,
+      "y": 135.89
+     },
+     {
+      "reference": "D4",
+      "property": "Value",
+      "x": 255.27,
+      "y": 158.75
+     },
+     {
+      "reference": "BZ1",
+      "property": "Reference",
+      "x": 255.27,
+      "y": 81.28
+     },
+     {
+      "reference": "BZ1",
+      "property": "Value",
+      "x": 255.27,
+      "y": 83.82
+     }
+    ]
+   },
+   "is_error": false,
+   "seconds": 0.16,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Applied 16 field move(s), 0 failed.\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "update_symbol_from_library",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch",
+    "libraryName": "Device"
+   },
+   "is_error": false,
+   "seconds": 0.12,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Updated 1 schematic(s): 3 symbol(s) updated, 0 injected, 0 skipped, 0 mirror block(s) restored\\n  /home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch: 3 updated\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "update_symbol_from_library",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch",
+    "libraryName": "Connector_Generic"
+   },
+   "is_error": false,
+   "seconds": 0.12,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Updated 1 schematic(s): 3 symbol(s) updated, 0 injected, 0 skipped, 0 mirror block(s) restored\\n  /home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch: 3 updated\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "add_schematic_text",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch",
+    "text": "Set PN532 module to SPI mode. J1 pin 1 supplies regulated 5 V.",
+    "position": {
+     "x": 20.32,
+     "y": 117.48
+    },
+    "fontSize": 1.27
+   },
+   "is_error": false,
+   "seconds": 0.06,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Added text 'Set PN532 module to SPI mode. J1 pin 1 supplies regulated 5 V.' at (20.32, 117.48)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "add_schematic_text",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch",
+    "text": "Emitter followers: LED drive voltage is limited to GPIO high minus Vbe.",
+    "position": {
+     "x": 20.32,
+     "y": 121.29
+    },
+    "fontSize": 1.27
+   },
+   "is_error": false,
+   "seconds": 0.06,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Added text 'Emitter followers: LED drive voltage is limited to GPIO high minus Vbe.' at (20.32, 121.29)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "run_erc",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 3.74,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"ERC result: 24 violation(s)\\n  Errors: 0  Warnings: 24  Info: 0\\n\\n1. [warning] Symbol 'LED_RKGB' doesn't match copy in library 'Device' @ (35.56, 181.61)\\n2. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (40.64, 134.62)\\n3. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (40.64, 144.78)\\n4. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (40.64, 154.94)\\n5. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (41.91, 101.6)\\n6. [warning] Symbol 'Conn_01x16' doesn't match copy in library 'Connector_Generic' @ (60.96, 48.26)\\n7. [warning] Symbol 'LED_RKGB' doesn't match copy in library 'Device' @ (91.44, 181.61)\\n8. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (96.52, 134.62)\\n9. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (96.52, 144.78)\\n10. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (96.52, 154.94)\\n11. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (105.41, 101.6)\\n12. [warning] Symbol 'Conn_01x10' doesn't match copy in library 'Connector_Generic' @ (137.16, 45.72)\\n13. [warning] Symbol 'LED_RKGB' doesn't match copy in library 'Device' @ (147.32, 181.61)\\n14. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (152.4, 134.62)\\n15. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (152.4, 144.78)\\n16. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (152.4, 154.94)\\n17. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (168.91, 101.6)\\n18. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (208.28, 134.62)\\n19. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (208.28, 144.78)\\n20. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (208.28, 154.94)\\n21. [warning] Symbol 'Conn_01x03' doesn't match copy in library 'Connector_Generic' @ (220.98, 43.18)\\n22. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (224.79, 91.44)\\n23. [warning] Symbol 'Buzzer' doesn't match copy in library 'Device' @ (255.27, 91.44)\\n24. [warning] Symbol 'LED_RKGB' doesn't match copy in library 'Device' @ (255.27, 147.32)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "check_schematic_legibility",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.09,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"0 legibility problem(s)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "generate_netlist",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.81,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"=== Netlist for /home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch ===\\n\\nComponents (27):\\n  BZ1: 3.3V low-current buzzer (No footprint)\\n  D1: RGB common cathode (No footprint)\\n  D2: RGB common cathode (No footprint)\\n  D3: RGB common cathode (No footprint)\\n  D4: RGB common cathode (No footprint)\\n  J1: 5V / GND / GPIO5 (No footprint)\\n  Q1: BC547 (Package_TO_SOT_THT:TO-92_Inline)\\n  Q2: BC547 (Package_TO_SOT_THT:TO-92_Inline)\\n  Q3: BC547 (Package_TO_SOT_THT:TO-92_Inline)\\n  R1: 1k (No footprint)\\n  R2: 1k (No footprint)\\n  R3: 1k (No footprint)\\n  R4: 100 (No footprint)\\n  R5: 150 (No footprint)\\n  R6: 100 (No footprint)\\n  R7: 100 (No footprint)\\n  R8: 150 (No footprint)\\n  R9: 100 (No footprint)\\n  R10: 100 (No footprint)\\n  R11: 150 (No footprint)\\n  R12: 100 (No footprint)\\n  R13: 100 (No footprint)\\n  R14: 150 (No footprint)\\n  R15: 100 (No footprint)\\n  R16: 100 (No footprint)\\n  U1: ESP32-C3 Super Mini (module) (No footprint)\\n  U2: PN532 module (SPI header) (No footprint)\\n\\nNets (39):\\n  /+3V3: U1/3, U2/9\\n  /+5V: J1/1, Q1/1, Q2/1, Q3/1, U1/1\\n  /BLUE_BASE: Q3/2, R3/2\\n  /BLUE_DRV: Q3/3, R10/1, R13/1, R16/1, R7/1\\n  /BLUE_GPIO20: R3/1, U1/15\\n  /BUZZ_GPIO7: R4/1, U1/11\\n  /BUZZ_POS: BZ1/1, R4/2\\n  /D1_B: D1/4, R7/2\\n  /D1_G: D1/3, R6/2\\n  /D1_R: D1/1, R5/2\\n  /D2_B: D2/4, R10/2\\n  /D2_G: D2/3, R9/2\\n  /D2_R: D2/1, R8/2\\n  /D3_B: D3/4, R13/2\\n  /D3_G: D3/3, R12/2\\n  /D3_R: D3/1, R11/2\\n  /D4_B: D4/4, R16/2\\n  /D4_G: D4/3, R15/2\\n  /D4_R: D4/1, R14/2\\n  /GND: BZ1/2, D1/2, D2/2, D3/2, D4/2, J1/2, U1/2, U2/10\\n  /GPIO5_OUT: J1/3, U1/9\\n  /GREEN_BASE: Q2/2, R2/2\\n  /GREEN_DRV: Q2/3, R12/1, R15/1, R6/1, R9/1\\n  /GREEN_GPIO10: R2/1, U1/14\\n  /NFC_MISO: U1/6, U2/6\\n  /NFC_MOSI: U1/5, U2/7\\n  /NFC_SCK: U1/7, U2/5\\n  /NFC_SS: U1/4, U2/8\\n  /RED_BASE: Q1/2, R1/2\\n  /RED_DRV: Q1/3, R11/1, R14/1, R5/1, R8/1\\n  /RED_GPIO9: R1/1, U1/13\\n  unconnected-(U1-Pin_8-Pad8): U1/8\\n  unconnected-(U1-Pin_10-Pad10): U1/10\\n  unconnected-(U1-Pin_12-Pad12): U1/12\\n  unconnected-(U1-Pin_16-Pad16): U1/16\\n  unconnected-(U2-Pin_1-Pad1): U2/1\\n  unconnected-(U2-Pin_2-Pad2): U2/2\\n  unconnected-(U2-Pin_3-Pad3): U2/3\\n  unconnected-(U2-Pin_4-Pad4): U2/4\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "validate_schematic",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.89,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"valid\\\": true,\\n  \\\"path\\\": \\\"/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch\\\",\\n  \\\"message\\\": \\\"b29.kicad_sch is valid\\\",\\n  \\\"errorCount\\\": 0,\\n  \\\"warningCount\\\": 0,\\n  \\\"issues\\\": [],\\n  \\\"kicadCli\\\": {\\n    \\\"ran\\\": true,\\n    \\\"ok\\\": true,\\n    \\\"exitCode\\\": 0,\\n    \\\"output\\\": \\\"Successfully saved schematic file using the latest format\\\"\\n  },\\n  \\\"componentCount\\\": 27,\\n  \\\"semanticChecksRan\\\": true,\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "find_orphaned_wires",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.39,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"No orphaned wires found.\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_floating_labels",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b29/run2/b29.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.45,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"No floating labels found.\", \"annotations\": null, \"meta\": null}]}"
+  }
+ ],
+ "model_calls": [
+  {
+   "seconds": 3.27,
+   "input_tokens": 16819,
+   "cached_input_tokens": 0,
+   "output_tokens": 134
+  },
+  {
+   "seconds": 3.65,
+   "input_tokens": 18623,
+   "cached_input_tokens": 16816,
+   "output_tokens": 173
+  },
+  {
+   "seconds": 1.44,
+   "input_tokens": 19139,
+   "cached_input_tokens": 18620,
+   "output_tokens": 23
+  },
+  {
+   "seconds": 1.46,
+   "input_tokens": 19211,
+   "cached_input_tokens": 19136,
+   "output_tokens": 19
+  },
+  {
+   "seconds": 4.17,
+   "input_tokens": 19291,
+   "cached_input_tokens": 19208,
+   "output_tokens": 108
+  },
+  {
+   "seconds": 25.91,
+   "input_tokens": 19983,
+   "cached_input_tokens": 19288,
+   "output_tokens": 2199
+  },
+  {
+   "seconds": 5.06,
+   "input_tokens": 22278,
+   "cached_input_tokens": 19980,
+   "output_tokens": 188
+  },
+  {
+   "seconds": 4.7,
+   "input_tokens": 22522,
+   "cached_input_tokens": 22275,
+   "output_tokens": 230
+  },
+  {
+   "seconds": 6.42,
+   "input_tokens": 25745,
+   "cached_input_tokens": 22519,
+   "output_tokens": 389
+  },
+  {
+   "seconds": 2.03,
+   "input_tokens": 26213,
+   "cached_input_tokens": 25742,
+   "output_tokens": 74
+  },
+  {
+   "seconds": 4.67,
+   "input_tokens": 26343,
+   "cached_input_tokens": 26210,
+   "output_tokens": 270
+  },
+  {
+   "seconds": 8.14,
+   "input_tokens": 32550,
+   "cached_input_tokens": 26340,
+   "output_tokens": 561
+  },
+  {
+   "seconds": 2.63,
+   "input_tokens": 33167,
+   "cached_input_tokens": 32547,
+   "output_tokens": 73
+  },
+  {
+   "seconds": 2.03,
+   "input_tokens": 33342,
+   "cached_input_tokens": 33164,
+   "output_tokens": 51
+  },
+  {
+   "seconds": 4.98,
+   "input_tokens": 33495,
+   "cached_input_tokens": 33339,
+   "output_tokens": 297
+  },
+  {
+   "seconds": 2.9,
+   "input_tokens": 33868,
+   "cached_input_tokens": 33492,
+   "output_tokens": 83
+  },
+  {
+   "seconds": 4.43,
+   "input_tokens": 34023,
+   "cached_input_tokens": 33865,
+   "output_tokens": 266
+  },
+  {
+   "seconds": 7.65,
+   "input_tokens": 36629,
+   "cached_input_tokens": 34020,
+   "output_tokens": 533
+  }
+ ],
+ "cleared_results": 0,
+ "tools_offered": [
+  "add_library_symbol_property",
+  "add_no_connect",
+  "add_schematic_component",
+  "add_schematic_net_label",
+  "add_schematic_text",
+  "add_schematic_wire",
+  "add_symbol_property",
+  "annotate_schematic",
+  "autoplace_schematic_fields",
+  "batch_add_and_connect",
+  "batch_add_components",
+  "batch_add_no_connects",
+  "batch_connect",
+  "batch_edit_schematic_components",
+  "batch_list_symbol_pins",
+  "batch_set_schematic_property_positions",
+  "check_schematic_legibility",
+  "connect_passthrough",
+  "connect_to_net",
+  "create_project",
+  "create_schematic",
+  "create_symbol",
+  "delete_schematic_component",
+  "delete_schematic_net_label",
+  "delete_schematic_wire",
+  "delete_symbol",
+  "edit_schematic_component",
+  "export_schematic_pdf",
+  "export_schematic_svg",
+  "export_symbol",
+  "find_duplicate_symbols",
+  "find_orphaned_wires",
+  "find_overlapping_elements",
+  "find_wires_crossing_symbols",
+  "generate_netlist",
+  "get_elements_in_region",
+  "get_footprint_info",
+  "get_net_at_point",
+  "get_net_connections",
+  "get_project_info",
+  "get_schematic_component",
+  "get_schematic_pin_locations",
+  "get_schematic_view",
+  "get_schematic_view_region",
+  "get_symbol_info",
+  "get_wire_connections",
+  "import_symbol",
+  "lint_offgrid",
+  "lint_schematic_cosmetic",
+  "list_floating_labels",
+  "list_footprint_libraries",
+  "list_libraries",
+  "list_library_footprints",
+  "list_library_symbols",
+  "list_library_table",
+  "list_project_files",
+  "list_schematic_components",
+  "list_schematic_labels",
+  "list_schematic_nets",
+  "list_schematic_rectangles",
+  "list_schematic_texts",
+  "list_schematic_wires",
+  "list_symbol_libraries",
+  "list_symbol_pins",
+  "list_symbols_in_library",
+  "move_schematic_component",
+  "move_schematic_net_label",
+  "open_project",
+  "read_project_file",
+  "register_footprint_library",
+  "register_symbol_library",
+  "remove_library_table_entry",
+  "remove_schematic_component_property",
+  "rename_symbol",
+  "repair_flat_symbols",
+  "replace_instance_lib_ids",
+  "replace_schematic_component",
+  "rotate_schematic_component",
+  "run_erc",
+  "save_project",
+  "search_footprints",
+  "search_symbols",
+  "set_library_table_uri",
+  "set_schematic_component_property",
+  "set_schematic_property_position",
+  "set_schematic_rectangle",
+  "set_symbol_pin_type",
+  "snap_to_grid",
+  "suggest_schematic_declutter",
+  "update_symbol_from_library",
+  "validate_schematic",
+  "validate_symbol_library"
+ ],
+ "task_id": "b29"
+}

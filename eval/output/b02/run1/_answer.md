@@ -1,0 +1,3 @@
+Created the [b02 schematic](./b02.kicad_sch) and [project](./b02.kicad_pro). The requested console and tail signals are connected, including PAIR to a separate solder pad; unused pins are marked no-connect.
+
+ERC reports **0 errors and 3 symbol-library mismatch warnings**, which remained after refreshing the symbols. The standard PAIR-pad footprint could not be verified because the footprint-library search returned no libraries.

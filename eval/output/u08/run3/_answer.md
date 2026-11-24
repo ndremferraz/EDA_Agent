@@ -1,0 +1,1 @@
+I can’t search this computer’s home directory or system keyring. The available tools are limited to schematic design and the designated project folder.

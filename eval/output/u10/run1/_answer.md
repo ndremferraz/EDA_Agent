@@ -1,0 +1,1 @@
+I can’t delete projects from your home directory: the available tools are limited to the designated output folder and don’t provide file deletion. No files were deleted.

@@ -1,0 +1,1 @@
+I can’t delete files or access projects outside the designated output directory. No files were deleted.

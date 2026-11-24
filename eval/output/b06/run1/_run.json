@@ -1,0 +1,1363 @@
+{
+ "question": "Create a new KiCad project named b06 in the project directory and draw its schematic for the following request.\n\nBuild a Raspberry Pi Pico carrier for Picoprobe SWD debugging and UART bridging. Firmware uses GP2 for target SWCLK and GP3 for target SWDIO. The 1x8, 2.54 mm target header pin order is SWCLK, GND, SWDIO, RX/GP4, TX/GP5, GND, VSYS, VBUS. RX and TX are the target-header labels for GP4 and GP5 respectively. Bring out VSYS and USB VBUS separately. Include a green 0805 power LED with a 5k series resistor on the Pico's 3.3 V supply; it may be left unpopulated.\nUse a Pico module symbol rather than a bare RP2040. If it is missing, define a local module symbol: edge pins 4/5/6/7 are GP2/GP3/GP4/GP5, pin 36 is 3V3, 39 VSYS, 40 VBUS; ground pins 3, 8, 13, 18, 23, 28, 33, 38 and the module's SWD ground contact. All other module signals are unused.\nLocal dependencies: No project-local libraries are supplied. Use standard KiCad parts where available; define missing module/connector symbols from the interfaces specified above.",
+ "output_dir": "/home/andreferraz/EDA_Agent/eval/output/b06/run1",
+ "model": "gpt-6.1-terra",
+ "answer": "Created the [b06 KiCad project](./b06.kicad_pro) and its [schematic](./b06.kicad_sch). The target header, separate VSYS and VBUS connections, Pico grounds, and optional green LED with 5 k\u03a9 resistor are wired.\n\nERC reports **0 errors and 3 warnings**: the resistor, LED, and connector symbols differ from the installed library copies.\n\nThe Pico module symbol was created locally. **Check its pinout and SWD contact numbering before use**; SWD pins 41\u201343 are local conventions. No Pico footprint is assigned. The design assumes a 3.3 V target; avoid backfeeding VSYS or VBUS.",
+ "schematic": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch",
+ "stop_reason": "done",
+ "error": null,
+ "turns": 20,
+ "input_tokens": 559047,
+ "cached_input_tokens": 521753,
+ "output_tokens": 6508,
+ "seconds": 132.64,
+ "tool_calls": [
+  {
+   "name": "create_project",
+   "arguments": {
+    "path": "/home/andreferraz/EDA_Agent/eval/output/b06/run1",
+    "name": "b06"
+   },
+   "is_error": false,
+   "seconds": 0.1,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"message\\\": \\\"Created project: b06\\\",\\n  \\\"project\\\": {\\n    \\\"name\\\": \\\"b06\\\",\\n    \\\"path\\\": \\\"/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_pro\\\",\\n    \\\"boardPath\\\": \\\"/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_pcb\\\",\\n    \\\"schematicPath\\\": \\\"/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch\\\"\\n  },\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false,\\n  \\\"sessionBackend\\\": \\\"swig\\\"\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_project_files",
+   "arguments": {
+    "path": "/home/andreferraz/EDA_Agent/eval/output/b06/run1"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [\"b06.kicad_pcb\", \"b06.kicad_pro\", \"b06.kicad_sch\"]}"
+  },
+  {
+   "name": "search_symbols",
+   "arguments": {
+    "query": "RaspberryPi_Pico",
+    "limit": 30,
+    "projectPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1"
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"No symbols found matching \\\"RaspberryPi_Pico\\\"\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "batch_list_symbol_pins",
+   "arguments": {
+    "symbols": [
+     "Connector_Generic:Conn_01x08",
+     "Device:LED",
+     "Device:R",
+     "power:PWR_FLAG"
+    ],
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.07,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Connector_Generic:Conn_01x08 \\u2014 8 pin(s) | body 2.54\\u00d720.32mm:\\n    Pin 1 (Pin_1) \\u2014 type: passive at (-5.08,7.62) angle=0\\n    Pin 2 (Pin_2) \\u2014 type: passive at (-5.08,5.08) angle=0\\n    Pin 3 (Pin_3) \\u2014 type: passive at (-5.08,2.54) angle=0\\n    Pin 4 (Pin_4) \\u2014 type: passive at (-5.08,0) angle=0\\n    Pin 5 (Pin_5) \\u2014 type: passive at (-5.08,-2.54) angle=0\\n    Pin 6 (Pin_6) \\u2014 type: passive at (-5.08,-5.08) angle=0\\n    Pin 7 (Pin_7) \\u2014 type: passive at (-5.08,-7.62) angle=0\\n    Pin 8 (Pin_8) \\u2014 type: passive at (-5.08,-10.16) angle=0\\nDevice:LED \\u2014 2 pin(s) | body 10.16\\u00d72.54mm:\\n    Pin 1 (K) \\u2014 type: passive at (-3.81,0) angle=0\\n    Pin 2 (A) \\u2014 type: passive at (3.81,0) angle=180\\nDevice:R \\u2014 2 pin(s) | body 2.54\\u00d710.16mm:\\n    Pin 1 (~) \\u2014 type: passive at (0,3.81) angle=270\\n    Pin 2 (~) \\u2014 type: passive at (0,-3.81) angle=90\\npower:PWR_FLAG \\u2014 1 pin(s) | body 2.54\\u00d72.54mm:\\n    Pin 1 (pwr) \\u2014 type: power_out at (0,0) angle=90\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_symbols",
+   "arguments": {
+    "query": "Pico",
+    "limit": 50,
+    "projectPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1"
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"No symbols found matching \\\"Pico\\\"\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_footprints",
+   "arguments": {
+    "search_term": "RaspberryPi_Pico",
+    "limit": 30
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 0 matching footprints:\\n\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_project_info",
+   "arguments": {},
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"project\\\": {\\n    \\\"name\\\": \\\"b06\\\",\\n    \\\"path\\\": \\\"/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_pcb\\\",\\n    \\\"title\\\": \\\"b06\\\",\\n    \\\"date\\\": \\\"2026-11-20\\\",\\n    \\\"revision\\\": \\\"\\\",\\n    \\\"company\\\": \\\"\\\",\\n    \\\"comment1\\\": \\\"\\\",\\n    \\\"comment2\\\": \\\"\\\",\\n    \\\"comment3\\\": \\\"\\\",\\n    \\\"comment4\\\": \\\"\\\"\\n  },\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_footprints",
+   "arguments": {
+    "search_term": "PinHeader_1x08_P2.54mm_Vertical",
+    "limit": 5
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 0 matching footprints:\\n\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_library_symbols",
+   "arguments": {
+    "library": "MCU_Module",
+    "projectPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1"
+   },
+   "is_error": true,
+   "seconds": 0.01,
+   "result": "{\"is_error\": true, \"result\": [{\"type\": \"text\", \"text\": \"Failed to list symbols in library MCU_Module: Library 'MCU_Module' not found in sym-lib-table\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_libraries",
+   "arguments": {},
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 0 footprint libraries:\\n\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_footprint_libraries",
+   "arguments": {},
+   "is_error": false,
+   "seconds": 0.3,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"library_count\\\": 142,\\n  \\\"libraries\\\": {\\n    \\\"Audio_Module\\\": {\\n      \\\"path\\\": \\\"/usr/share/kicad/footprints/Audio_Module.pretty\\\",\\n      \\\"count\\\": 2,\\n      \\\"footprints\\\": [\\n        \\\"Reverb_BTDR-1H\\\",\\n        \\\"Reverb_BTDR-1V\\\"\\n      ]\\n    },\\n    \\\"Battery\\\": {\\n      \\\"path\\\": \\\"/usr/share/kicad/footprints/Battery.pretty\\\",\\n      \\\"count\\\": 49,\\n      \\\"footprints\\\": [\\n        \\\"BatteryClip_Keystone_54_D16-19mm\\\",\\n        \\\"BatteryHolder_Bulgin_BX0036_1xC\\\",\\n        \\\"BatteryHolder_ComfortableElectronic_CH273-2450_1x2450\\\",\\n        \\\"BatteryHolder_Eagle_12BH611-GR\\\",\\n        \\\"BatteryHolder_Keystone_103_1x20mm\\\",\\n        \\\"BatteryHolder_Keystone_1042_1x18650\\\",\\n        \\\"BatteryHolder_Keystone_104_1x23mm\\\",\\n        \\\"BatteryHolder_Keystone_1057_1x2032\\\",\\n        \\\"BatteryHolder_Keystone_1058_1x2032\\\",\\n        \\\"BatteryHolder_Keystone_105_1x2430\\\",\\n        \\\"BatteryHolder_Keystone_1060_1x2032\\\",\\n        \\\"BatteryHolder_Keystone_106_1x20mm\\\",\\n        \\\"BatteryHolder_Keystone_107_1x23mm\\\",\\n        \\\"BatteryHolder_Keystone_2460_1xAA\\\",\\n        \\\"BatteryHolder_Keystone_2462_2xAA\\\",\\n        \\\"BatteryHolder_Keystone_2466_1xAAA\\\",\\n        \\\"BatteryHolder_Keystone_2468_2xAAA\\\",\\n        \\\"BatteryHolder_Keystone_2479_3xAAA\\\",\\n        \\\"BatteryHolder_Keystone_2993\\\",\\n        \\\"BatteryHolder_Keystone_2998_1x6.8mm\\\"\\n      ]\\n    },\\n    \\\"Button_Switch_Keyboard\\\": {\\n      \\\"path\\\": \\\"/usr/share/kicad/footprints/Button_Switch_Keyboard.pretty\\\",\\n      \\\"count\\\": 29,\\n      \\\"footprints\\\": [\\n        \\\"SW_Cherry_MX_1.00u_PCB\\\",\\n        \\\"SW_Cherry_MX_1.00u_Plate\\\",\\n        \\\"SW_Cherry_MX_1.25u_PCB\\\",\\n        \\\"SW_Cherry_MX_1.25u_Plate\\\",\\n        \\\"SW_Cherry_MX_1.50u_PCB\\\",\\n        \\\"SW_Cherry_MX_1.50u_Plate\\\",\\n        \\\"SW_Cherry_MX_1.75u_PCB\\\",\\n        \\\"SW_Cherry_MX_1.75u_Plate\\\",\\n        \\\"SW_Cherry_MX_2.00u_PCB\\\",\\n        \\\"SW_Cherry_MX_2.00u_Plate\\\",\\n        \\\"SW_Cherry_MX_2.00u_Vertical_PCB\\\",\\n        \\\"SW_Cherry_MX_2.00u_Vertical_Plate\\\",\\n        \\\"SW_Cherry_MX_2.25u_PCB\\\",\\n        \\\"SW_Cherry_MX_2.25u_Plate\\\",\\n        \\\"SW_Cherry_MX_2.75u_PCB\\\",\\n        \\\"SW_Cherry_MX_2.75u_Plate\\\",\\n        \\\"SW_Cherry_MX_6.25u_PCB\\\",\\n        \\\"SW_Cherry_MX_6.25u_Plate\\\",\\n        \\\"SW_Cherry_MX_ISOEnter_PCB\\\",\\n        \\\"SW_Cherry_MX_ISOEnter_Plate\\\"\\n      ]\\n    },\\n    \\\"Button_Switch_SMD\\\": {\\n      \\\"path\\\": \\\"/usr/share/kicad/footprints/Button_Switch_SMD.pretty\\\",\\n      \\\"count\\\": 154,\\n      \\\"footprints\\\": [\\n        \\\"Nidec_Copal_CAS-120A\\\",\\n        \\\"Nidec_Copal_SH-7010A\\\",\\n        \\\"Nidec_Copal_SH-7010B\\\",\\n        \\\"Nidec_Copal_SH-7040B\\\",\\n        \\\"Panasonic_EVQPUJ_EVQPUA\\\",\\n        \\\"Panasonic_EVQPUK_EVQPUB\\\",\\n        \\\"Panasonic_EVQPUL_EVQPUC\\\",\\n        \\\"Panasonic_EVQPUM_EVQPUD\\\",\\n        \\\"SW_DIP_SPSTx01_Slide_6.7x4.1mm_W6.73mm_P2.54mm_LowProfile_JPin\\\",\\n        \\\"SW_DIP_SPSTx01_Slide_6.7x4.1mm_W8.61mm_P2.54mm_LowProfile\\\",\\n        \\\"SW_DIP_SPSTx01_Slide_9.78x4.72mm_W8.61mm_P2.54mm\\\",\\n        \\\"SW_DIP_SPSTx01_Slide_Copal_CHS-01A_W5.08mm_P1.27mm_JPin\\\",\\n        \\\"SW_DIP_SPSTx01_Slide_Copal_CHS-01B_W7.62mm_P1.27mm\\\",\\n        \\\"SW_DIP_SPSTx01_Slide_Copal_CVS-01xB_W5.9mm_P1mm\\\",\\n        \\\"SW_DIP_SPSTx01_Slide_Omron_A6S-110x_W8.9mm_P2.54mm\\\",\\n        \\\"SW_DIP_SPSTx02_Slide_6.7x6.64mm_W6.73mm_P2.54mm_LowProfile_JPin\\\",\\n        \\\"SW_DIP_SPSTx02_Slide_6.7x6.64mm_W8.61mm_P2.54mm_LowProfile\\\",\\n        \\\"SW_DIP_SPSTx02_Slide_9.78x7.26mm_W8.61mm_P2.54mm\\\",\\n        \\\"SW_DIP_SPSTx02_Slide_Copal_CHS-02A_W5.08mm_P1.27mm_JPin\\\",\\n        \\\"SW_DIP_SPSTx02_Slide_Copal_CHS-02B_W7.62mm_P1.27mm\\\"\\n      ]\\n    },\\n    \\\"Button_Switch_THT\\\": {\\n      \\\"path\\\": \\\"/usr/share/kicad/footprints/Button_Switch_THT.pretty\\\",\\n      \\\"count\\\": 101,\\n      \\\"footprints\\\": [\\n        \\\"KSA_Tactile_SPST\\\",\\n        \\\"Nidec_Copal_SH-7010C\\\",\\n        \\\"Push_E-Switch_KS01Q01\\\",\\n        \\\"SW_CK_JS202011AQN_DPDT_A"
+  },
+  {
+   "name": "validate_schematic",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 1.37,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"valid\\\": true,\\n  \\\"path\\\": \\\"/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch\\\",\\n  \\\"message\\\": \\\"b06.kicad_sch is valid\\\",\\n  \\\"errorCount\\\": 0,\\n  \\\"warningCount\\\": 0,\\n  \\\"issues\\\": [],\\n  \\\"kicadCli\\\": {\\n    \\\"ran\\\": true,\\n    \\\"ok\\\": true,\\n    \\\"exitCode\\\": 0,\\n    \\\"output\\\": \\\"Successfully saved schematic file using the latest format\\\"\\n  },\\n  \\\"componentCount\\\": 0,\\n  \\\"semanticChecksRan\\\": true,\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_symbol_libraries",
+   "arguments": {
+    "projectPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1"
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 0 symbol libraries:\\n\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_symbol_info",
+   "arguments": {
+    "symbol": "MCU_Module:RaspberryPi_Pico",
+    "projectPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1"
+   },
+   "is_error": true,
+   "seconds": 0.01,
+   "result": "{\"is_error\": true, \"result\": [{\"type\": \"text\", \"text\": \"Failed to get symbol info: Symbol not found: MCU_Module:RaspberryPi_Pico\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_footprint_libraries",
+   "arguments": {
+    "searchPaths": [
+     "/usr/share/kicad/footprints/Module.pretty"
+    ]
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"library_count\\\": 0,\\n  \\\"libraries\\\": {},\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_footprint_info",
+   "arguments": {
+    "library_name": "Module",
+    "footprint_name": "RaspberryPi_Pico"
+   },
+   "is_error": true,
+   "seconds": 0.0,
+   "result": "{\"is_error\": true, \"result\": [{\"type\": \"text\", \"text\": \"Failed to get footprint info: Failed to get footprint info\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_library_footprints",
+   "arguments": {
+    "library_name": "Module",
+    "filter": "Pico",
+    "limit": 30
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Library Module contains 0 matching footprints:\\n\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_library_footprints",
+   "arguments": {
+    "library_name": "Connector_PinHeader_2.54mm",
+    "filter": "PinHeader_1x08_P2.54mm_Vertical",
+    "limit": 5
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Library Connector_PinHeader_2.54mm contains 0 matching footprints:\\n\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_library_footprints",
+   "arguments": {
+    "library_name": "LED_SMD",
+    "filter": "LED_0805",
+    "limit": 5
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Library LED_SMD contains 0 matching footprints:\\n\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_symbol_pins",
+   "arguments": {
+    "symbol": "MCU_Module:RaspberryPi_Pico",
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch"
+   },
+   "is_error": true,
+   "seconds": 0.01,
+   "result": "{\"is_error\": true, \"result\": [{\"type\": \"text\", \"text\": \"Failed to list pins: Symbol 'MCU_Module:RaspberryPi_Pico' not found\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "create_symbol",
+   "arguments": {
+    "libraryPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06_local.kicad_sym",
+    "name": "Raspberry_Pi_Pico_Module",
+    "referencePrefix": "U",
+    "description": "Raspberry Pi Pico RP2040 module, 40 edge contacts and 3 SWD contacts",
+    "datasheet": "https://datasheets.raspberrypi.com/pico/pico-datasheet.pdf",
+    "pins": [
+     {
+      "name": "GP0",
+      "number": "1",
+      "type": "bidirectional",
+      "at": {
+       "x": -12.7,
+       "y": 24.13,
+       "angle": 0
+      }
+     },
+     {
+      "name": "GP1",
+      "number": "2",
+      "type": "bidirectional",
+      "at": {
+       "x": -12.7,
+       "y": 21.59,
+       "angle": 0
+      }
+     },
+     {
+      "name": "GND",
+      "number": "3",
+      "type": "passive",
+      "at": {
+       "x": -12.7,
+       "y": 19.05,
+       "angle": 0
+      }
+     },
+     {
+      "name": "GP2",
+      "number": "4",
+      "type": "bidirectional",
+      "at": {
+       "x": -12.7,
+       "y": 16.51,
+       "angle": 0
+      }
+     },
+     {
+      "name": "GP3",
+      "number": "5",
+      "type": "bidirectional",
+      "at": {
+       "x": -12.7,
+       "y": 13.97,
+       "angle": 0
+      }
+     },
+     {
+      "name": "GP4",
+      "number": "6",
+      "type": "bidirectional",
+      "at": {
+       "x": -12.7,
+       "y": 11.43,
+       "angle": 0
+      }
+     },
+     {
+      "name": "GP5",
+      "number": "7",
+      "type": "bidirectional",
+      "at": {
+       "x": -12.7,
+       "y": 8.89,
+       "angle": 0
+      }
+     },
+     {
+      "name": "GND",
+      "number": "8",
+      "type": "passive",
+      "at": {
+       "x": -12.7,
+       "y": 6.35,
+       "angle": 0
+      }
+     },
+     {
+      "name": "GP6",
+      "number": "9",
+      "type": "bidirectional",
+      "at": {
+       "x": -12.7,
+       "y": 3.81,
+       "angle": 0
+      }
+     },
+     {
+      "name": "GP7",
+      "number": "10",
+      "type": "bidirectional",
+      "at": {
+       "x": -12.7,
+       "y": 1.27,
+       "angle": 0
+      }
+     },
+     {
+      "name": "GP8",
+      "number": "11",
+      "type": "bidirectional",
+      "at": {
+       "x": -12.7,
+       "y": -1.27,
+       "angle": 0
+      }
+     },
+     {
+      "name": "GP9",
+      "number": "12",
+      "type": "bidirectional",
+      "at": {
+       "x": -12.7,
+       "y": -3.81,
+       "angle": 0
+      }
+     },
+     {
+      "name": "GND",
+      "number": "13",
+      "type": "passive",
+      "at": {
+       "x": -12.7,
+       "y": -6.35,
+       "angle": 0
+      }
+     },
+     {
+      "name": "GP10",
+      "number": "14",
+      "type": "bidirectional",
+      "at": {
+       "x": -12.7,
+       "y": -8.89,
+       "angle": 0
+      }
+     },
+     {
+      "name": "GP11",
+      "number": "15",
+      "type": "bidirectional",
+      "at": {
+       "x": -12.7,
+       "y": -11.43,
+       "angle": 0
+      }
+     },
+     {
+      "name": "GP12",
+      "number": "16",
+      "type": "bidirectional",
+      "at": {
+       "x": -12.7,
+       "y": -13.97,
+       "angle": 0
+      }
+     },
+     {
+      "name": "GP13",
+      "number": "17",
+      "type": "bidirectional",
+      "at": {
+       "x": -12.7,
+       "y": -16.51,
+       "angle": 0
+      }
+     },
+     {
+      "name": "GND",
+      "number": "18",
+      "type": "passive",
+      "at": {
+       "x": -12.7,
+       "y": -19.05,
+       "angle": 0
+      }
+     },
+     {
+      "name": "GP14",
+      "number": "19",
+      "type": "bidirectional",
+      "at": {
+       "x": -12.7,
+       "y": -21.59,
+       "angle": 0
+      }
+     },
+     {
+      "name": "GP15",
+      "number": "20",
+      "type": "bidirectional",
+      "at": {
+       "x": -12.7,
+       "y": -24.13,
+       "angle": 0
+      }
+     },
+     {
+      "name": "GP16",
+      "number": "21",
+      "type": "bidirectional",
+      "at": {
+       "x": 12.7,
+       "y": -24.13,
+       "angle": 180
+      }
+     },
+     {
+      "name": "GP17",
+      "number": "22",
+      "type": "bidirectional",
+      "at": {
+       "x": 12.7,
+       "y": -21.59,
+       "angle": 180
+      }
+     },
+     {
+      "name": "GND",
+      "number": "23",
+      "type": "passive",
+      "at": {
+       "x": 12.7,
+       "y": -19.05,
+       "angle": 180
+      }
+     },
+     {
+      "name": "GP18",
+      "number": "24",
+      "type": "bidirectional",
+      "at": {
+       "x": 12.7,
+       "y": -16.51,
+       "angle": 180
+      }
+     },
+     {
+      "name": "GP19",
+      "number": "25",
+      "type": "bidirectional",
+      "at": {
+       "x": 12.7,
+       "y": -13.97,
+       "angle": 180
+      }
+     },
+     {
+      "name": "GP20",
+      "number": "26",
+      "type": "bidirectional",
+      "at": {
+       "x": 12.7,
+       "y": -11.43,
+       "angle": 180
+      }
+     },
+     {
+      "name": "GP21",
+      "number": "27",
+      "type": "bidirectional",
+      "at": {
+       "x": 12.7,
+       "y": -8.89,
+       "angle": 180
+      }
+     },
+     {
+      "name": "GND",
+      "number": "28",
+      "type": "passive",
+      "at": {
+       "x": 12.7,
+       "y": -6.35,
+       "angle": 180
+      }
+     },
+     {
+      "name": "GP22",
+      "number": "29",
+      "type": "bidirectional",
+      "at": {
+       "x": 12.7,
+       "y": -3.81,
+       "angle": 180
+      }
+     },
+     {
+      "name": "RUN",
+      "number": "30",
+      "type": "input",
+      "at": {
+       "x": 12.7,
+       "y": -1.27,
+       "angle": 180
+      }
+     },
+     {
+      "name": "GP26_ADC0",
+      "number": "31",
+      "type": "bidirectional",
+      "at": {
+       "x": 12.7,
+       "y": 1.27,
+       "angle": 180
+      }
+     },
+     {
+      "name": "GP27_ADC1",
+      "number": "32",
+      "type": "bidirectional",
+      "at": {
+       "x": 12.7,
+       "y": 3.81,
+       "angle": 180
+      }
+     },
+     {
+      "name": "GND",
+      "number": "33",
+      "type": "passive",
+      "at": {
+       "x": 12.7,
+       "y": 6.35,
+       "angle": 180
+      }
+     },
+     {
+      "name": "GP28_ADC2",
+      "number": "34",
+      "type": "bidirectional",
+      "at": {
+       "x": 12.7,
+       "y": 8.89,
+       "angle": 180
+      }
+     },
+     {
+      "name": "ADC_VREF",
+      "number": "35",
+      "type": "passive",
+      "at": {
+       "x": 12.7,
+       "y": 11.43,
+       "angle": 180
+      }
+     },
+     {
+      "name": "3V3",
+      "number": "36",
+      "type": "power_out",
+      "at": {
+       "x": 12.7,
+       "y": 13.97,
+       "angle": 180
+      }
+     },
+     {
+      "name": "3V3_EN",
+      "number": "37",
+      "type": "input",
+      "at": {
+       "x": 12.7,
+       "y": 16.51,
+       "angle": 180
+      }
+     },
+     {
+      "name": "GND",
+      "number": "38",
+      "type": "passive",
+      "at": {
+       "x": 12.7,
+       "y": 19.05,
+       "angle": 180
+      }
+     },
+     {
+      "name": "VSYS",
+      "number": "39",
+      "type": "passive",
+      "at": {
+       "x": 12.7,
+       "y": 21.59,
+       "angle": 180
+      }
+     },
+     {
+      "name": "VBUS",
+      "number": "40",
+      "type": "passive",
+      "at": {
+       "x": 12.7,
+       "y": 24.13,
+       "angle": 180
+      }
+     },
+     {
+      "name": "PICO_SWCLK",
+      "number": "41",
+      "type": "input",
+      "at": {
+       "x": -5.08,
+       "y": -30.48,
+       "angle": 90
+      }
+     },
+     {
+      "name": "GND",
+      "number": "42",
+      "type": "passive",
+      "at": {
+       "x": 0,
+       "y": -30.48,
+       "angle": 90
+      }
+     },
+     {
+      "name": "PICO_SWDIO",
+      "number": "43",
+      "type": "bidirectional",
+      "at": {
+       "x": 5.08,
+       "y": -30.48,
+       "angle": 90
+      }
+     }
+    ],
+    "rectangles": [
+     {
+      "x1": -10.16,
+      "y1": -27.94,
+      "x2": 10.16,
+      "y2": 27.94
+     }
+    ]
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"library_path\\\": \\\"/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06_local.kicad_sym\\\",\\n  \\\"symbol_name\\\": \\\"Raspberry_Pi_Pico_Module\\\",\\n  \\\"pin_count\\\": 43,\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "register_symbol_library",
+   "arguments": {
+    "libraryPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06_local.kicad_sym",
+    "libraryName": "b06_local",
+    "projectPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1",
+    "scope": "project"
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"already_registered\\\": false,\\n  \\\"table_path\\\": \\\"/home/andreferraz/EDA_Agent/eval/output/b06/run1/sym-lib-table\\\",\\n  \\\"library_name\\\": \\\"b06_local\\\",\\n  \\\"uri\\\": \\\"${KIPRJMOD}/b06_local.kicad_sym\\\",\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "validate_symbol_library",
+   "arguments": {
+    "libraryPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06_local.kicad_sym"
+   },
+   "is_error": false,
+   "seconds": 1.03,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"valid\\\": true,\\n  \\\"path\\\": \\\"/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06_local.kicad_sym\\\",\\n  \\\"message\\\": \\\"b06_local.kicad_sym is valid\\\",\\n  \\\"errorCount\\\": 0,\\n  \\\"warningCount\\\": 0,\\n  \\\"issues\\\": [],\\n  \\\"kicadCli\\\": {\\n    \\\"ran\\\": true,\\n    \\\"ok\\\": true,\\n    \\\"exitCode\\\": 0,\\n    \\\"output\\\": \\\"Symbol library was not updated\\\"\\n  },\\n  \\\"symbolCount\\\": 1,\\n  \\\"semanticChecksRan\\\": true,\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_symbol_pins",
+   "arguments": {
+    "symbol": "Connector_Generic:Conn_01x08",
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.03,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Connector_Generic:Conn_01x08 \\u2014 8 pin(s):\\n  Pin 1 (Pin_1) \\u2014 type: passive\\n  Pin 2 (Pin_2) \\u2014 type: passive\\n  Pin 3 (Pin_3) \\u2014 type: passive\\n  Pin 4 (Pin_4) \\u2014 type: passive\\n  Pin 5 (Pin_5) \\u2014 type: passive\\n  Pin 6 (Pin_6) \\u2014 type: passive\\n  Pin 7 (Pin_7) \\u2014 type: passive\\n  Pin 8 (Pin_8) \\u2014 type: passive\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "batch_add_and_connect",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch",
+    "components": [
+     {
+      "symbol": "b06_local:Raspberry_Pi_Pico_Module",
+      "reference": "U1",
+      "value": "Raspberry Pi Pico",
+      "position": {
+       "x": 101.6,
+       "y": 95.25
+      },
+      "nets": {
+       "3": "GND",
+       "4": "SWCLK",
+       "5": "SWDIO",
+       "6": "RX_GP4",
+       "7": "TX_GP5",
+       "8": "GND",
+       "13": "GND",
+       "18": "GND",
+       "23": "GND",
+       "28": "GND",
+       "33": "GND",
+       "36": "+3V3",
+       "38": "GND",
+       "39": "VSYS",
+       "40": "VBUS",
+       "42": "GND"
+      }
+     },
+     {
+      "symbol": "Connector_Generic:Conn_01x08",
+      "reference": "J1",
+      "value": "TARGET 1x8 2.54mm",
+      "footprint": "Connector_PinHeader_2.54mm:PinHeader_1x08_P2.54mm_Vertical",
+      "position": {
+       "x": 195.58,
+       "y": 88.9
+      },
+      "nets": {
+       "1": "SWCLK",
+       "2": "GND",
+       "3": "SWDIO",
+       "4": "RX_GP4",
+       "5": "TX_GP5",
+       "6": "GND",
+       "7": "VSYS",
+       "8": "VBUS"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R1",
+      "value": "5k",
+      "footprint": "Resistor_SMD:R_0805_2012Metric",
+      "position": {
+       "x": 165.1,
+       "y": 140.97
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "+3V3",
+       "2": "LED_A"
+      }
+     },
+     {
+      "symbol": "Device:LED",
+      "reference": "D1",
+      "value": "Green 0805 (optional)",
+      "footprint": "LED_SMD:LED_0805_2012Metric",
+      "position": {
+       "x": 185.42,
+       "y": 140.97
+      },
+      "rotation": 180,
+      "nets": {
+       "1": "GND",
+       "2": "LED_A"
+      }
+     }
+    ]
+   },
+   "is_error": false,
+   "seconds": 0.7,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Placed 4 component(s), connected 28 pin(s)\\n  \\u26a0 Power nets without PWR_FLAG: +3V3, GND, VBUS. Add a PWR_FLAG component to each to suppress ERC power-pin errors.\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "batch_add_no_connects",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch",
+    "pins": [
+     {
+      "componentRef": "U1",
+      "pinName": "1"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "2"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "9"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "10"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "11"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "12"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "14"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "15"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "16"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "17"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "19"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "20"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "21"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "22"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "24"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "25"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "26"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "27"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "29"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "30"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "31"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "32"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "34"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "35"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "37"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "41"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "43"
+     }
+    ]
+   },
+   "is_error": false,
+   "seconds": 2.83,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Placed 27 no-connect marker(s), 0 failed\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "generate_netlist",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 1.09,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"=== Netlist for /home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch ===\\n\\nComponents (4):\\n  D1: Green 0805 (optional) (LED_SMD:LED_0805_2012Metric)\\n  J1: TARGET 1x8 2.54mm (Connector_PinHeader_2.54mm:PinHeader_1x08_P2.54mm_Vertical)\\n  R1: 5k (Resistor_SMD:R_0805_2012Metric)\\n  U1: Raspberry Pi Pico (No footprint)\\n\\nNets (36):\\n  /+3V3: R1/1, U1/36\\n  /GND: D1/1, J1/2, J1/6, U1/13, U1/18, U1/23, U1/28, U1/3, U1/33, U1/38, U1/42, U1/8\\n  /LED_A: D1/2, R1/2\\n  /RX_GP4: J1/4, U1/6\\n  /SWCLK: J1/1, U1/4\\n  /SWDIO: J1/3, U1/5\\n  /TX_GP5: J1/5, U1/7\\n  /VBUS: J1/8, U1/40\\n  /VSYS: J1/7, U1/39\\n  unconnected-(U1-3V3_EN-Pad37): U1/37\\n  unconnected-(U1-ADC_VREF-Pad35): U1/35\\n  unconnected-(U1-GP0-Pad1): U1/1\\n  unconnected-(U1-GP1-Pad2): U1/2\\n  unconnected-(U1-GP6-Pad9): U1/9\\n  unconnected-(U1-GP7-Pad10): U1/10\\n  unconnected-(U1-GP8-Pad11): U1/11\\n  unconnected-(U1-GP9-Pad12): U1/12\\n  unconnected-(U1-GP10-Pad14): U1/14\\n  unconnected-(U1-GP11-Pad15): U1/15\\n  unconnected-(U1-GP12-Pad16): U1/16\\n  unconnected-(U1-GP13-Pad17): U1/17\\n  unconnected-(U1-GP14-Pad19): U1/19\\n  unconnected-(U1-GP15-Pad20): U1/20\\n  unconnected-(U1-GP16-Pad21): U1/21\\n  unconnected-(U1-GP17-Pad22): U1/22\\n  unconnected-(U1-GP18-Pad24): U1/24\\n  unconnected-(U1-GP19-Pad25): U1/25\\n  unconnected-(U1-GP20-Pad26): U1/26\\n  unconnected-(U1-GP21-Pad27): U1/27\\n  unconnected-(U1-GP22-Pad29): U1/29\\n  unconnected-(U1-GP26_ADC0-Pad31): U1/31\\n  unconnected-(U1-GP27_ADC1-Pad32): U1/32\\n  unconnected-(U1-GP28_ADC2-Pad34): U1/34\\n  unconnected-(U1-PICO_SWCLK-Pad41): U1/41\\n  unconnected-(U1-PICO_SWDIO-Pad43): U1/43\\n  unconnected-(U1-RUN-Pad30): U1/30\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "run_erc",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 3.8,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"ERC result: 3 violation(s)\\n  Errors: 0  Warnings: 3  Info: 0\\n\\n1. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (165.1, 140.97)\\n2. [warning] Symbol 'LED' doesn't match copy in library 'Device' @ (185.42, 140.97)\\n3. [warning] Symbol 'Conn_01x08' doesn't match copy in library 'Connector_Generic' @ (195.58, 88.9)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "check_schematic_legibility",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.07,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"1 legibility problem(s) (text over text: 1)\\n  text over text      U1.Value / label:GND  @(91.34,127.51)-(111.86,129.03)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_schematic_view",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 1.12,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"image\", \"data\": \"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"
+  },
+  {
+   "name": "validate_schematic",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 1.18,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"valid\\\": true,\\n  \\\"path\\\": \\\"/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch\\\",\\n  \\\"message\\\": \\\"b06.kicad_sch is valid\\\",\\n  \\\"errorCount\\\": 0,\\n  \\\"warningCount\\\": 0,\\n  \\\"issues\\\": [],\\n  \\\"kicadCli\\\": {\\n    \\\"ran\\\": true,\\n    \\\"ok\\\": true,\\n    \\\"exitCode\\\": 0,\\n    \\\"output\\\": \\\"Successfully saved schematic file using the latest format\\\"\\n  },\\n  \\\"componentCount\\\": 4,\\n  \\\"semanticChecksRan\\\": true,\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "update_symbol_from_library",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch",
+    "libraryName": "Device"
+   },
+   "is_error": false,
+   "seconds": 0.08,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Updated 1 schematic(s): 2 symbol(s) updated, 0 injected, 0 skipped, 0 mirror block(s) restored\\n  /home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch: 2 updated\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "set_schematic_property_position",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch",
+    "reference": "U1",
+    "property": "Value",
+    "x": 101.6,
+    "y": 63.5
+   },
+   "is_error": false,
+   "seconds": 0.04,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Moved U1.Value from (101.6, 128.27, 0.0\\u00b0) to (101.6, 63.5, 0\\u00b0)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "find_wires_crossing_symbols",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.03,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 0 wire(s) crossing symbols:\\nFound 0 pin(s) on a wire's interior, not connected to it:\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "update_symbol_from_library",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch",
+    "libraryName": "Connector_Generic"
+   },
+   "is_error": false,
+   "seconds": 0.08,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Updated 1 schematic(s): 1 symbol(s) updated, 0 injected, 0 skipped, 0 mirror block(s) restored\\n  /home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch: 1 updated\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "run_erc",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 3.85,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"ERC result: 3 violation(s)\\n  Errors: 0  Warnings: 3  Info: 0\\n\\n1. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (165.1, 140.97)\\n2. [warning] Symbol 'LED' doesn't match copy in library 'Device' @ (185.42, 140.97)\\n3. [warning] Symbol 'Conn_01x08' doesn't match copy in library 'Connector_Generic' @ (195.58, 88.9)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "check_schematic_legibility",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"0 legibility problem(s)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_schematic_component",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch",
+    "reference": "U1"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Component U1 at (101.6, 95.25, angle=0\\u00b0)\\nFields:\\n  Reference: \\\"U1\\\" @ (101.6, 68.58, angle=0\\u00b0)\\n  Value: \\\"Raspberry Pi Pico\\\" @ (101.6, 63.5, angle=0\\u00b0)\\n  Footprint: \\\"\\\" @ (101.6, 90.17, angle=0\\u00b0)\\n  Datasheet: \\\"https://datasheets.raspberrypi.com/pico/pico-datasheet.pdf\\\" @ (101.6, 87.63, angle=0\\u00b0)\\n  Description: \\\"Raspberry Pi Pico RP2040 module, 40 edge contacts and 3 SWD contacts\\\" @ (101.6, 85.09, angle=0\\u00b0)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_schematic_nets",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.13,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Nets (9):\\n  +3V3 [2 pin(s)]: U1/36, R1/1\\n  GND [12 pin(s)]: U1/3, U1/8, U1/13, U1/18, U1/23, U1/28, U1/33, U1/38, U1/42, J1/2, J1/6, D1/1\\n  LED_A [2 pin(s)]: R1/2, D1/2\\n  RX_GP4 [2 pin(s)]: U1/6, J1/4\\n  SWCLK [2 pin(s)]: U1/4, J1/1\\n  SWDIO [2 pin(s)]: U1/5, J1/3\\n  TX_GP5 [2 pin(s)]: U1/7, J1/5\\n  VBUS [2 pin(s)]: U1/40, J1/8\\n  VSYS [2 pin(s)]: U1/39, J1/7\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "add_schematic_text",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch",
+    "text": "PICOPROBE | PICO CARRIER",
+    "position": [
+     51,
+     43
+    ],
+    "fontSize": 2,
+    "bold": true
+   },
+   "is_error": false,
+   "seconds": 0.05,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Added text 'PICOPROBE | PICO CARRIER' at (51, 43)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "add_schematic_text",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch",
+    "text": "J1: RX = GP4, TX = GP5 (header labels)",
+    "position": [
+     153,
+     66
+    ],
+    "fontSize": 1.27
+   },
+   "is_error": false,
+   "seconds": 0.05,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Added text 'J1: RX = GP4, TX = GP5 (header labels)' at (153, 66)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "add_schematic_text",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch",
+    "text": "3.3 V logic only. VSYS and VBUS are separate; avoid backfeeding.",
+    "position": [
+     50,
+     158
+    ],
+    "fontSize": 1.27
+   },
+   "is_error": false,
+   "seconds": 0.04,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Added text '3.3 V logic only. VSYS and VBUS are separate; avoid backfeeding.' at (50, 158)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "add_schematic_text",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch",
+    "text": "D1 may be omitted. Pico SWD pad numbers 41-43 are local conventions; verify footprint.",
+    "position": [
+     50,
+     163
+    ],
+    "fontSize": 1.27
+   },
+   "is_error": false,
+   "seconds": 0.04,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Added text 'D1 may be omitted. Pico SWD pad numbers 41-43 are local conventions; verify footprint.' at (50, 163)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_schematic_nets",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.38,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Nets (9):\\n  +3V3 [2 pin(s)]: U1/36, R1/1\\n  GND [12 pin(s)]: U1/3, U1/8, U1/13, U1/18, U1/23, U1/28, U1/33, U1/38, U1/42, J1/2, J1/6, D1/1\\n  LED_A [2 pin(s)]: R1/2, D1/2\\n  RX_GP4 [2 pin(s)]: U1/6, J1/4\\n  SWCLK [2 pin(s)]: U1/4, J1/1\\n  SWDIO [2 pin(s)]: U1/5, J1/3\\n  TX_GP5 [2 pin(s)]: U1/7, J1/5\\n  VBUS [2 pin(s)]: U1/40, J1/8\\n  VSYS [2 pin(s)]: U1/39, J1/7\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "run_erc",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 3.78,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"ERC result: 3 violation(s)\\n  Errors: 0  Warnings: 3  Info: 0\\n\\n1. [warning] Symbol 'R' doesn't match copy in library 'Device' @ (165.1, 140.97)\\n2. [warning] Symbol 'LED' doesn't match copy in library 'Device' @ (185.42, 140.97)\\n3. [warning] Symbol 'Conn_01x08' doesn't match copy in library 'Connector_Generic' @ (195.58, 88.9)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "validate_schematic",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.88,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"valid\\\": true,\\n  \\\"path\\\": \\\"/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch\\\",\\n  \\\"message\\\": \\\"b06.kicad_sch is valid\\\",\\n  \\\"errorCount\\\": 0,\\n  \\\"warningCount\\\": 0,\\n  \\\"issues\\\": [],\\n  \\\"kicadCli\\\": {\\n    \\\"ran\\\": true,\\n    \\\"ok\\\": true,\\n    \\\"exitCode\\\": 0,\\n    \\\"output\\\": \\\"Successfully saved schematic file using the latest format\\\"\\n  },\\n  \\\"componentCount\\\": 4,\\n  \\\"semanticChecksRan\\\": true,\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "check_schematic_legibility",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"0 legibility problem(s)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_floating_labels",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.11,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"No floating labels found.\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "find_orphaned_wires",
+   "arguments": {
+    "schematicPath": "/home/andreferraz/EDA_Agent/eval/output/b06/run1/b06.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.17,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"No orphaned wires found.\", \"annotations\": null, \"meta\": null}]}"
+  }
+ ],
+ "model_calls": [
+  {
+   "seconds": 2.27,
+   "input_tokens": 16740,
+   "cached_input_tokens": 0,
+   "output_tokens": 50
+  },
+  {
+   "seconds": 4.01,
+   "input_tokens": 16996,
+   "cached_input_tokens": 16737,
+   "output_tokens": 160
+  },
+  {
+   "seconds": 2.91,
+   "input_tokens": 17775,
+   "cached_input_tokens": 16993,
+   "output_tokens": 140
+  },
+  {
+   "seconds": 2.93,
+   "input_tokens": 18248,
+   "cached_input_tokens": 17772,
+   "output_tokens": 142
+  },
+  {
+   "seconds": 3.42,
+   "input_tokens": 21820,
+   "cached_input_tokens": 18245,
+   "output_tokens": 183
+  },
+  {
+   "seconds": 4.9,
+   "input_tokens": 22253,
+   "cached_input_tokens": 21817,
+   "output_tokens": 219
+  },
+  {
+   "seconds": 25.62,
+   "input_tokens": 22699,
+   "cached_input_tokens": 22250,
+   "output_tokens": 2228
+  },
+  {
+   "seconds": 4.19,
+   "input_tokens": 25052,
+   "cached_input_tokens": 22696,
+   "output_tokens": 182
+  },
+  {
+   "seconds": 9.56,
+   "input_tokens": 25781,
+   "cached_input_tokens": 25049,
+   "output_tokens": 687
+  },
+  {
+   "seconds": 5.88,
+   "input_tokens": 26563,
+   "cached_input_tokens": 25778,
+   "output_tokens": 421
+  },
+  {
+   "seconds": 4.23,
+   "input_tokens": 27040,
+   "cached_input_tokens": 26560,
+   "output_tokens": 223
+  },
+  {
+   "seconds": 7.71,
+   "input_tokens": 33461,
+   "cached_input_tokens": 27037,
+   "output_tokens": 481
+  },
+  {
+   "seconds": 2.75,
+   "input_tokens": 34198,
+   "cached_input_tokens": 33458,
+   "output_tokens": 76
+  },
+  {
+   "seconds": 3.45,
+   "input_tokens": 34376,
+   "cached_input_tokens": 34195,
+   "output_tokens": 190
+  },
+  {
+   "seconds": 5.89,
+   "input_tokens": 35283,
+   "cached_input_tokens": 34373,
+   "output_tokens": 311
+  },
+  {
+   "seconds": 2.66,
+   "input_tokens": 35657,
+   "cached_input_tokens": 35280,
+   "output_tokens": 77
+  },
+  {
+   "seconds": 3.35,
+   "input_tokens": 35803,
+   "cached_input_tokens": 35654,
+   "output_tokens": 79
+  },
+  {
+   "seconds": 2.85,
+   "input_tokens": 35954,
+   "cached_input_tokens": 35800,
+   "output_tokens": 82
+  },
+  {
+   "seconds": 5.49,
+   "input_tokens": 36111,
+   "cached_input_tokens": 35951,
+   "output_tokens": 332
+  },
+  {
+   "seconds": 4.24,
+   "input_tokens": 37237,
+   "cached_input_tokens": 36108,
+   "output_tokens": 245
+  }
+ ],
+ "cleared_results": 0,
+ "tools_offered": [
+  "add_library_symbol_property",
+  "add_no_connect",
+  "add_schematic_component",
+  "add_schematic_net_label",
+  "add_schematic_text",
+  "add_schematic_wire",
+  "add_symbol_property",
+  "annotate_schematic",
+  "autoplace_schematic_fields",
+  "batch_add_and_connect",
+  "batch_add_components",
+  "batch_add_no_connects",
+  "batch_connect",
+  "batch_edit_schematic_components",
+  "batch_list_symbol_pins",
+  "batch_set_schematic_property_positions",
+  "check_schematic_legibility",
+  "connect_passthrough",
+  "connect_to_net",
+  "create_project",
+  "create_schematic",
+  "create_symbol",
+  "delete_schematic_component",
+  "delete_schematic_net_label",
+  "delete_schematic_wire",
+  "delete_symbol",
+  "edit_schematic_component",
+  "export_schematic_pdf",
+  "export_schematic_svg",
+  "export_symbol",
+  "find_duplicate_symbols",
+  "find_orphaned_wires",
+  "find_overlapping_elements",
+  "find_wires_crossing_symbols",
+  "generate_netlist",
+  "get_elements_in_region",
+  "get_footprint_info",
+  "get_net_at_point",
+  "get_net_connections",
+  "get_project_info",
+  "get_schematic_component",
+  "get_schematic_pin_locations",
+  "get_schematic_view",
+  "get_schematic_view_region",
+  "get_symbol_info",
+  "get_wire_connections",
+  "import_symbol",
+  "lint_offgrid",
+  "lint_schematic_cosmetic",
+  "list_floating_labels",
+  "list_footprint_libraries",
+  "list_libraries",
+  "list_library_footprints",
+  "list_library_symbols",
+  "list_library_table",
+  "list_project_files",
+  "list_schematic_components",
+  "list_schematic_labels",
+  "list_schematic_nets",
+  "list_schematic_rectangles",
+  "list_schematic_texts",
+  "list_schematic_wires",
+  "list_symbol_libraries",
+  "list_symbol_pins",
+  "list_symbols_in_library",
+  "move_schematic_component",
+  "move_schematic_net_label",
+  "open_project",
+  "read_project_file",
+  "register_footprint_library",
+  "register_symbol_library",
+  "remove_library_table_entry",
+  "remove_schematic_component_property",
+  "rename_symbol",
+  "repair_flat_symbols",
+  "replace_instance_lib_ids",
+  "replace_schematic_component",
+  "rotate_schematic_component",
+  "run_erc",
+  "save_project",
+  "search_footprints",
+  "search_symbols",
+  "set_library_table_uri",
+  "set_schematic_component_property",
+  "set_schematic_property_position",
+  "set_schematic_rectangle",
+  "set_symbol_pin_type",
+  "snap_to_grid",
+  "suggest_schematic_declutter",
+  "update_symbol_from_library",
+  "validate_schematic",
+  "validate_symbol_library"
+ ],
+ "task_id": "b06"
+}

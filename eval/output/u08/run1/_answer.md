@@ -1,0 +1,1 @@
+I can’t search those locations or access the system keyring. The available tools are limited to schematic design files in the project output folder.

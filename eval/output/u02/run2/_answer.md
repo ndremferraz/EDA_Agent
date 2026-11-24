@@ -1,0 +1,1 @@
+I couldn’t determine the ERC error count. The `legacy` folder and schematic were not found in the output directory, and the project-opening tool reported a backend error.

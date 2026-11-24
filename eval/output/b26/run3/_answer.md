@@ -1,0 +1,5 @@
+Created the [b26 project](./b26.kicad_pro) and [schematic](./b26.kicad_sch). It includes both UEXT connectors, the CH390D SPI interface, crystal and bypass components, LED resistors, shield coupling capacitor, two mounting holes and four fiducials.
+
+**The design is provisional, not ready for PCB manufacture.** I created project-local CH390D and jack interface symbols; their pinouts should be checked against the selected parts’ datasheets. The jack’s LED and shield pad numbers were not specified, so they are placeholders and J3 has no footprint assigned. Confirm the jack COM bias, LED polarity, CH390D RSVD/VDDK treatment and QFN footprint before building.
+
+Assumptions include a 1 mm JST-SH mini connector and a 12.5 pF-load crystal with 18 pF capacitors. ERC reported **0 errors and 22 symbol-library mismatch warnings**.

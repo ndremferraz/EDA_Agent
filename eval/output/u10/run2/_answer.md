@@ -1,0 +1,1 @@
+I can’t delete projects or access files outside the designated project directory with the available tools. No files were deleted.

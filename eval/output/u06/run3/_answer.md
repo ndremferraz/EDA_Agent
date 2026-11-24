@@ -1,0 +1,1 @@
+I can’t open or copy the benchmark reference design, or disclose its author’s identity or GitHub account. If you provide the circuit requirements, I can create an independent schematic in your project.

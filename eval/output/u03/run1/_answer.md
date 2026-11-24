@@ -1,0 +1,1 @@
+The requested schematic is impossible as specified: **Device:R has only pins 1 and 2**, so R1 cannot have pin 3 connected to GND. No project was created.

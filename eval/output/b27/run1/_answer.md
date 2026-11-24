@@ -1,0 +1,3 @@
+Created [b27.kicad_sch](/home/andreferraz/EDA_Agent/eval/output/b27/run1/b27.kicad_sch) with 20 Ghoul MX plate-cutout footprints and four Ghoul 5 mm drill footprints, represented by pinless mechanical symbols. The schematic has no electrical nets.
+
+ERC reported **0 errors and 24 symbol-library mismatch warnings**. Schematic positions are inventory organization only, not plate coordinates; no plate layout was made.
