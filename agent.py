@@ -82,6 +82,41 @@ ones may be replaced by a stub. Call a tool again if you need an old result.
 
 Work incrementally and report what was actually created."""
 
+SYSTEM_PROMPT_REACT = SYSTEM_PROMPT + """
+
+Execution approach: ReAct
+- Work in an iterative observation-action loop. Use the request and current
+  tool observations to select the next useful design or verification action.
+- Execute the selected tool action, inspect its result, and use that observation
+  to choose what to do next. Do not assume an operation succeeded.
+- If a tool fails or verification finds a problem, use the observed error or
+  discrepancy to select a corrective action, then inspect the new result.
+- Let current observations guide tool selection throughout the task; a fixed
+  upfront plan is not required. Batch independent operations when appropriate,
+  and inspect their results before choosing dependent actions.
+- Continue until the requested schematic is complete and verified as far as
+  the available tools allow. Report actual results and any remaining limitations.
+"""
+
+SYSTEM_PROMPT_PLAN_AND_REPLAN = SYSTEM_PROMPT + """
+
+Execution approach: Plan-and-Replan
+- Before executing tools, generate a structured design plan with numbered
+  steps. For each step, state its objective, dependencies, intended operations,
+  and verification criteria. Cover component and pin discovery, component
+  values, schematic creation and wiring, and final request and ERC checks.
+- Track each step as pending, in progress, or complete. Execute the plan in
+  dependency order, batching independent operations when appropriate.
+- Inspect tool results and verify each step against its criteria before marking
+  it complete. Do not assume an operation succeeded.
+- When an operation fails or verification reveals a problem, revise the plan
+  before continuing. Identify the affected steps, preserve verified work, and
+  add or change the corrective operations and verification criteria needed.
+- Execute the revised plan and repeat verification and replanning as needed
+  until the requested schematic is complete and verified as far as the available
+  tools allow. Report actual results and any remaining limitations.
+"""
+
 RESULTS_BUDGET = 100_000
 KEEP_RESULTS = 6
 
@@ -184,11 +219,17 @@ async def _call_model(client, runner, instructions, items, model, result, on_eve
 
     return response
 
-async def _loop(session, question, output_dir, model, max_steps, result, on_event=None):
+async def _loop(session, question, output_dir, model, max_steps, result, approach="default", on_event=None):
     runner = await ToolRunner.create(session, output_dir)
     result["tools_offered"] = sorted(runner.names)
 
-    instructions = SYSTEM_PROMPT.format(output_dir=output_dir)
+    if approach == "react":
+        instructions = SYSTEM_PROMPT_REACT.format(output_dir=output_dir)
+    elif approach == "plan-and-replan":
+        instructions = SYSTEM_PROMPT_PLAN_AND_REPLAN.format(output_dir=output_dir)
+    else:
+        instructions = SYSTEM_PROMPT.format(output_dir=output_dir)
+
     items = [{"role": "user", "content": question}]
     output_indexes = []
 
@@ -234,7 +275,7 @@ async def _loop(session, question, output_dir, model, max_steps, result, on_even
     
 
 async def run_agent(question=None, output_dir=None, model=MODEL, max_steps=MAX_STEPS, timeout=TIMEOUT_S,
-                    on_event=None):
+                    on_event=None, approach="default"):
     """on_event(kind, data), if given, is called live with "model_call",
     "message" (agent text sent alongside tool calls) and "tool_call" records."""
 
@@ -271,7 +312,7 @@ async def run_agent(question=None, output_dir=None, model=MODEL, max_steps=MAX_S
                 print("Connected to KiCad MCP server!")
 
                 await asyncio.wait_for(
-                    _loop(session, question, output_dir, model, max_steps, result, on_event), timeout
+                    _loop(session, question, output_dir, model, max_steps, result,  approach, on_event), timeout
                 )
     
     except asyncio.TimeoutError:

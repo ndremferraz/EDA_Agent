@@ -54,10 +54,10 @@ def prepare(task, run_dir, benchmark=DEFAULT_BENCHMARK):
     return question
 
 
-async def run_task(task, run_dir, benchmark=DEFAULT_BENCHMARK, **kw):
+async def run_task(task, run_dir, benchmark=DEFAULT_BENCHMARK, approach="default", **kw):
 
     question = prepare(task, run_dir, benchmark)
-    result = await run_agent(question, run_dir, **kw)
+    result = await run_agent(question, run_dir, approach=approach, **kw)
 
     result["task_id"] = task["id"]
 
@@ -76,13 +76,14 @@ def main():
     ap.add_argument("--run", type=int, default=0)
     ap.add_argument("--model", default=MODEL)
     ap.add_argument("--max-steps", type=int, default=MAX_STEPS)
+    ap.add_argument("--approach", choices=("default", "react", "plan-and-replan"), default="default")
     a = ap.parse_args()
 
     tasks = {t["id"]: t for t in map(json.loads, a.tasks.read_text().splitlines()) if t}
     run_dir = OUTPUT_ROOT / a.task_id / f"run{a.run}"
 
     r = asyncio.run(run_task(tasks[a.task_id], run_dir, a.benchmark,
-                             model=a.model, max_steps=a.max_steps))
+                             model=a.model, max_steps=a.max_steps, approach=a.approach))
 
     
     print(json.dumps({k: r[k] for k in ("task_id", "stop_reason", "error", "turns", "input_tokens",

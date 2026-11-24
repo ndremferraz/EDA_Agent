@@ -77,6 +77,9 @@ main { min-width: 0; min-height: 0; overflow: hidden; display: flex; flex-direct
 .seg { display: inline-flex; border: 1px solid var(--line-2); border-radius: 7px; padding: 2px; margin-bottom: 12px; background: var(--panel); }
 .seg button { border: 0; background: none; padding: 5px 14px; border-radius: 5px; color: var(--muted); }
 .seg button.on { background: var(--panel-2); color: var(--text); font-weight: 550; box-shadow: 0 0 0 1px var(--line); }
+.approach-picker { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+.approach-picker > span { color: var(--muted); font-size: 12.5px; }
+.approach-picker .seg { margin-bottom: 0; flex-wrap: wrap; }
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); }
 textarea#q { width: 100%; min-height: 170px; resize: vertical; border: 0; outline: 0; background: none; padding: 14px 16px; display: block; }
 .card:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); }
@@ -253,6 +256,14 @@ dialog::backdrop { background: rgba(10, 12, 16, .45); }
         <button class="on" data-mode="free">Custom request</button>
         <button data-mode="task">Benchmark task</button>
       </div>
+      <div class="approach-picker">
+        <span id="approachLabel">Approach</span>
+        <div class="seg" id="approachSeg" role="group" aria-labelledby="approachLabel">
+          <button type="button" class="on" data-approach="default" aria-pressed="true" title="Use the original design workflow">Default</button>
+          <button type="button" data-approach="react" aria-pressed="false" title="Choose tools iteratively based on current observations">ReAct</button>
+          <button type="button" data-approach="plan-and-replan" aria-pressed="false" title="Create a structured plan and revise it after failures or verification problems">Plan-and-Replan</button>
+        </div>
+      </div>
       <div class="card">
         <div id="freeBox"><textarea id="q" placeholder="e.g. A 5 V LED indicator with a current-limiting resistor for about 10 mA and a 2-pin power connector."></textarea></div>
         <div id="taskBox" hidden><input class="search" id="taskSearch" placeholder="Filter tasks…" style="border-radius:0;border:0;border-bottom:1px solid var(--line);padding:10px 14px">
@@ -326,8 +337,9 @@ const fmtN = n => n == null ? "–" : n >= 1e6 ? (n/1e6).toFixed(2)+"M" : n >= 1
 const fmtS = s => s == null ? "–" : s < 60 ? s.toFixed(1)+"s" : Math.floor(s/60)+"m "+Math.round(s%60)+"s";
 const ago = t => { const d = Date.now()/1000 - t; return d < 60 ? "just now" : d < 3600 ? Math.round(d/60)+"m ago" : d < 86400 ? Math.round(d/3600)+"h ago" : Math.round(d/86400)+"d ago"; };
 const STATUS = {done: "Done", running: "Running", error: "Error", timeout: "Timed out", max_steps: "Step limit", stopped: "Stopped", unknown: "Unknown"};
+const APPROACH = {default: "Default", react: "ReAct", "plan-and-replan": "Plan-and-Replan"};
 
-let cfg = {}, runs = [], tasks = [], mode = "free", pickedTask = null, current = null, es = null;
+let cfg = {}, runs = [], tasks = [], mode = "free", approach = "default", pickedTask = null, current = null, es = null;
 
 /* ---------------- markdown (small subset) ---------------- */
 function md(src) {
@@ -427,6 +439,15 @@ function setMode(m) {
   $("#examples").hidden = m !== "free";
 }
 $("#modeSeg").addEventListener("click", e => { const b = e.target.closest("button"); if (b) setMode(b.dataset.mode); });
+function setApproach(value) {
+  approach = value;
+  document.querySelectorAll("#approachSeg button").forEach(b => {
+    const selected = b.dataset.approach === value;
+    b.classList.toggle("on", selected);
+    b.setAttribute("aria-pressed", String(selected));
+  });
+}
+$("#approachSeg").addEventListener("click", e => { const b = e.target.closest("button"); if (b) setApproach(b.dataset.approach); });
 function renderTasks() {
   const f = $("#taskSearch").value.toLowerCase();
   $("#tasks").innerHTML = tasks.filter(t => !f || (t.id + " " + t.question).toLowerCase().includes(f)).map(t => `
@@ -446,7 +467,7 @@ async function startRun(body) {
   finally { $("#runBtn").disabled = false; }
 }
 function submit() {
-  const base = { model: $("#model").value, max_steps: +$("#maxSteps").value };
+  const base = { model: $("#model").value, max_steps: +$("#maxSteps").value, approach };
   if (mode === "task") {
     if (!pickedTask) { $("#startErr").textContent = "Pick a task first."; return; }
     startRun({ ...base, task_id: pickedTask });
@@ -541,6 +562,7 @@ function renderHead() {
     ["Turns", s.turns], ["Tool calls", s.calls], ["Errors", s.errors, s.errors > 0], ...(s.refused ? [["Refused paths", s.refused, true]] : []),
     ["Input tokens", fmtN(s.tin)], ["Cached", s.tin ? Math.round(100 * s.tcached / s.tin) + "%" : "–"],
     ["Output tokens", fmtN(s.tout)], ["Time", fmtS(s.secs)], ["Model", esc(current.run.model || "")],
+    ["Approach", esc(APPROACH[current.run.approach] || "Default")],
   ].map(([k, v, bad]) => `<div class="stat"><b class="${bad ? "bad" : ""}">${v}</b>${k}</div>`).join("");
 }
 $("#rq").addEventListener("click", () => $("#rq").classList.toggle("open"));
@@ -619,6 +641,7 @@ $("#againBtn").addEventListener("click", () => {
   if (r.task_id) { setMode("task"); pickedTask = r.task_id; renderTasks(); }
   else { setMode("free"); $("#q").value = r.question; }
   if (r.model) $("#model").value = r.model;
+  setApproach(r.approach || "default");
   showNew();
 });
 

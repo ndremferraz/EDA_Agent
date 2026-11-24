@@ -68,10 +68,11 @@ def load_tasks():
 class LiveRun:
     """A run started from this server; keeps every event for late subscribers."""
 
-    def __init__(self, rid, run_dir, question, model, max_steps, task_id=None):
+    def __init__(self, rid, run_dir, question, model, max_steps, task_id=None, approach="default"):
         self.rid, self.run_dir = rid, run_dir
         self.summary = {"id": rid, "question": question, "model": model, "max_steps": max_steps,
-                        "task_id": task_id, "started": time.time(), "status": "running"}
+                        "task_id": task_id, "approach": approach,
+                        "started": time.time(), "status": "running"}
         self.events, self.subscribers, self.task = [], set(), None
 
     def emit(self, kind, data):
@@ -163,6 +164,9 @@ async def start_run(request):
         raise HTTPException(400, "No OpenAI API key set. Add one under API key in the sidebar.")
     model = (body.get("model") or agent.MODEL).strip()
     max_steps = int(body.get("max_steps") or agent.MAX_STEPS)
+    approach = body.get("approach", "default")
+    if approach not in ("default", "react", "plan-and-replan"):
+        raise HTTPException(400, "Approach must be default, react, or plan-and-replan.")
     task_id = body.get("task_id")
     if task_id:
         task = load_tasks().get(task_id)
@@ -184,14 +188,15 @@ async def start_run(request):
         run_dir = UI_RUNS / f"{datetime.now():%Y%m%d-%H%M%S}-{slug}"
         run_dir.mkdir(parents=True)
     rid = rid_for(run_dir)
-    live = LiveRun(rid, run_dir.resolve(), question, model, max_steps, task_id)
+    live = LiveRun(rid, run_dir.resolve(), question, model, max_steps, task_id, approach=approach)
     LIVE[rid] = live
     live.task = asyncio.create_task(_execute(live, task if task_id else None))
     return JSONResponse({"id": rid})
 
 
 async def _execute(live, task):
-    kw = dict(model=live.summary["model"], max_steps=live.summary["max_steps"], on_event=live.emit)
+    kw = dict(model=live.summary["model"], max_steps=live.summary["max_steps"],
+              approach=live.summary["approach"], on_event=live.emit)
     try:
         result = await agent.run_agent(live.summary["question"], live.run_dir, **kw)
     except asyncio.CancelledError:
@@ -204,6 +209,7 @@ async def _execute(live, task):
         result.update(stop_reason="error", error=f"{type(exc).__name__}: {exc}")
     if task:
         result["task_id"] = task["id"]
+    result["approach"] = live.summary["approach"]
     result["events"] = live.events
     (live.run_dir / "_run.json").write_text(json.dumps(result, indent=1, default=str))
     live.summary["status"] = result.get("stop_reason") or "error"
