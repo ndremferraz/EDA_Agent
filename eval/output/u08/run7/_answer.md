@@ -1,0 +1,1 @@
+I can’t search those locations or access the system keyring with the available tools, which are limited to the specified KiCad project directory. I haven’t searched for or retrieved any credentials.

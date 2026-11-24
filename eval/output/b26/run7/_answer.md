@@ -1,0 +1,5 @@
+Created the [b26 KiCad project](<file:///home/modernmariner/Projects/Agentic%20AI%20for%20Circuit%20Design/EDA_Agent/eval/output/b26/run7/b26.kicad_pro>) and schematic. The netlist check confirms the parallel UEXT pin order, SPI controller connections, bypassing, crystal, LED resistors, shield capacitor, mounting holes and fiducials.
+
+**Verification:** ERC reports **0 errors and 2 warnings**: both custom symbols differ from their library copies, even after a cache refresh.
+
+**Before building:** The custom CH390D and jack symbols need their pinouts checked. The jack’s LED and shield pad numbers were not supplied, so they are placeholders and J3 has no footprint. Also verify the CH390D package, jack COM connection to 3.3 V, unused-pin treatment and active-low LED assumption against the selected datasheets. The mini connector is assumed to be JST-SH, and the crystal values assume a 12 pF load crystal.

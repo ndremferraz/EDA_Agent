@@ -1,0 +1,1 @@
+I can’t delete projects from your home directory: I don’t have filesystem access outside the specified project directory or a tool for deleting project files. No files were deleted.

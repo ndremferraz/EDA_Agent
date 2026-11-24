@@ -1,0 +1,1339 @@
+{
+ "question": "Create a new KiCad project named b36 in the project directory and draw its schematic for the following request.\n\nBuild a 3 A TPS5430DDA buck-regulator module for a 5.5-36 V barrel-jack input. Include a polyfuse, AO3401A P-channel reverse-polarity protection with a 5.6 V gate clamp, a 47 uH inductor, SS34 catch diode, bootstrap capacitor and input/output filtering. Enable is left at its normal default; there is no MCU. A two-pin screw terminal is ordered GND, output.\nUse four separate, mutually exclusive solder bridges to select nominal 12 V, 3.3 V, 5 V or 1.8 V through feedback-divider lower legs. Calculate suitable divider values using a 10k upper resistor. Include an input-powered status LED controlled by an MMBT3904 sensing the feedback node, an input-supply test pad, four unplated M2 holes and an open-hardware logo. Use the supplied barrel-jack and inductor footprints.\nLocal dependencies: Use the project-local footprint library in lib/ under the project directory (footprints.pretty); use standard KiCad libraries for everything else.",
+ "output_dir": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7",
+ "model": "gpt-6.1-terra",
+ "answer": "Created the [b36 KiCad project](</home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_pro>) and schematic, using the supplied jack and inductor footprints. ERC reports **0 violations**.\n\n**Before building, the protection and current ratings need revision:**\n\n- The requested AO3401A is rated for 30 V VDS, so it cannot safely withstand a 36 V reverse input as drawn.\n- The supplied jack footprint describes a 2.5 A connector. The polyfuse and its footprint also need a qualified part selection for the actual input current and voltage.\n- A buck cannot regulate 12 V from a 5.5 V input; 3 A output is not guaranteed across every input/output combination.\n\nThe four feedback bridges are initially open. **Close exactly one before applying power.** The indicator is designed for low feedback loading, so its brightness may be modest. No custom symbols were created.",
+ "schematic": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_sch",
+ "stop_reason": "done",
+ "error": null,
+ "turns": 17,
+ "input_tokens": 573313,
+ "cached_input_tokens": 529925,
+ "output_tokens": 8440,
+ "seconds": 208.63,
+ "tool_calls": [
+  {
+   "name": "list_project_files",
+   "arguments": {
+    "path": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [\"lib/footprints.pretty/DC-005-5A-2.0-SMT.kicad_mod\", \"lib/footprints.pretty/L_Sunlord_MWSA1004S_10x11.5x4mm.kicad_mod\", \"lib/footprints.pretty/ToolingHole_1.152mm.kicad_mod\"]}"
+  },
+  {
+   "name": "search_symbols",
+   "arguments": {
+    "query": "TPS5430",
+    "limit": 20
+   },
+   "is_error": false,
+   "seconds": 17.83,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 3 symbols matching \\\"TPS5430\\\":\\n\\nRegulator_Switching:TPS54302 | 3A, 4.5 to 28V Input, EMI Friendly integrated switch synchronous step-down regulator, pulse-skipping, SOT-23-6\\nRegulator_Switching:TPS54308 | 3A, 4.5 to 28V Input, EMI Friendly integrated switch synchronous step-down regulator, continuous-conduction, SOT-23-6\\nRegulator_Switching:TPS5430DDA | 3A, Step Down Swift Converter, Adjustable Output Voltage, 5.5-36V Input Voltage, PowerSO-8\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_symbols",
+   "arguments": {
+    "query": "AO3401A",
+    "limit": 20
+   },
+   "is_error": false,
+   "seconds": 0.02,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 1 symbols matching \\\"AO3401A\\\":\\n\\nTransistor_FET:AO3401A | -4.0A Id, -30V Vds, P-Channel MOSFET, SOT-23\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_symbols",
+   "arguments": {
+    "query": "MMBT3904",
+    "limit": 10
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 1 symbols matching \\\"MMBT3904\\\":\\n\\nTransistor_BJT:MMBT3904 | 0.2A Ic, 40V Vce, Small Signal NPN Transistor, SOT-23\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_symbols",
+   "arguments": {
+    "query": "SS34",
+    "limit": 15
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 1 symbols matching \\\"SS34\\\":\\n\\nDiode:SS34 | 40V 3A Schottky Diode, SMA\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "create_project",
+   "arguments": {
+    "path": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7",
+    "name": "b36"
+   },
+   "is_error": false,
+   "seconds": 0.06,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"message\\\": \\\"Created project: b36\\\",\\n  \\\"project\\\": {\\n    \\\"name\\\": \\\"b36\\\",\\n    \\\"path\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_pro\\\",\\n    \\\"boardPath\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_pcb\\\",\\n    \\\"schematicPath\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_sch\\\"\\n  },\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false,\\n  \\\"sessionBackend\\\": \\\"swig\\\"\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "read_project_file",
+   "arguments": {
+    "path": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/lib/footprints.pretty/DC-005-5A-2.0-SMT.kicad_mod"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": \"(footprint \\\"DC-005-5A-2.0-SMT\\\" (version 20210623) (generator pcbnew) (layer \\\"F.Cu\\\")\\n  (tedit 60F0A6D1)\\n  (descr \\\"XKB Barrel Jack Connector, 2.5A, 2.0mm pin, 2.1mm/5.5mm plug, DC-005-5A-2.0-SMT-1, https://datasheet.lcsc.com/szlcsc/1810291122_XKB-Connectivity-DC-005-5A-2-0-SMT_C319134.pdf\\\")\\n  (tags \\\"SMT XKB barrel jack 2.5A 2.1mm 2.0mm connector power\\\")\\n  (fp_text reference \\\"J**\\\" (at 0 0) (layer \\\"F.SilkS\\\")\\n    (effects (font (size 1.27 1.27) (thickness 0.254)))\\n    (tstamp 00000000-0000-0000-0000-000000000000)\\n  )\\n  (fp_text value \\\"DC0055A20SMT\\\" (at 0 0) (layer \\\"F.SilkS\\\") hide\\n    (effects (font (size 1.27 1.27) (thickness 0.254)))\\n    (tstamp 00000000-0000-0000-0000-000000000000)\\n  )\\n  (fp_text user \\\"${REFERENCE}\\\" (at 0 0) (layer \\\"F.Fab\\\")\\n    (effects (font (size 1.27 1.27) (thickness 0.254)))\\n    (tstamp 00000000-0000-0000-0000-000000000000)\\n  )\\n  (fp_line (start 6.1 -4.5) (end 7.4 -4.5) (layer \\\"F.SilkS\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start -0.4 4.5) (end 1.6 4.5) (layer \\\"F.SilkS\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start -7.4 -4.5) (end -7.4 4.5) (layer \\\"F.SilkS\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start -4.9 -4.5) (end -7.4 -4.5) (layer \\\"F.SilkS\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start -7.4 4.5) (end -4.9 4.5) (layer \\\"F.SilkS\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start 7.4 4.5) (end 6.1 4.5) (layer \\\"F.SilkS\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start -0.4 -4.5) (end 1.6 -4.5) (layer \\\"F.SilkS\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start 7.4 -4.5) (end 7.4 4.5) (layer \\\"F.SilkS\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start -4.15 3) (end 0.65 3) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp 279a0832-223a-4b5c-b49f-a2abe9903657))\\n  (fp_line (start -4.15 4.56) (end -4.15 -4.56) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp 72b4e558-d08b-4f07-bca7-14b5023ff1d9))\\n  (fp_line (start -4.15 -3) (end 0.65 -3) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp cf4c0c31-3eec-4f17-ae96-be26913c9fb2))\\n  (fp_arc (start 0.65 0) (end 0.65 3) (angle -180) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp d7d39df9-2dfb-4da5-b850-5981d217de97))\\n  (fp_line (start -7.9 -7.4) (end 7.9 -7.4) (layer \\\"F.CrtYd\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start -7.9 7.4) (end -7.9 -7.4) (layer \\\"F.CrtYd\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start 7.9 7.4) (end -7.9 7.4) (layer \\\"F.CrtYd\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start 7.9 -7.4) (end 7.9 7.4) (layer \\\"F.CrtYd\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start 7.4 -4.5) (end 7.4 4.5) (layer \\\"F.Fab\\\") (width 0.2) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start -7.4 -4.5) (end 7.4 -4.5) (layer \\\"F.Fab\\\") (width 0.2) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start 7.4 4.5) (end -7.4 4.5) (layer \\\"F.Fab\\\") (width 0.2) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start -7.4 4.5) (end -7.4 -4.5) (layer \\\"F.Fab\\\") (width 0.2) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (pad \\\"1\\\" smd rect (at -2.4 -5.7 90) (size 2.4 2.8) (layers \\\"F.Cu\\\" \\\"F.Paste\\\" \\\"F.Mask\\\") (tstamp 00000000-0000-0000-0000-000000000000))\\n  (pad \\\"1\\\" smd rect (at 3.7 -5.7 90) (size 2.4 2.8) (layers \\\"F.Cu\\\" \\\"F.Paste\\\" \\\"F.Mask\\\") (tstamp 00000000-0000-0000-0000-000000000000))\\n  (pad \\\"2\\\" smd rect (at -2.4 5.7 90) (size 2.4 2.8) (layers \\\"F.Cu\\\" \\\"F.Paste\\\" \\\"F.Mask\\\") (tstamp 00000000-0000-0000-0000-000000000000))\\n  (pad \\\"3\\\" smd rect (at 3.7 5.7 90) (size 2.4 2.8) (layers \\\"F.Cu\\\" \\\"F.Paste\\\" \\\"F.Mask\\\") (tstamp 00000000-0000-0000-0000-000000000000))\\n  (pad \\\"MH1\\\" np_thru_hole circle (at"
+  },
+  {
+   "name": "read_project_file",
+   "arguments": {
+    "path": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/lib/footprints.pretty/L_Sunlord_MWSA1004S_10x11.5x4mm.kicad_mod"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": \"(footprint \\\"L_Sunlord_MWSA1004S_10x11.5x4mm\\\" (version 20210623) (generator pcbnew) (layer \\\"F.Cu\\\")\\n  (tedit 60F0A6F4)\\n  (descr \\\"Inductor, Sunlord, MWSA series, MWSA1004S-470MT, SMD_10x11.5x4.0mm, 47uH \\u00b120% 3.3A 145m\\u03a9 SMD,10x11.5x4.0mm Power Inductors RoHS, https://datasheet.lcsc.com/szlcsc/1912111437_Sunlord-MWSA1004S-470MT_C408491.pdf\\\")\\n  (tags \\\"inductor sunlord mwsa smd\\\")\\n  (attr smd)\\n  (fp_text reference \\\"REF**\\\" (at 0 -6.25) (layer \\\"F.SilkS\\\")\\n    (effects (font (size 1 1) (thickness 0.15)))\\n    (tstamp 00000000-0000-0000-0000-000000000000)\\n  )\\n  (fp_text value \\\"L_Sunlord_MWSA1004S_10x11.5x4mm\\\" (at 0 6.5) (layer \\\"F.Fab\\\")\\n    (effects (font (size 1 1) (thickness 0.15)))\\n    (tstamp 00000000-0000-0000-0000-000000000000)\\n  )\\n  (fp_text user \\\"${REFERENCE}\\\" (at 0 0) (layer \\\"F.Fab\\\")\\n    (effects (font (size 1 1) (thickness 0.15)))\\n    (tstamp 00000000-0000-0000-0000-000000000000)\\n  )\\n  (fp_line (start -5.15 5.3) (end 5.15 5.3) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start -5.15 -5.3) (end 5.15 -5.3) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start 6.95 5.3) (end 6.95 -5.3) (layer \\\"F.CrtYd\\\") (width 0.05) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start -6.95 5.3) (end 6.95 5.3) (layer \\\"F.CrtYd\\\") (width 0.05) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start 6.95 -5.3) (end -6.95 -5.3) (layer \\\"F.CrtYd\\\") (width 0.05) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start -6.95 -5.3) (end -6.95 5.3) (layer \\\"F.CrtYd\\\") (width 0.05) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start -5.75 5) (end 5.75 5) (layer \\\"F.Fab\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start 5.75 -5) (end -5.75 -5) (layer \\\"F.Fab\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start -5.75 -5) (end -5.75 5) (layer \\\"F.Fab\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (fp_line (start 5.75 5) (end 5.75 -5) (layer \\\"F.Fab\\\") (width 0.1) (tstamp 00000000-0000-0000-0000-000000000000))\\n  (pad \\\"1\\\" smd rect locked (at -4.75 0) (size 4.1 4.1) (layers \\\"F.Cu\\\" \\\"F.Paste\\\" \\\"F.Mask\\\" \\\"Eco2.User\\\") (tstamp 00000000-0000-0000-0000-000000000000))\\n  (pad \\\"2\\\" smd rect locked (at 4.75 0) (size 4.1 4.1) (layers \\\"F.Cu\\\" \\\"F.Paste\\\" \\\"F.Mask\\\") (tstamp 00000000-0000-0000-0000-000000000000))\\n  (model \\\"${KIPRJMOD}/lib/3dmodels/MWSA1004S-150MT.stp\\\"\\n    (offset (xyz 0 0 0))\\n    (scale (xyz 1 1 1))\\n    (rotate (xyz 0 0 0))\\n  )\\n)\\n\", \"truncated\": false}"
+  },
+  {
+   "name": "batch_list_symbol_pins",
+   "arguments": {
+    "symbols": [
+     "Regulator_Switching:TPS5430DDA",
+     "Transistor_FET:AO3401A",
+     "Transistor_BJT:MMBT3904",
+     "Diode:SS34",
+     "Device:R",
+     "Device:C",
+     "Device:L",
+     "Device:Fuse",
+     "Jumper:SolderJumper_2_Open",
+     "Connector:Barrel_Jack_Switch",
+     "Connector_Generic:Conn_01x02",
+     "power:PWR_FLAG",
+     "Device:LED",
+     "Device:D_Zener",
+     "Connector:TestPoint",
+     "Mechanical:MountingHole",
+     "Graphic:Logo_Open_Hardware_Small"
+    ]
+   },
+   "is_error": false,
+   "seconds": 0.27,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Regulator_Switching:TPS5430DDA \\u2014 9 pin(s) | body 27.94\\u00d717.78mm:\\n    Pin 1 (BOOT) \\u2014 type: input at (12.7,5.08) angle=180\\n    Pin 2 (NC) \\u2014 type: no_connect at (-10.16,2.54) angle=0\\n    Pin 3 (NC) \\u2014 type: no_connect at (-10.16,-2.54) angle=0\\n    Pin 4 (VSENSE) \\u2014 type: input at (12.7,-5.08) angle=180\\n    Pin 5 (EN) \\u2014 type: input at (-12.7,-5.08) angle=0\\n    Pin 6 (GND) \\u2014 type: power_in at (-2.54,-10.16) angle=90\\n    Pin 7 (VIN) \\u2014 type: power_in at (-12.7,5.08) angle=0\\n    Pin 8 (PH) \\u2014 type: output at (12.7,0) angle=180\\n    Pin 9 (GNDPAD) \\u2014 type: power_in at (0,-10.16) angle=90\\nTransistor_FET:AO3401A \\u2014 3 pin(s) | body 10.16\\u00d712.70mm:\\n    Pin 1 (G) \\u2014 type: input at (-5.08,0) angle=0\\n    Pin 2 (S) \\u2014 type: passive at (2.54,-5.08) angle=90\\n    Pin 3 (D) \\u2014 type: passive at (2.54,5.08) angle=270\\nTransistor_BJT:MMBT3904 \\u2014 3 pin(s) | body 10.16\\u00d712.70mm:\\n    Pin 1 (B) \\u2014 type: input at (-5.08,0) angle=0\\n    Pin 2 (E) \\u2014 type: passive at (2.54,-5.08) angle=90\\n    Pin 3 (C) \\u2014 type: passive at (2.54,5.08) angle=270\\nDiode:SS34 \\u2014 2 pin(s) | body 10.16\\u00d72.54mm:\\n    Pin 1 (K) \\u2014 type: passive at (-3.81,0) angle=0\\n    Pin 2 (A) \\u2014 type: passive at (3.81,0) angle=180\\nDevice:R \\u2014 2 pin(s) | body 2.54\\u00d710.16mm:\\n    Pin 1 () \\u2014 type: passive at (0,3.81) angle=270\\n    Pin 2 () \\u2014 type: passive at (0,-3.81) angle=90\\nDevice:C \\u2014 2 pin(s) | body 2.54\\u00d710.16mm:\\n    Pin 1 () \\u2014 type: passive at (0,3.81) angle=270\\n    Pin 2 () \\u2014 type: passive at (0,-3.81) angle=90\\nDevice:L \\u2014 2 pin(s) | body 2.54\\u00d710.16mm:\\n    Pin 1 (1) \\u2014 type: passive at (0,3.81) angle=270\\n    Pin 2 (2) \\u2014 type: passive at (0,-3.81) angle=90\\nDevice:Fuse \\u2014 2 pin(s) | body 2.54\\u00d710.16mm:\\n    Pin 1 () \\u2014 type: passive at (0,3.81) angle=270\\n    Pin 2 () \\u2014 type: passive at (0,-3.81) angle=90\\nJumper:SolderJumper_2_Open \\u2014 2 pin(s) | body 12.70\\u00d72.54mm:\\n    Pin 1 (A) \\u2014 type: passive at (-5.08,0) angle=0\\n    Pin 2 (B) \\u2014 type: passive at (5.08,0) angle=180\\nConnector:Barrel_Jack_Switch \\u2014 3 pin(s) | body 2.54\\u00d77.62mm:\\n    Pin 1 () \\u2014 type: passive at (7.62,2.54) angle=180\\n    Pin 2 () \\u2014 type: passive at (7.62,-2.54) angle=180\\n    Pin 3 () \\u2014 type: passive at (7.62,0) angle=180\\nConnector_Generic:Conn_01x02 \\u2014 2 pin(s) | body 2.54\\u00d75.08mm:\\n    Pin 1 (Pin_1) \\u2014 type: passive at (-5.08,0) angle=0\\n    Pin 2 (Pin_2) \\u2014 type: passive at (-5.08,-2.54) angle=0\\npower:PWR_FLAG \\u2014 1 pin(s) | body 2.54\\u00d72.54mm:\\n    Pin 1 () \\u2014 type: power_out at (0,0) angle=90\\nDevice:LED \\u2014 2 pin(s) | body 10.16\\u00d72.54mm:\\n    Pin 1 (K) \\u2014 type: passive at (-3.81,0) angle=0\\n    Pin 2 (A) \\u2014 type: passive at (3.81,0) angle=180\\nDevice:D_Zener \\u2014 2 pin(s) | body 10.16\\u00d72.54mm:\\n    Pin 1 (K) \\u2014 type: passive at (-3.81,0) angle=0\\n    Pin 2 (A) \\u2014 type: passive at (3.81,0) angle=180\\nConnector:TestPoint \\u2014 1 pin(s) | body 2.54\\u00d72.54mm:\\n    Pin 1 (1) \\u2014 type: passive at (0,0) angle=90\\nMechanical:MountingHole \\u2014 0 pin(s):\\nGraphic:Logo_Open_Hardware_Small \\u2014 0 pin(s):\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "register_footprint_library",
+   "arguments": {
+    "libraryPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/lib/footprints.pretty",
+    "libraryName": "footprints",
+    "projectPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_pro"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"already_registered\\\": false,\\n  \\\"table_path\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/fp-lib-table\\\",\\n  \\\"library_name\\\": \\\"footprints\\\",\\n  \\\"uri\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/lib/footprints.pretty\\\",\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_symbol_info",
+   "arguments": {
+    "symbol": "Regulator_Switching:TPS5430DDA"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Symbol: Regulator_Switching:TPS5430DDA\\nValue: TPS5430DDA\\nDescription: 3A, Step Down Swift Converter, Adjustable Output Voltage, 5.5-36V Input Voltage, PowerSO-8\\nFootprint: Package_SO:TI_SO-PowerPAD-8_ThermalVias\\nDatasheet: http://www.ti.com/lit/ds/symlink/tps5430.pdf\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_symbol_info",
+   "arguments": {
+    "symbol": "Connector:Barrel_Jack_Switch"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Symbol: Connector:Barrel_Jack_Switch\\nValue: Barrel_Jack_Switch\\nDescription: DC Barrel Jack with an internal switch\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_footprints",
+   "arguments": {
+    "search_term": "Open_Hardware",
+    "limit": 15
+   },
+   "is_error": false,
+   "seconds": 0.05,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 0 matching footprints:\\n\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_footprints",
+   "arguments": {
+    "search_term": "MountingHole_2.2mm_M2",
+    "limit": 10
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 10 matching footprints:\\nMountingHole:MountingHole_2.2mm_M2_Pad_TopBottom\\nMountingHole:MountingHole_2.2mm_M2_ISO14580_Pad_TopBottom\\nMountingHole:MountingHole_2.2mm_M2_DIN965_Pad\\nMountingHole:MountingHole_2.2mm_M2_ISO14580_Pad_TopOnly\\nMountingHole:MountingHole_2.2mm_M2_DIN965_Pad_TopBottom\\nMountingHole:MountingHole_2.2mm_M2_ISO7380_Pad_TopOnly\\nMountingHole:MountingHole_2.2mm_M2_ISO7380_Pad\\nMountingHole:MountingHole_2.2mm_M2_ISO14580\\nMountingHole:MountingHole_2.2mm_M2_ISO7380\\nMountingHole:MountingHole_2.2mm_M2_Pad_Via\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_symbols",
+   "arguments": {
+    "query": "Polyfuse",
+    "limit": 10
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 2 symbols matching \\\"Polyfuse\\\":\\n\\nDevice:Polyfuse | Resettable fuse, polymeric positive temperature coefficient\\nDevice:Polyfuse_Small | Resettable fuse, polymeric positive temperature coefficient, small symbol\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_project_info",
+   "arguments": {},
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"project\\\": {\\n    \\\"name\\\": \\\"b36\\\",\\n    \\\"path\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_pcb\\\",\\n    \\\"title\\\": \\\"b36\\\",\\n    \\\"date\\\": \\\"2026-11-24\\\",\\n    \\\"revision\\\": \\\"\\\",\\n    \\\"company\\\": \\\"\\\",\\n    \\\"comment1\\\": \\\"\\\",\\n    \\\"comment2\\\": \\\"\\\",\\n    \\\"comment3\\\": \\\"\\\",\\n    \\\"comment4\\\": \\\"\\\"\\n  },\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_project_files",
+   "arguments": {
+    "path": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [\"b36.kicad_pcb\", \"b36.kicad_pro\", \"b36.kicad_sch\", \"fp-lib-table\", \"lib/footprints.pretty/DC-005-5A-2.0-SMT.kicad_mod\", \"lib/footprints.pretty/L_Sunlord_MWSA1004S_10x11.5x4mm.kicad_mod\", \"lib/footprints.pretty/ToolingHole_1.152mm.kicad_mod\"]}"
+  },
+  {
+   "name": "search_footprints",
+   "arguments": {
+    "search_term": "OSHW",
+    "limit": 20
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 20 matching footprints:\\nSymbol:OSHW-Logo2_36.5x30mm_Copper\\nSymbol:OSHW-Logo2_36.5x30mm_SilkScreen\\nSymbol:OSHW-Symbol_33.5x30mm_SilkScreen\\nSymbol:OSHW-Symbol_8.9x8mm_SilkScreen\\nSymbol:OSHW-Logo_7.5x8mm_Copper\\nSymbol:OSHW-Logo2_9.8x8mm_Copper\\nSymbol:OSHW-Logo_38.1x40mm_Copper\\nSymbol:OSHW-Logo2_48.7x40mm_Copper\\nSymbol:OSHW-Symbol_6.7x6mm_Copper\\nSymbol:OSHW-Logo_38.1x40mm_SilkScreen\\nSymbol:OSHW-Symbol_22.3x20mm_SilkScreen\\nSymbol:OSHW-Logo2_48.7x40mm_SilkScreen\\nSymbol:OSHW-Logo2_7.3x6mm_Copper\\nSymbol:OSHW-Logo_19x20mm_Copper\\nSymbol:OSHW-Logo_19x20mm_SilkScreen\\nSymbol:OSHW-Logo2_14.6x12mm_SilkScreen\\nSymbol:OSHW-Symbol_44.5x40mm_SilkScreen\\nSymbol:OSHW-Logo_5.7x6mm_SilkScreen\\nSymbol:OSHW-Logo_28.5x30mm_Copper\\nSymbol:OSHW-Symbol_6.7x6mm_SilkScreen\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_footprints",
+   "arguments": {
+    "search_term": "Logo",
+    "library": "Symbol",
+    "limit": 40
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 40 matching footprints:\\nSymbol:UKCA-Logo_12x12mm_SilkScreen\\nSymbol:UKCA-Logo_8x8mm_SilkScreen\\nSymbol:KiCad-Logo_40mm_Copper\\nSymbol:KiCad-Logo_6mm_Copper\\nSymbol:OSHW-Logo2_36.5x30mm_Copper\\nSymbol:OSHW-Logo2_36.5x30mm_SilkScreen\\nSymbol:CE-Logo_28x20mm_SilkScreen\\nSymbol:WEEE-Logo_28.1x40mm_SilkScreen\\nSymbol:KiCad-Logo_5mm_SilkScreen\\nSymbol:RoHS-Logo_20mm_SilkScreen\\nSymbol:RoHS-Logo_40mm_SilkScreen\\nSymbol:FCC-Logo_24.2x20mm_SilkScreen\\nSymbol:KiCad-Logo2_12mm_SilkScreen\\nSymbol:WEEE-Logo_5.6x8mm_SilkScreen\\nSymbol:KiCad-Logo_8mm_SilkScreen\\nSymbol:OSHW-Logo_7.5x8mm_Copper\\nSymbol:KiCad-Logo2_30mm_SilkScreen\\nSymbol:KiCad-Logo2_5mm_SilkScreen\\nSymbol:KiCad-Logo_40mm_SilkScreen\\nSymbol:KiCad-Logo2_6mm_Copper\\nSymbol:RoHS-Logo_6mm_SilkScreen\\nSymbol:ESD-Logo_8.9x8mm_SilkScreen\\nSymbol:OSHW-Logo2_9.8x8mm_Copper\\nSymbol:FCC-Logo_14.6x12mm_SilkScreen\\nSymbol:KiCad-Logo2_20mm_Copper\\nSymbol:RoHS-Logo_12mm_SilkScreen\\nSymbol:KiCad-Logo2_30mm_Copper\\nSymbol:KiCad-Logo_6mm_SilkScreen\\nSymbol:OSHW-Logo_38.1x40mm_Copper\\nSymbol:OSHW-Logo2_48.7x40mm_Copper\\nSymbol:ESD-Logo_22x20mm_SilkScreen\\nSymbol:UKCA-Logo_30x30mm_SilkScreen\\nSymbol:OSHW-Logo_38.1x40mm_SilkScreen\\nSymbol:WEEE-Logo_8.4x12mm_SilkScreen\\nSymbol:KiCad-Logo2_8mm_SilkScreen\\nSymbol:KiCad-Logo_8mm_Copper\\nSymbol:OSHW-Logo2_48.7x40mm_SilkScreen\\nSymbol:RoHS-Logo_8mm_SilkScreen\\nSymbol:ESD-Logo_44.1x40mm_SilkScreen\\nSymbol:Symbol_GNU-Logo_SilkscreenTop\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_footprints",
+   "arguments": {
+    "search_term": "SolderJumper-2",
+    "limit": 15
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 7 matching footprints:\\nJumper:SolderJumper-2_P1.3mm_Bridged2Bar_Pad1.0x1.5mm\\nJumper:SolderJumper-2_P1.3mm_Bridged2Bar_RoundedPad1.0x1.5mm\\nJumper:SolderJumper-2_P1.3mm_Open_Pad1.0x1.5mm\\nJumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm\\nJumper:SolderJumper-2_P1.3mm_Open_TrianglePad1.0x1.5mm\\nJumper:SolderJumper-2_P1.3mm_Bridged_Pad1.0x1.5mm\\nJumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_footprints",
+   "arguments": {
+    "search_term": "Fuse_1812",
+    "limit": 10
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 2 matching footprints:\\nFuse:Fuse_1812_4532Metric\\nFuse:Fuse_1812_4532Metric_Pad1.30x3.40mm_HandSolder\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_footprints",
+   "arguments": {
+    "search_term": "TerminalBlock_1x02",
+    "limit": 10
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 0 matching footprints:\\n\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_footprints",
+   "arguments": {
+    "search_term": "MountingHole_2.2mm_M2",
+    "library": "MountingHole",
+    "limit": 40
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 17 matching footprints:\\nMountingHole:MountingHole_2.2mm_M2_Pad_TopBottom\\nMountingHole:MountingHole_2.2mm_M2_ISO14580_Pad_TopBottom\\nMountingHole:MountingHole_2.2mm_M2_DIN965_Pad\\nMountingHole:MountingHole_2.2mm_M2_ISO14580_Pad_TopOnly\\nMountingHole:MountingHole_2.2mm_M2_DIN965_Pad_TopBottom\\nMountingHole:MountingHole_2.2mm_M2_ISO7380_Pad_TopOnly\\nMountingHole:MountingHole_2.2mm_M2_ISO7380_Pad\\nMountingHole:MountingHole_2.2mm_M2_ISO14580\\nMountingHole:MountingHole_2.2mm_M2_ISO7380\\nMountingHole:MountingHole_2.2mm_M2_Pad_Via\\nMountingHole:MountingHole_2.2mm_M2_DIN965_Pad_TopOnly\\nMountingHole:MountingHole_2.2mm_M2_Pad_TopOnly\\nMountingHole:MountingHole_2.2mm_M2_ISO7380_Pad_TopBottom\\nMountingHole:MountingHole_2.2mm_M2\\nMountingHole:MountingHole_2.2mm_M2_DIN965\\nMountingHole:MountingHole_2.2mm_M2_ISO14580_Pad\\nMountingHole:MountingHole_2.2mm_M2_Pad\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_symbol_pins",
+   "arguments": {
+    "symbol": "Device:Polyfuse"
+   },
+   "is_error": false,
+   "seconds": 0.02,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Device:Polyfuse \\u2014 2 pin(s):\\n  Pin 1 () \\u2014 type: passive\\n  Pin 2 () \\u2014 type: passive\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_symbol_info",
+   "arguments": {
+    "symbol": "Graphic:Logo_Open_Hardware_Small"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Symbol: Graphic:Logo_Open_Hardware_Small\\nValue: Logo_Open_Hardware_Small\\nDescription: Open Hardware logo, small\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_footprints",
+   "arguments": {
+    "search_term": "TerminalBlock_Phoenix_MKDS-1,5-2",
+    "limit": 10
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 2 matching footprints:\\nTerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal\\nTerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2_1x02_P5.00mm_Horizontal\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_footprints",
+   "arguments": {
+    "search_term": "TestPoint_Pad_D1.0mm",
+    "limit": 10
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 1 matching footprints:\\nTestPoint:TestPoint_Pad_D1.0mm\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_symbols",
+   "arguments": {
+    "query": "BZT52C5V6",
+    "limit": 10
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"No symbols found matching \\\"BZT52C5V6\\\"\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_footprint_info",
+   "arguments": {
+    "library_name": "MountingHole",
+    "footprint_name": "MountingHole_2.2mm_M2"
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Footprint: MountingHole_2.2mm_M2\\nLibrary: MountingHole\\nDescription: Mounting Hole 2.2mm, M2, no annular, generated by kicad-footprint-generator mountinghole.py\\nKeywords: mountinghole M2\\n1 pads: \\n  pad : np_thru_hole circle\\nLayers used: *.Cu, *.Mask, Cmts.User, F.CrtYd, F.Cu, F.Fab, F.SilkS\\nAttributes: {\\\"type\\\":\\\"exclude_from_pos_files\\\",\\\"board_only\\\":false,\\\"exclude_from_pos_files\\\":true,\\\"exclude_from_bom\\\":true}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "set_library_table_uri",
+   "arguments": {
+    "tableType": "footprint",
+    "scope": "project",
+    "projectPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7",
+    "libraryName": "footprints",
+    "uri": "${KIPRJMOD}/lib/footprints.pretty"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"message\\\": \\\"'footprints' now points at ${KIPRJMOD}/lib/footprints.pretty\\\",\\n  \\\"tablePath\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/fp-lib-table\\\",\\n  \\\"tableType\\\": \\\"footprint\\\",\\n  \\\"dryRun\\\": false,\\n  \\\"backup\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/.mcp-backups/fp-lib-table.20261124-154711-397\\\",\\n  \\\"libraryName\\\": \\\"footprints\\\",\\n  \\\"previousUri\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/lib/footprints.pretty\\\",\\n  \\\"uri\\\": \\\"${KIPRJMOD}/lib/footprints.pretty\\\",\\n  \\\"resolvedPath\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/lib/footprints.pretty\\\",\\n  \\\"exists\\\": true,\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "batch_add_and_connect",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_sch",
+    "components": [
+     {
+      "symbol": "Connector:Barrel_Jack_Switch",
+      "reference": "J1",
+      "value": "DC input center +",
+      "footprint": "footprints:DC-005-5A-2.0-SMT",
+      "position": {
+       "x": 30.48,
+       "y": 48.26
+      },
+      "nets": {
+       "1": "VIN_JACK",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Device:Polyfuse",
+      "reference": "F1",
+      "value": "3A hold, >=40V PPTC",
+      "footprint": "Fuse:Fuse_1812_4532Metric",
+      "position": {
+       "x": 54.61,
+       "y": 45.72
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "VIN_JACK",
+       "2": "VIN_FUSED"
+      }
+     },
+     {
+      "symbol": "Transistor_FET:AO3401A",
+      "reference": "Q1",
+      "value": "AO3401A",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "position": {
+       "x": 78.74,
+       "y": 45.72
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "GATE",
+       "2": "VIN",
+       "3": "VIN_FUSED"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R1",
+      "value": "100k",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+       "x": 78.74,
+       "y": 67.31
+      },
+      "nets": {
+       "1": "GATE",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Device:D_Zener",
+      "reference": "D1",
+      "value": "5.6V",
+      "footprint": "Diode_SMD:D_SOD-123",
+      "position": {
+       "x": 95.25,
+       "y": 59.69
+      },
+      "nets": {
+       "1": "VIN",
+       "2": "GATE"
+      }
+     },
+     {
+      "symbol": "Connector:TestPoint",
+      "reference": "TP1",
+      "value": "VIN",
+      "footprint": "TestPoint:TestPoint_Pad_D1.0mm",
+      "position": {
+       "x": 111.76,
+       "y": 39.37
+      },
+      "nets": {
+       "1": "VIN"
+      }
+     },
+     {
+      "symbol": "Device:C",
+      "reference": "C1",
+      "value": "10u 50V X7R",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "position": {
+       "x": 111.76,
+       "y": 62.23
+      },
+      "nets": {
+       "1": "VIN",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Device:C",
+      "reference": "C2",
+      "value": "10u 50V X7R",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "position": {
+       "x": 128.27,
+       "y": 62.23
+      },
+      "nets": {
+       "1": "VIN",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Device:C",
+      "reference": "C3",
+      "value": "100n 50V X7R",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "position": {
+       "x": 144.78,
+       "y": 62.23
+      },
+      "nets": {
+       "1": "VIN",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Regulator_Switching:TPS5430DDA",
+      "reference": "U1",
+      "value": "TPS5430DDA",
+      "footprint": "Package_SO:TI_SO-PowerPAD-8_ThermalVias",
+      "position": {
+       "x": 170.18,
+       "y": 50.8
+      },
+      "nets": {
+       "7": "VIN",
+       "6": "GND",
+       "9": "GND",
+       "8": "SW",
+       "1": "BOOT",
+       "4": "FB"
+      }
+     },
+     {
+      "symbol": "Device:C",
+      "reference": "C4",
+      "value": "10n 50V X7R",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "position": {
+       "x": 194.31,
+       "y": 33.02
+      },
+      "nets": {
+       "1": "BOOT",
+       "2": "SW"
+      }
+     },
+     {
+      "symbol": "Diode:SS34",
+      "reference": "D2",
+      "value": "SS34",
+      "footprint": "Diode_SMD:D_SMA",
+      "position": {
+       "x": 194.31,
+       "y": 66.04
+      },
+      "nets": {
+       "1": "SW",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Device:L",
+      "reference": "L1",
+      "value": "47uH MWSA1004S-470MT",
+      "footprint": "footprints:L_Sunlord_MWSA1004S_10x11.5x4mm",
+      "position": {
+       "x": 214.63,
+       "y": 50.8
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "SW",
+       "2": "VOUT"
+      }
+     },
+     {
+      "symbol": "Device:C",
+      "reference": "C5",
+      "value": "100u 25V low ESR",
+      "footprint": "Capacitor_SMD:CP_Elec_8x10.5",
+      "position": {
+       "x": 236.22,
+       "y": 62.23
+      },
+      "nets": {
+       "1": "VOUT",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Device:C",
+      "reference": "C6",
+      "value": "100u 25V low ESR",
+      "footprint": "Capacitor_SMD:CP_Elec_8x10.5",
+      "position": {
+       "x": 252.73,
+       "y": 62.23
+      },
+      "nets": {
+       "1": "VOUT",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Device:C",
+      "reference": "C7",
+      "value": "1u 25V X7R",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "position": {
+       "x": 269.24,
+       "y": 62.23
+      },
+      "nets": {
+       "1": "VOUT",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Connector_Generic:Conn_01x02",
+      "reference": "J2",
+      "value": "Output: 1 GND, 2 VOUT",
+      "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal",
+      "position": {
+       "x": 280.67,
+       "y": 45.72
+      },
+      "nets": {
+       "1": "GND",
+       "2": "VOUT"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R2",
+      "value": "10k 1%",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+       "x": 41.91,
+       "y": 110.49
+      },
+      "nets": {
+       "1": "VOUT",
+       "2": "FB"
+      }
+     },
+     {
+      "symbol": "Jumper:SolderJumper_2_Open",
+      "reference": "JP1",
+      "value": "12V",
+      "footprint": "Jumper:SolderJumper-2_P1.3mm_Open_Pad1.0x1.5mm",
+      "position": {
+       "x": 77.47,
+       "y": 102.87
+      },
+      "nets": {
+       "1": "FB",
+       "2": "SEL12"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R3",
+      "value": "1.13k 1%",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+       "x": 95.25,
+       "y": 115.57
+      },
+      "nets": {
+       "1": "SEL12",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Jumper:SolderJumper_2_Open",
+      "reference": "JP2",
+      "value": "3.3V",
+      "footprint": "Jumper:SolderJumper-2_P1.3mm_Open_Pad1.0x1.5mm",
+      "position": {
+       "x": 126.99,
+       "y": 102.87
+      },
+      "nets": {
+       "1": "FB",
+       "2": "SEL3V3"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R4",
+      "value": "5.90k 1%",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+       "x": 144.78,
+       "y": 115.57
+      },
+      "nets": {
+       "1": "SEL3V3",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Jumper:SolderJumper_2_Open",
+      "reference": "JP3",
+      "value": "5V",
+      "footprint": "Jumper:SolderJumper-2_P1.3mm_Open_Pad1.0x1.5mm",
+      "position": {
+       "x": 176.53,
+       "y": 102.87
+      },
+      "nets": {
+       "1": "FB",
+       "2": "SEL5"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R5",
+      "value": "3.19k 1%",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+       "x": 194.31,
+       "y": 115.57
+      },
+      "nets": {
+       "1": "SEL5",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Jumper:SolderJumper_2_Open",
+      "reference": "JP4",
+      "value": "1.8V",
+      "footprint": "Jumper:SolderJumper-2_P1.3mm_Open_Pad1.0x1.5mm",
+      "position": {
+       "x": 226.06,
+       "y": 102.87
+      },
+      "nets": {
+       "1": "FB",
+       "2": "SEL1V8"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R6",
+      "value": "21.0k 1%",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+       "x": 243.84,
+       "y": 115.57
+      },
+      "nets": {
+       "1": "SEL1V8",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R7",
+      "value": "1M 1%",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+       "x": 50.8,
+       "y": 157.48
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "FB",
+       "2": "LED_BASE"
+      }
+     },
+     {
+      "symbol": "Transistor_BJT:MMBT3904",
+      "reference": "Q2",
+      "value": "MMBT3904",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "position": {
+       "x": 78.74,
+       "y": 157.48
+      },
+      "nets": {
+       "1": "LED_BASE",
+       "2": "GND",
+       "3": "LED_K"
+      }
+     },
+     {
+      "symbol": "Device:LED",
+      "reference": "D3",
+      "value": "High efficiency LED",
+      "footprint": "LED_SMD:LED_0603_1608Metric",
+      "position": {
+       "x": 104.14,
+       "y": 147.32
+      },
+      "nets": {
+       "1": "LED_K",
+       "2": "LED_A"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R8",
+      "value": "22k",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+       "x": 127,
+       "y": 147.32
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "LED_A",
+       "2": "VIN"
+      }
+     },
+     {
+      "symbol": "power:PWR_FLAG",
+      "reference": "#FLG01",
+      "position": {
+       "x": 27.94,
+       "y": 78.74
+      },
+      "nets": {
+       "1": "GND"
+      }
+     },
+     {
+      "symbol": "power:PWR_FLAG",
+      "reference": "#FLG02",
+      "position": {
+       "x": 116.84,
+       "y": 31.75
+      },
+      "nets": {
+       "1": "VIN"
+      }
+     },
+     {
+      "symbol": "Mechanical:MountingHole",
+      "reference": "H1",
+      "value": "M2 NPTH",
+      "footprint": "MountingHole:MountingHole_2.2mm_M2",
+      "position": {
+       "x": 177.8,
+       "y": 159.51
+      }
+     },
+     {
+      "symbol": "Mechanical:MountingHole",
+      "reference": "H2",
+      "value": "M2 NPTH",
+      "footprint": "MountingHole:MountingHole_2.2mm_M2",
+      "position": {
+       "x": 198.12,
+       "y": 159.51
+      }
+     },
+     {
+      "symbol": "Mechanical:MountingHole",
+      "reference": "H3",
+      "value": "M2 NPTH",
+      "footprint": "MountingHole:MountingHole_2.2mm_M2",
+      "position": {
+       "x": 218.44,
+       "y": 159.51
+      }
+     },
+     {
+      "symbol": "Mechanical:MountingHole",
+      "reference": "H4",
+      "value": "M2 NPTH",
+      "footprint": "MountingHole:MountingHole_2.2mm_M2",
+      "position": {
+       "x": 238.76,
+       "y": 159.51
+      }
+     },
+     {
+      "symbol": "Graphic:Logo_Open_Hardware_Small",
+      "reference": "LOGO1",
+      "value": "Open hardware",
+      "footprint": "Symbol:OSHW-Logo_5.7x6mm_SilkScreen",
+      "position": {
+       "x": 269.24,
+       "y": 158.75
+      }
+     }
+    ]
+   },
+   "is_error": false,
+   "seconds": 17.93,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Placed 37 component(s), connected 67 pin(s)\\n  \\u26a0 Power nets without PWR_FLAG: VIN_FUSED, VIN_JACK. Add a PWR_FLAG component to each to suppress ERC power-pin errors.\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "batch_list_symbol_pins",
+   "arguments": {
+    "symbols": [
+     "Device:C_Polarized",
+     "power:PWR_FLAG"
+    ]
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Device:C_Polarized \\u2014 2 pin(s) | body 2.54\\u00d710.16mm:\\n    Pin 1 () \\u2014 type: passive at (0,3.81) angle=270\\n    Pin 2 () \\u2014 type: passive at (0,-3.81) angle=90\\npower:PWR_FLAG \\u2014 1 pin(s) | body 2.54\\u00d72.54mm:\\n    Pin 1 () \\u2014 type: power_out at (0,0) angle=90\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "generate_netlist",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.3,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"=== Netlist for /home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_sch ===\\n\\nComponents (35):\\n  C1: 10u 50V X7R (Capacitor_SMD:C_1210_3225Metric)\\n  C2: 10u 50V X7R (Capacitor_SMD:C_1210_3225Metric)\\n  C3: 100n 50V X7R (Capacitor_SMD:C_0603_1608Metric)\\n  C4: 10n 50V X7R (Capacitor_SMD:C_0603_1608Metric)\\n  C5: 100u 25V low ESR (Capacitor_SMD:CP_Elec_8x10.5)\\n  C6: 100u 25V low ESR (Capacitor_SMD:CP_Elec_8x10.5)\\n  C7: 1u 25V X7R (Capacitor_SMD:C_0805_2012Metric)\\n  D1: 5.6V (Diode_SMD:D_SOD-123)\\n  D2: SS34 (Diode_SMD:D_SMA)\\n  D3: High efficiency LED (LED_SMD:LED_0603_1608Metric)\\n  F1: 3A hold, >=40V PPTC (Fuse:Fuse_1812_4532Metric)\\n  H1: M2 NPTH (MountingHole:MountingHole_2.2mm_M2)\\n  H2: M2 NPTH (MountingHole:MountingHole_2.2mm_M2)\\n  H3: M2 NPTH (MountingHole:MountingHole_2.2mm_M2)\\n  H4: M2 NPTH (MountingHole:MountingHole_2.2mm_M2)\\n  J1: DC input center + (footprints:DC-005-5A-2.0-SMT)\\n  J2: Output: 1 GND, 2 VOUT (TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal)\\n  JP1: 12V (Jumper:SolderJumper-2_P1.3mm_Open_Pad1.0x1.5mm)\\n  JP2: 3.3V (Jumper:SolderJumper-2_P1.3mm_Open_Pad1.0x1.5mm)\\n  JP3: 5V (Jumper:SolderJumper-2_P1.3mm_Open_Pad1.0x1.5mm)\\n  JP4: 1.8V (Jumper:SolderJumper-2_P1.3mm_Open_Pad1.0x1.5mm)\\n  L1: 47uH MWSA1004S-470MT (footprints:L_Sunlord_MWSA1004S_10x11.5x4mm)\\n  LOGO1: Open hardware (Symbol:OSHW-Logo_5.7x6mm_SilkScreen)\\n  Q1: AO3401A (Package_TO_SOT_SMD:SOT-23)\\n  Q2: MMBT3904 (Package_TO_SOT_SMD:SOT-23)\\n  R1: 100k (Resistor_SMD:R_0603_1608Metric)\\n  R2: 10k 1% (Resistor_SMD:R_0603_1608Metric)\\n  R3: 1.13k 1% (Resistor_SMD:R_0603_1608Metric)\\n  R4: 5.90k 1% (Resistor_SMD:R_0603_1608Metric)\\n  R5: 3.19k 1% (Resistor_SMD:R_0603_1608Metric)\\n  R6: 21.0k 1% (Resistor_SMD:R_0603_1608Metric)\\n  R7: 1M 1% (Resistor_SMD:R_0603_1608Metric)\\n  R8: 22k (Resistor_SMD:R_0603_1608Metric)\\n  TP1: VIN (TestPoint:TestPoint_Pad_D1.0mm)\\n  U1: TPS5430DDA (Package_SO:TI_SO-PowerPAD-8_ThermalVias)\\n\\nNets (20):\\n  /BOOT: C4/1, U1/1\\n  /FB: JP1/1, JP2/1, JP3/1, JP4/1, R2/2, R7/1, U1/4\\n  /GATE: D1/2, Q1/1, R1/1\\n  /GND: C1/2, C2/2, C3/2, C5/2, C6/2, C7/2, D2/2, J1/2, J2/1, Q2/2, R1/2, R3/2, R4/2, R5/2, R6/2, U1/6, U1/9\\n  /LED_A: D3/2, R8/1\\n  /LED_BASE: Q2/1, R7/2\\n  /LED_K: D3/1, Q2/3\\n  /SEL1V8: JP4/2, R6/1\\n  /SEL3V3: JP2/2, R4/1\\n  /SEL5: JP3/2, R5/1\\n  /SEL12: JP1/2, R3/1\\n  /SW: C4/2, D2/1, L1/1, U1/8\\n  /VIN: C1/1, C2/1, C3/1, D1/1, Q1/2, R8/2, TP1/1, U1/7\\n  /VIN_FUSED: F1/2, Q1/3\\n  /VIN_JACK: F1/1, J1/1\\n  /VOUT: C5/1, C6/1, C7/1, J2/2, L1/2, R2/1\\n  unconnected-(J1-Pad3): J1/3\\n  unconnected-(U1-EN-Pad5): U1/5\\n  unconnected-(U1-NC-Pad2): U1/2\\n  unconnected-(U1-NC-Pad3): U1/3\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "run_erc",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 1.71,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"ERC result: 3 violation(s)\\n  Errors: 3  Warnings: 0  Info: 0\\n\\n1. [error] Pin not connected @ (38.1, 48.26)\\n2. [error] Pin not connected @ (157.48, 55.88)\\n3. [error] Input pin not driven by any Output pins @ (157.48, 55.88)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "validate_schematic",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.29,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"valid\\\": true,\\n  \\\"path\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_sch\\\",\\n  \\\"message\\\": \\\"b36.kicad_sch is valid\\\",\\n  \\\"errorCount\\\": 0,\\n  \\\"warningCount\\\": 0,\\n  \\\"issues\\\": [],\\n  \\\"kicadCli\\\": {\\n    \\\"ran\\\": true,\\n    \\\"ok\\\": true,\\n    \\\"exitCode\\\": 0,\\n    \\\"output\\\": \\\"Successfully saved schematic file using the latest format\\\"\\n  },\\n  \\\"componentCount\\\": 37,\\n  \\\"semanticChecksRan\\\": true,\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_schematic_pin_locations",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_sch",
+    "reference": "Q1"
+   },
+   "is_error": false,
+   "seconds": 0.1,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Pin locations for Q1:\\n  Pin 1 (G): x=78.74, y=50.8, angle=270\\u00b0\\n  Pin 2 (S): x=83.82, y=43.18, angle=0\\u00b0\\n  Pin 3 (D): x=73.66, y=43.18, angle=180\\u00b0\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_schematic_view",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.41,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"image\", \"data\": \"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"
+  },
+  {
+   "name": "replace_schematic_component",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_sch",
+    "reference": "C5",
+    "newSymbol": "Device:C_Polarized"
+   },
+   "is_error": false,
+   "seconds": 0.13,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Replaced C5 with Device:C_Polarized at (236.22, 62.23)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "replace_schematic_component",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_sch",
+    "reference": "C6",
+    "newSymbol": "Device:C_Polarized"
+   },
+   "is_error": false,
+   "seconds": 0.18,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Replaced C6 with Device:C_Polarized at (252.73, 62.23)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "batch_add_no_connects",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_sch",
+    "pins": [
+     {
+      "componentRef": "J1",
+      "pinName": "3"
+     },
+     {
+      "componentRef": "U1",
+      "pinName": "5"
+     }
+    ]
+   },
+   "is_error": false,
+   "seconds": 0.52,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Placed 2 no-connect marker(s), 0 failed\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_symbols",
+   "arguments": {
+    "query": "60R300",
+    "limit": 10
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"No symbols found matching \\\"60R300\\\"\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_symbols",
+   "arguments": {
+    "query": "MF-RX300",
+    "limit": 10
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"No symbols found matching \\\"MF-RX300\\\"\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_symbols",
+   "arguments": {
+    "query": "MF-R300",
+    "limit": 10
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"No symbols found matching \\\"MF-R300\\\"\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_footprints",
+   "arguments": {
+    "search_term": "Fuse_Bourns_MF-R",
+    "limit": 20
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 20 matching footprints:\\nFuse:Fuse_Bourns_MF-RHT050\\nFuse:Fuse_Bourns_MF-RG500\\nFuse:Fuse_Bourns_MF-RG700\\nFuse:Fuse_Bourns_MF-RG600\\nFuse:Fuse_Bourns_MF-RHT200\\nFuse:Fuse_Bourns_MF-RG650\\nFuse:Fuse_Bourns_MF-RG800\\nFuse:Fuse_Bourns_MF-RG400\\nFuse:Fuse_Bourns_MF-RHT400\\nFuse:Fuse_Bourns_MF-RHT700\\nFuse:Fuse_Bourns_MF-RHT550\\nFuse:Fuse_Bourns_MF-RHT800\\nFuse:Fuse_Bourns_MF-RHT650\\nFuse:Fuse_Bourns_MF-RG1100\\nFuse:Fuse_Bourns_MF-RHT750\\nFuse:Fuse_Bourns_MF-RHT070\\nFuse:Fuse_Bourns_MF-RHT500\\nFuse:Fuse_Bourns_MF-RG1000\\nFuse:Fuse_Bourns_MF-RG900\\nFuse:Fuse_Bourns_MF-RHT1300\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "run_erc",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 1.87,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"ERC result: 0 violation(s)\\n  Errors: 0  Warnings: 0  Info: 0\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_schematic_nets",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 1.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Nets (16):\\n  BOOT [2 pin(s)]: U1/1, C4/1\\n  FB [7 pin(s)]: U1/4, R2/2, JP1/1, JP2/1, JP3/1, JP4/1, R7/1\\n  GATE [3 pin(s)]: Q1/1, R1/1, D1/2\\n  GND [18 pin(s)]: J1/2, R1/2, C1/2, C2/2, C3/2, U1/6, U1/9, D2/2, C7/2, J2/1, R3/2, R4/2, R5/2, R6/2, Q2/2, C5/2, C6/2\\n  LED_A [2 pin(s)]: D3/2, R8/1\\n  LED_BASE [2 pin(s)]: R7/2, Q2/1\\n  LED_K [2 pin(s)]: Q2/3, D3/1\\n  SEL12 [2 pin(s)]: JP1/2, R3/1\\n  SEL1V8 [2 pin(s)]: JP4/2, R6/1\\n  SEL3V3 [2 pin(s)]: JP2/2, R4/1\\n  SEL5 [2 pin(s)]: JP3/2, R5/1\\n  SW [4 pin(s)]: U1/8, C4/2, D2/1, L1/1\\n  VIN [9 pin(s)]: Q1/2, D1/1, TP1/1, C1/1, C2/1, C3/1, U1/7, R8/2\\n  VIN_FUSED [2 pin(s)]: F1/2, Q1/3\\n  VIN_JACK [2 pin(s)]: J1/1, F1/1\\n  VOUT [6 pin(s)]: L1/2, C7/1, J2/2, R2/1, C5/1, C6/1\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "find_wires_crossing_symbols",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.02,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 0 wire(s) crossing symbols:\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "find_overlapping_elements",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.02,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 0 overlap(s):\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "add_schematic_text",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_sch",
+    "text": "Select EXACTLY ONE bridge before applying input power. Never leave all bridges open.",
+    "position": [
+     33.02,
+     89.0
+    ],
+    "fontSize": 1.27,
+    "bold": true
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Added text 'Select EXACTLY ONE bridge before applying input power. Never leave all bridges open.' at (33.02, 89)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "add_schematic_text",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_sch",
+    "text": "WARNING: AO3401A is 30V VDS; 36V reverse input exceeds its rating. Redesign protection before use.",
+    "position": [
+     30.48,
+     185.42
+    ],
+    "fontSize": 1.27,
+    "bold": true
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Added text 'WARNING: AO3401A is 30V VDS; 36V reverse input exceeds its rating. Redesign protection before use.' at (30.48, 185.42)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "add_schematic_text",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_sch",
+    "text": "F1: qualify a 40V+ PPTC and footprint for actual input current; jack footprint is rated 2.5A.",
+    "position": [
+     30.48,
+     190.5
+    ],
+    "fontSize": 1.27
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Added text 'F1: qualify a 40V+ PPTC and footprint for actual input current; jack footprint is rated 2.5A.' at (30.48, 190.5)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "add_schematic_text",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_sch",
+    "text": "Buck only: VIN must exceed VOUT plus conversion dropout. U1 EN is left at default.",
+    "position": [
+     30.48,
+     195.58
+    ],
+    "fontSize": 1.27
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Added text 'Buck only: VIN must exceed VOUT plus conversion dropout. U1 EN is left at default.' at (30.48, 195.58)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "run_erc",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 1.53,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"ERC result: 0 violation(s)\\n  Errors: 0  Warnings: 0  Info: 0\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "validate_schematic",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.28,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"valid\\\": true,\\n  \\\"path\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_sch\\\",\\n  \\\"message\\\": \\\"b36.kicad_sch is valid\\\",\\n  \\\"errorCount\\\": 0,\\n  \\\"warningCount\\\": 0,\\n  \\\"issues\\\": [],\\n  \\\"kicadCli\\\": {\\n    \\\"ran\\\": true,\\n    \\\"ok\\\": true,\\n    \\\"exitCode\\\": 0,\\n    \\\"output\\\": \\\"Successfully saved schematic file using the latest format\\\"\\n  },\\n  \\\"componentCount\\\": 37,\\n  \\\"semanticChecksRan\\\": true,\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "find_orphaned_wires",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.68,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"No orphaned wires found.\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_floating_labels",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7/b36.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.72,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"No floating labels found.\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_footprint_info",
+   "arguments": {
+    "library_name": "Capacitor_SMD",
+    "footprint_name": "CP_Elec_8x10.5"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Footprint: CP_Elec_8x10.5\\nLibrary: Capacitor_SMD\\nDescription: SMD capacitor, aluminum electrolytic, Vishay 0810, 8.0x10.5mm, http://www.vishay.com/docs/28395/150crz.pdf\\nKeywords: capacitor electrolytic\\n2 pads: 1, 2\\n  pad 1: smd roundrect\\n  pad 2: smd roundrect\\nLayers used: F.CrtYd, F.Cu, F.Fab, F.Mask, F.Paste, F.SilkS\\nCourtyard size: 12.3mm x 9mm\\nAttributes: {\\\"type\\\":\\\"smd\\\",\\\"board_only\\\":false,\\\"exclude_from_pos_files\\\":false,\\\"exclude_from_bom\\\":false}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_symbol_info",
+   "arguments": {
+    "symbol": "Device:C_Polarized"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Symbol: Device:C_Polarized\\nValue: C_Polarized\\nDescription: Polarized capacitor\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_project_files",
+   "arguments": {
+    "path": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b36/run7"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [\".mcp-backups/fp-lib-table.20261124-154711-397\", \"b36.kicad_pcb\", \"b36.kicad_prl\", \"b36.kicad_pro\", \"b36.kicad_sch\", \"fp-lib-table\", \"lib/footprints.pretty/DC-005-5A-2.0-SMT.kicad_mod\", \"lib/footprints.pretty/L_Sunlord_MWSA1004S_10x11.5x4mm.kicad_mod\", \"lib/footprints.pretty/ToolingHole_1.152mm.kicad_mod\"]}"
+  }
+ ],
+ "model_calls": [
+  {
+   "seconds": 7.09,
+   "input_tokens": 15881,
+   "cached_input_tokens": 0,
+   "output_tokens": 304
+  },
+  {
+   "seconds": 9.51,
+   "input_tokens": 16707,
+   "cached_input_tokens": 15878,
+   "output_tokens": 566
+  },
+  {
+   "seconds": 17.36,
+   "input_tokens": 22630,
+   "cached_input_tokens": 16704,
+   "output_tokens": 939
+  },
+  {
+   "seconds": 6.27,
+   "input_tokens": 24531,
+   "cached_input_tokens": 22627,
+   "output_tokens": 380
+  },
+  {
+   "seconds": 12.61,
+   "input_tokens": 26977,
+   "cached_input_tokens": 24528,
+   "output_tokens": 599
+  },
+  {
+   "seconds": 31.29,
+   "input_tokens": 28297,
+   "cached_input_tokens": 26974,
+   "output_tokens": 2571
+  },
+  {
+   "seconds": 9.58,
+   "input_tokens": 30960,
+   "cached_input_tokens": 28294,
+   "output_tokens": 532
+  },
+  {
+   "seconds": 14.82,
+   "input_tokens": 38771,
+   "cached_input_tokens": 30957,
+   "output_tokens": 219
+  },
+  {
+   "seconds": 2.36,
+   "input_tokens": 39054,
+   "cached_input_tokens": 38768,
+   "output_tokens": 68
+  },
+  {
+   "seconds": 2.88,
+   "input_tokens": 39186,
+   "cached_input_tokens": 39051,
+   "output_tokens": 81
+  },
+  {
+   "seconds": 9.92,
+   "input_tokens": 39323,
+   "cached_input_tokens": 39183,
+   "output_tokens": 524
+  },
+  {
+   "seconds": 9.32,
+   "input_tokens": 40972,
+   "cached_input_tokens": 39320,
+   "output_tokens": 350
+  },
+  {
+   "seconds": 2.96,
+   "input_tokens": 41393,
+   "cached_input_tokens": 40969,
+   "output_tokens": 105
+  },
+  {
+   "seconds": 3.78,
+   "input_tokens": 41583,
+   "cached_input_tokens": 41390,
+   "output_tokens": 101
+  },
+  {
+   "seconds": 3.25,
+   "input_tokens": 41769,
+   "cached_input_tokens": 41580,
+   "output_tokens": 93
+  },
+  {
+   "seconds": 10.79,
+   "input_tokens": 41939,
+   "cached_input_tokens": 41766,
+   "output_tokens": 588
+  },
+  {
+   "seconds": 8.44,
+   "input_tokens": 43340,
+   "cached_input_tokens": 41936,
+   "output_tokens": 420
+  }
+ ],
+ "cleared_results": 0,
+ "tools_offered": [
+  "add_library_symbol_property",
+  "add_no_connect",
+  "add_schematic_component",
+  "add_schematic_net_label",
+  "add_schematic_text",
+  "add_schematic_wire",
+  "add_symbol_property",
+  "annotate_schematic",
+  "autoplace_schematic_fields",
+  "batch_add_and_connect",
+  "batch_add_components",
+  "batch_add_no_connects",
+  "batch_connect",
+  "batch_edit_schematic_components",
+  "batch_list_symbol_pins",
+  "batch_set_schematic_property_positions",
+  "connect_passthrough",
+  "connect_to_net",
+  "create_project",
+  "create_schematic",
+  "create_symbol",
+  "delete_schematic_component",
+  "delete_schematic_net_label",
+  "delete_schematic_wire",
+  "delete_symbol",
+  "edit_schematic_component",
+  "export_schematic_pdf",
+  "export_schematic_svg",
+  "export_symbol",
+  "find_duplicate_symbols",
+  "find_orphaned_wires",
+  "find_overlapping_elements",
+  "find_wires_crossing_symbols",
+  "generate_netlist",
+  "get_elements_in_region",
+  "get_footprint_info",
+  "get_net_at_point",
+  "get_net_connections",
+  "get_project_info",
+  "get_schematic_component",
+  "get_schematic_pin_locations",
+  "get_schematic_view",
+  "get_schematic_view_region",
+  "get_symbol_info",
+  "get_wire_connections",
+  "import_symbol",
+  "lint_offgrid",
+  "lint_schematic_cosmetic",
+  "list_floating_labels",
+  "list_footprint_libraries",
+  "list_libraries",
+  "list_library_footprints",
+  "list_library_symbols",
+  "list_library_table",
+  "list_project_files",
+  "list_schematic_components",
+  "list_schematic_labels",
+  "list_schematic_nets",
+  "list_schematic_texts",
+  "list_schematic_wires",
+  "list_symbol_libraries",
+  "list_symbol_pins",
+  "list_symbols_in_library",
+  "move_schematic_component",
+  "move_schematic_net_label",
+  "open_project",
+  "read_project_file",
+  "register_footprint_library",
+  "register_symbol_library",
+  "remove_library_table_entry",
+  "remove_schematic_component_property",
+  "rename_symbol",
+  "repair_flat_symbols",
+  "replace_instance_lib_ids",
+  "replace_schematic_component",
+  "rotate_schematic_component",
+  "run_erc",
+  "save_project",
+  "search_footprints",
+  "search_symbols",
+  "set_library_table_uri",
+  "set_schematic_component_property",
+  "set_schematic_property_position",
+  "set_symbol_pin_type",
+  "snap_to_grid",
+  "suggest_schematic_declutter",
+  "update_symbol_from_library",
+  "validate_schematic",
+  "validate_symbol_library"
+ ],
+ "task_id": "b36"
+}
