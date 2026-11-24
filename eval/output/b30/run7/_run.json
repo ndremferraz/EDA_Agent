@@ -1,0 +1,1419 @@
+{
+ "question": "Create a new KiCad project named b30 in the project directory and draw its schematic for the following request.\n\nBuild a standing-desk LIN controller around an ATtiny841-SS and an MCP2003B. A five-pin desk interface is ordered 24 V, GND, LIN, external RX, external TX. Derive 12 V with a 7812 and 5 V with an HT7550-1; include input transient suppression and LIN-master diode/resistor pull-up protection. Include a buzzer, reset/ISP support and decoupling.\nFirmware uses PA1 for LIN TXD, PA2 for LIN RXD, PA7 for the buzzer, PB0/PB1 for up/down buttons and PA0/PA3 for the two extra panel inputs. The 10-pin panel FFC uses pin 5 = up, 6 = down, 7 = GND, 9 = PA0 and 10 = PA3; other pins are unused. External RX/TX reach PA4/PA5 through 1k resistors, sharing ISP SCK/MISO; use standard AVR ISP for the remaining programming signals. Keep the LIN transceiver enabled and WAKE low. Expose up/down test pads and two isolated service pads joined only to each other. Use the supplied MCP2003B symbol and FFC footprint.\nLocal dependencies: Use the project-local symbol library (megadesk.kicad_sym) and footprint library (megadesk.pretty) in lib/ under the project directory; use standard KiCad libraries for everything else.",
+ "output_dir": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7",
+ "model": "gpt-6.1-terra",
+ "answer": "Created [b30.kicad_pro](</home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_pro>) and its [schematic](</home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_sch>). All planned steps are complete; **ERC reports 0 violations**.\n\nThe schematic uses the supplied MCP2003B symbol and FFC footprint. I repaired the local symbol\u2019s library naming and reversed RXD/TXD electrical types; its pinout should still be checked against the selected device.\n\n**Assumptions and checks before building:**\n- LIN uses a 12 V pull-up; confirm compatibility with the desk bus.\n- External RX/TX are 5 V logic, and panel switches pull inputs to ground. Firmware must enable the input pull-ups. Isolate external drivers during ISP.\n- The input TVS can clamp above the 7812\u2019s maximum input voltage. Verify the upstream surge limits and regulator thermal budget.",
+ "schematic": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_sch",
+ "stop_reason": "done",
+ "error": null,
+ "turns": 19,
+ "input_tokens": 662729,
+ "cached_input_tokens": 614045,
+ "output_tokens": 8541,
+ "seconds": 207.44,
+ "tool_calls": [
+  {
+   "name": "list_project_files",
+   "arguments": {
+    "path": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [\"lib/megadesk.kicad_sym\", \"lib/megadesk.pretty/F1004-H-10-20G-R.kicad_mod\", \"lib/megadesk.pretty/FB35-10N0-AHK.kicad_mod\"]}"
+  },
+  {
+   "name": "get_project_info",
+   "arguments": {},
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": false,\\n  \\\"message\\\": \\\"No board is loaded\\\",\\n  \\\"errorDetails\\\": \\\"Load or create a board first\\\",\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_symbols",
+   "arguments": {
+    "query": "ATtiny841"
+   },
+   "is_error": false,
+   "seconds": 20.43,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 3 symbols matching \\\"ATtiny841\\\":\\n\\nMCU_Microchip_ATtiny:ATtiny841-M | 16MHz, 8kB Flash, 512B SRAM, 512B EEPROM, ADC, ACI, debugWIRE, QFN-20\\nMCU_Microchip_ATtiny:ATtiny841-MM | 16MHz, 8kB Flash, 512B SRAM, 512B EEPROM, ADC, ACI, debugWIRE, QFN-20\\nMCU_Microchip_ATtiny:ATtiny841-SS | 16MHz, 8kB Flash, 512B SRAM, 512B EEPROM, ADC, ACI, debugWIRE, SOIC-14\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_symbols",
+   "arguments": {
+    "query": "HT7550"
+   },
+   "is_error": false,
+   "seconds": 0.02,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"No symbols found matching \\\"HT7550\\\"\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_symbols",
+   "arguments": {
+    "query": "7812"
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 4 symbols matching \\\"7812\\\":\\n\\nConverter_DCDC:R-7812-0.5 | 500mA Step-Down DC/DC-Regulator, 15-32V input, 12V fixed Output Voltage, LM78xx replacement, -40\\u00b0C to +85\\u00b0C, SIP3\\nRegulator_Linear:L7812 | Positive 1.5A 35V Linear Regulator, Fixed Output 12V, TO-220/TO-263/TO-252\\nRegulator_Linear:LM7812_TO220 | Positive 1A 35V Linear Regulator, Fixed Output 12V, TO-220\\nRegulator_Linear:uA7812 | Positive 1A 35V Linear Regulator, Fixed Output 12V, TO-220/TO-263\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_symbols_in_library",
+   "arguments": {
+    "libraryPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/megadesk.kicad_sym"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"library_path\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/megadesk.kicad_sym\\\",\\n  \\\"symbol_count\\\": 1,\\n  \\\"symbols\\\": [\\n    \\\"megadesk:MCP2003B\\\"\\n  ],\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "read_project_file",
+   "arguments": {
+    "path": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/megadesk.kicad_sym"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": \"(kicad_symbol_lib (version 20210619) (generator kicad_symbol_editor)\\n  (symbol \\\"megadesk:MCP2003B\\\" (in_bom yes) (on_board yes)\\n    (property \\\"Reference\\\" \\\"U\\\" (id 0) (at -7.62 8.89 0)\\n      (effects (font (size 1.27 1.27)) (justify left))\\n    )\\n    (property \\\"Value\\\" \\\"MCP2003B\\\" (id 1) (at -5.08 -8.89 0)\\n      (effects (font (size 1.27 1.27)) (justify left))\\n    )\\n    (property \\\"Footprint\\\" \\\"Housings_SOIC:SOIC-8\\\" (id 2) (at 0 -11.43 0)\\n      (effects (font (size 1.27 1.27)) hide)\\n    )\\n    (property \\\"Datasheet\\\" \\\"http://ww1.microchip.com/downloads/en/DeviceDoc/22299B.pdf\\\" (id 3) (at 2.54 0 0)\\n      (effects (font (size 1.27 1.27)) hide)\\n    )\\n    (property \\\"ki_keywords\\\" \\\"LIN transceiver regulator\\\" (id 4) (at 0 0 0)\\n      (effects (font (size 1.27 1.27)) hide)\\n    )\\n    (property \\\"ki_description\\\" \\\"LIN Transceiver with Voltage Regulator, 5V, PDIP\\\" (id 5) (at 0 0 0)\\n      (effects (font (size 1.27 1.27)) hide)\\n    )\\n    (property \\\"ki_fp_filters\\\" \\\"SOIC*3.9x4.9mm*Pitch1.27mm* DIP*W7.62mm* TSSOP*3x3mm*Pitch0.65mm*\\\" (id 6) (at 0 0 0)\\n      (effects (font (size 1.27 1.27)) hide)\\n    )\\n    (symbol \\\"MCP2003B_0_0\\\"\\n      (pin input line (at -10.16 5.08 0) (length 3.81)\\n        (name \\\"RXD\\\" (effects (font (size 1.27 1.27))))\\n        (number \\\"1\\\" (effects (font (size 1.27 1.27))))\\n      )\\n      (pin output line (at 10.16 5.08 180) (length 3.81)\\n        (name \\\"VREN\\\" (effects (font (size 1.27 1.27))))\\n        (number \\\"8\\\" (effects (font (size 1.27 1.27))))\\n      )\\n    )\\n    (symbol \\\"MCP2003B_0_1\\\"\\n      (rectangle (start 6.35 6.35) (end -6.35 -7.62)\\n        (stroke (width 0)) (fill (type background))\\n      )\\n    )\\n    (symbol \\\"MCP2003B_1_1\\\"\\n      (pin input line (at -10.16 1.27 0) (length 3.81)\\n        (name \\\"CS\\\" (effects (font (size 1.27 1.27))))\\n        (number \\\"2\\\" (effects (font (size 1.27 1.27))))\\n      )\\n      (pin input line (at -10.16 -2.54 0) (length 3.81)\\n        (name \\\"WAKE\\\" (effects (font (size 1.1938 1.1938))))\\n        (number \\\"3\\\" (effects (font (size 1.27 1.27))))\\n      )\\n      (pin output line (at -10.16 -6.35 0) (length 3.81)\\n        (name \\\"TXD\\\" (effects (font (size 1.27 1.27))))\\n        (number \\\"4\\\" (effects (font (size 1.27 1.27))))\\n      )\\n      (pin power_in line (at 10.16 -6.35 180) (length 3.81)\\n        (name \\\"VSS\\\" (effects (font (size 1.27 1.27))))\\n        (number \\\"5\\\" (effects (font (size 1.27 1.27))))\\n      )\\n      (pin bidirectional line (at 10.16 -2.54 180) (length 3.81)\\n        (name \\\"LBUS\\\" (effects (font (size 1.27 1.27))))\\n        (number \\\"6\\\" (effects (font (size 1.27 1.27))))\\n      )\\n      (pin power_in line (at 10.16 1.27 180) (length 3.81)\\n        (name \\\"VBB\\\" (effects (font (size 1.27 1.27))))\\n        (number \\\"7\\\" (effects (font (size 1.27 1.27))))\\n      )\\n    )\\n  )\\n)\\n\", \"truncated\": false}"
+  },
+  {
+   "name": "read_project_file",
+   "arguments": {
+    "path": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/megadesk.pretty/F1004-H-10-20G-R.kicad_mod"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": \"(footprint \\\"F1004-H-10-20G-R\\\" (version 20211014) (generator pcbnew)\\n  (layer \\\"F.Cu\\\")\\n  (tedit 61F6DD88)\\n  (descr \\\"C668117\\\")\\n  (attr smd)\\n  (fp_text reference \\\"REF**\\\" (at 0 1.8) (layer \\\"F.SilkS\\\")\\n    (effects (font (size 1 1) (thickness 0.15)))\\n    (tstamp f1d34821-cc17-42fc-b481-1c7f738497e3)\\n  )\\n  (fp_text value \\\"F1004-H-10-20G-R\\\" (at 0 -1.85) (layer \\\"F.Fab\\\")\\n    (effects (font (size 1 1) (thickness 0.15)))\\n    (tstamp 78fa7842-f3c6-48db-8c77-7797633506e5)\\n  )\\n  (fp_line (start -5 0.83) (end -5 4.62) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp 116b375f-957b-4eda-a12b-df384678f533))\\n  (fp_line (start 5 0.83) (end 5 4.62) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp 1b80aaa4-9cfe-448e-8ff1-d2c69f706b2e))\\n  (fp_line (start 8.16 4.62) (end 8.16 1.46) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp 1bd13fbe-d376-42a1-8a94-f12442f4121a))\\n  (fp_line (start -8.16 1.46) (end -5 1.46) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp 2ad27911-6b4b-41d3-af19-3a88d479912c))\\n  (fp_line (start -5 4.62) (end -8.16 4.62) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp 3eb6166e-d2a4-4778-a9e3-fd9ea19f972e))\\n  (fp_line (start 5 1.46) (end 5 -0.83) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp 54c2b029-df21-4268-9a74-8433670031c7))\\n  (fp_line (start 8.16 1.46) (end 5 1.46) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp 6dda73be-73a3-4bdf-aea3-f2d520a51491))\\n  (fp_line (start -5 1.46) (end -5 -0.83) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp 825e7db8-0294-426e-853c-3be31e57f559))\\n  (fp_line (start -5 0.83) (end 5 0.83) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp 8519174e-f406-4836-8f33-e219a5351591))\\n  (fp_line (start -8.16 4.62) (end -8.16 1.46) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp a6e79250-4ea1-4a1f-b168-c1d347acb43a))\\n  (fp_line (start 5 4.62) (end 8.16 4.62) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp c36f7147-bc6f-4cbe-8b56-617ae1aaead3))\\n  (fp_line (start -5 -0.83) (end 5 -0.83) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp d9452562-ce7e-4680-9c6e-6998b86cb475))\\n  (fp_line (start -8.4 -1.05) (end 8.4 -1.05) (layer \\\"F.CrtYd\\\") (width 0.05) (tstamp 293bc8e1-4ff1-450d-8ef0-4276b77002bf))\\n  (fp_line (start -8.4 4.85) (end 8.4 4.85) (layer \\\"F.CrtYd\\\") (width 0.05) (tstamp 778130e2-5dcf-4ba4-bd77-4acc3a461105))\\n  (fp_line (start 8.4 -1.05) (end 8.4 4.85) (layer \\\"F.CrtYd\\\") (width 0.05) (tstamp 7b7fe22f-5db7-4fb0-a6e2-91b9a8e5f484))\\n  (fp_line (start -8.4 -1.05) (end -8.4 4.85) (layer \\\"F.CrtYd\\\") (width 0.05) (tstamp c908cdd7-5bf2-4e04-ae66-bd89b22bab8d))\\n  (fp_line (start -8.1 5.2) (end 8.15 5.2) (layer \\\"F.Fab\\\") (width 0.1) (tstamp 24cb67fc-f0c9-4f6e-88c1-7636ab854c5e))\\n  (pad \\\"0\\\" smd rect (at -7 3.1) (size 1.6 2.8) (layers \\\"F.Cu\\\" \\\"F.Paste\\\" \\\"F.Mask\\\") (tstamp 834d0192-2f8f-45da-a664-ea874d4070f9))\\n  (pad \\\"0\\\" smd rect (at 7 3.1) (size 1.6 2.8) (layers \\\"F.Cu\\\" \\\"F.Paste\\\" \\\"F.Mask\\\") (tstamp bdf9dfdb-3e3e-46cc-8bb8-4372561c164b))\\n  (pad \\\"1\\\" smd rect (at -4.5 0) (size 0.3 1.3) (layers \\\"F.Cu\\\" \\\"F.Paste\\\" \\\"F.Mask\\\") (tstamp 442f453a-9b44-44ab-a898-82f45629c72d))\\n  (pad \\\"2\\\" smd rect (at -3.5 0) (size 0.3 1.3) (layers \\\"F.Cu\\\" \\\"F.Paste\\\" \\\"F.Mask\\\") (tstamp 1b642110-eaa8-451d-b449-e92e71e75978))\\n  (pad \\\"3\\\" smd rect (at -2.5 0) (size 0.3 1.3) (layers \\\"F.Cu\\\" \\\"F.Paste\\\" \\\"F.Mask\\\") (tstamp be52ce9f-4498-483f-a791-994a787b7224))\\n  (pad \\\"4\\\" smd rect (at -1.5 0) (size 0.3 1.3) (layers \\\"F.Cu\\\" \\\"F.Paste\\\" \\\"F.Mask\\\") (tstamp 16b71e23-859c-4e16-8af1-5d30a5c2b726))\\n  (pad \\\"5\\\" smd rect (at -0.5 0) (size 0.3 1.3) (layers \\\"F.Cu\\\" \\\"F.Paste\\\" \\\"F.Mask\\\") (tstamp fcdae4f4-bcbc-432a-b7d5-ee4bdd3d104f))\\n  (pad \\\"6\\\" smd rect (at 0.5 0) (size 0.3 1.3) (layers \\\"F.Cu\\\" \\\"F.Paste\\\" \\\"F.Mask\\\") (tstamp ec53b93c-c93c-4a00-b315-00a9db4c857c))\\n  (pad \\\"7\\\" smd rect (at 1.5 0) (size 0.3 1.3) (layers \\\"F.Cu\\\" \\\"F.Paste\\\" \\\"F.Mask\\\") (tstamp 6a8a1901-a3c7-470d-99d9-02146451972b))\\n  (pad \\\"8\\\" smd rect (at 2.5 0) (size 0.3 1.3) (layers \\\"F.Cu\\\" \\\"F.Paste\\\" \\\"F.Mask\\\") (tstamp c4eb404f-f3d2-4506-bf24-56396736d56"
+  },
+  {
+   "name": "read_project_file",
+   "arguments": {
+    "path": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/megadesk.pretty/FB35-10N0-AHK.kicad_mod"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": \"(footprint \\\"FB35-10N0-AHK\\\" (version 20211014) (generator pcbnew)\\n  (layer \\\"F.Cu\\\")\\n  (tedit 61F6DCE4)\\n  (attr smd)\\n  (fp_text reference \\\"REF**\\\" (at 0 2.1) (layer \\\"F.SilkS\\\")\\n    (effects (font (size 1 1) (thickness 0.15)))\\n    (tstamp 6f048920-b9c3-4479-84e4-2c5b1d2ac0ef)\\n  )\\n  (fp_text value \\\"FB35-10N0-AHK\\\" (at 0 3.25) (layer \\\"F.Fab\\\")\\n    (effects (font (size 1 1) (thickness 0.15)))\\n    (tstamp f0983254-d5b0-469a-bedd-3778db095803)\\n  )\\n  (fp_line (start 5 1.13) (end 5 3.93) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp 0600dc94-67dc-4525-9550-e67ba97631a9))\\n  (fp_line (start 9.06 3.93) (end 9.06 0.77) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp 0a668045-17c7-47c6-8cab-cb0131e0e450))\\n  (fp_line (start -9.06 3.93) (end -9.06 0.77) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp 0f449e59-6597-4721-a5f8-23642ce6dc4f))\\n  (fp_line (start -5 1.13) (end -5 3.93) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp 18abc72d-c821-40f6-b3f9-f092a633b02f))\\n  (fp_line (start 5 3.93) (end 9.06 3.93) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp 22924eee-7536-4040-9e9c-f28362a6a82d))\\n  (fp_line (start -5 -1.13) (end 5 -1.13) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp 549c54a0-8750-445f-90b1-0a799272aed0))\\n  (fp_line (start -9.06 0.77) (end -5 0.77) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp 950c87ae-835c-4bc7-8703-7eef0f8e7616))\\n  (fp_line (start 9.06 0.77) (end 5 0.77) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp a9bc6e5a-3637-4174-b885-325fd396044e))\\n  (fp_line (start -5 1.66) (end -5 -1.13) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp c1179915-cffd-4172-a49b-8106ec4d07be))\\n  (fp_line (start -5 1.13) (end 5 1.13) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp ca9d8239-49d5-4542-8928-cd4062e2d558))\\n  (fp_line (start 5 1.66) (end 5 -1.13) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp e3fa561f-c8dd-497c-8845-7d1a86245a25))\\n  (fp_line (start -5 3.93) (end -9.06 3.93) (layer \\\"F.SilkS\\\") (width 0.12) (tstamp f71c31a5-bc77-40de-9fb2-49ae13d9149c))\\n  (fp_line (start -9.3 -1.35) (end 9.3 -1.35) (layer \\\"F.CrtYd\\\") (width 0.05) (tstamp 27ad8c85-12fa-44a0-9328-8afee8bd87a6))\\n  (fp_line (start 9.3 -1.35) (end 9.3 6.95) (layer \\\"F.CrtYd\\\") (width 0.05) (tstamp 7c05ea94-cadf-468f-bc66-daea8bee61c4))\\n  (fp_line (start -9.3 6.95) (end 9.3 6.95) (layer \\\"F.CrtYd\\\") (width 0.05) (tstamp 8d0f3cd4-bc51-436a-9ce8-a99590aabf95))\\n  (fp_line (start -9.3 -1.35) (end -9.3 6.95) (layer \\\"F.CrtYd\\\") (width 0.05) (tstamp fb8c56b8-0a19-4046-a89e-fef30aa5f32a))\\n  (fp_line (start -6.6 6.8) (end -6.6 4.75) (layer \\\"F.Fab\\\") (width 0.1) (tstamp 465da501-0922-49a7-b4a5-ba8722e2e9b0))\\n  (fp_line (start -6.6 6.8) (end 6.6 6.8) (layer \\\"F.Fab\\\") (width 0.1) (tstamp 5f6637f7-5aea-4ccc-8c8d-b7c5ac414318))\\n  (fp_line (start 6.6 6.75) (end 6.6 4.75) (layer \\\"F.Fab\\\") (width 0.1) (tstamp b44bba26-61d9-4f5f-b6a5-65ce98693575))\\n  (pad \\\"0\\\" smd rect (at -7.65 2.35) (size 2.1 2.8) (layers \\\"F.Cu\\\" \\\"F.Paste\\\" \\\"F.Mask\\\") (tstamp 3e4505b2-be1d-41c7-a910-49ab592fd459))\\n  (pad \\\"0\\\" smd rect (at 7.65 2.35) (size 2.1 2.8) (layers \\\"F.Cu\\\" \\\"F.Paste\\\" \\\"F.Mask\\\") (tstamp d531df5d-accf-4b52-bb85-9702dd155de4))\\n  (pad \\\"1\\\" smd rect (at -4.5 0) (size 0.6 1.9) (layers \\\"F.Cu\\\" \\\"F.Paste\\\" \\\"F.Mask\\\") (tstamp e598f7f9-a73d-4c3a-ad16-d7341e6360e7))\\n  (pad \\\"2\\\" smd rect (at -3.5 0) (size 0.6 1.9) (layers \\\"F.Cu\\\" \\\"F.Paste\\\" \\\"F.Mask\\\") (tstamp 2b6246b0-35bf-4e49-9c33-b755e619697b))\\n  (pad \\\"3\\\" smd rect (at -2.5 0) (size 0.6 1.9) (layers \\\"F.Cu\\\" \\\"F.Paste\\\" \\\"F.Mask\\\") (tstamp bb58c2a4-9150-46c1-ab49-96590ead64cd))\\n  (pad \\\"4\\\" smd rect (at -1.5 0) (size 0.6 1.9) (layers \\\"F.Cu\\\" \\\"F.Paste\\\" \\\"F.Mask\\\") (tstamp 87f407a4-6c41-4911-bc89-29cabce8cbe6))\\n  (pad \\\"5\\\" smd rect (at -0.5 0) (size 0.6 1.9) (layers \\\"F.Cu\\\" \\\"F.Paste\\\" \\\"F.Mask\\\") (tstamp b87e2416-09d7-4c57-81c3-6b1cdbf7b3da))\\n  (pad \\\"6\\\" smd rect (at 0.5 0) (size 0.6 1.9) (layers \\\"F.Cu\\\" \\\"F.Paste\\\" \\\"F.Mask\\\") (tstamp 894b8e8c-6b9d-464c-aab0-46c0fa68fd3c))\\n  (pad \\\"7\\\" smd rect (at 1.5 0) (size 0.6 1.9) ("
+  },
+  {
+   "name": "batch_list_symbol_pins",
+   "arguments": {
+    "symbols": [
+     "MCU_Microchip_ATtiny:ATtiny841-SS",
+     "Regulator_Linear:L7812",
+     "Connector_Generic:Conn_01x05",
+     "Connector_Generic:Conn_01x10",
+     "Connector:AVR-ISP-6",
+     "Device:Buzzer",
+     "Device:D",
+     "Device:D_TVS",
+     "Device:R",
+     "Device:C",
+     "Connector:TestPoint"
+    ]
+   },
+   "is_error": false,
+   "seconds": 0.23,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"MCU_Microchip_ATtiny:ATtiny841-SS \\u2014 14 pin(s) | body 17.78\\u00d748.26mm:\\n    Pin 1 (VCC) \\u2014 type: power_in at (0,22.86) angle=270\\n    Pin 2 (XTAL1/PB0) \\u2014 type: bidirectional at (15.24,-7.62) angle=180\\n    Pin 3 (XTAL2/PB1) \\u2014 type: bidirectional at (15.24,-10.16) angle=180\\n    Pin 4 (~{RESET}/PB3) \\u2014 type: bidirectional at (15.24,-15.24) angle=180\\n    Pin 5 (PB2) \\u2014 type: bidirectional at (15.24,-12.7) angle=180\\n    Pin 6 (PA7) \\u2014 type: bidirectional at (15.24,-2.54) angle=180\\n    Pin 7 (PA6) \\u2014 type: bidirectional at (15.24,0) angle=180\\n    Pin 8 (PA5) \\u2014 type: bidirectional at (15.24,2.54) angle=180\\n    Pin 9 (PA4) \\u2014 type: bidirectional at (15.24,5.08) angle=180\\n    Pin 10 (PA3) \\u2014 type: bidirectional at (15.24,7.62) angle=180\\n    Pin 11 (PA2) \\u2014 type: bidirectional at (15.24,10.16) angle=180\\n    Pin 12 (PA1) \\u2014 type: bidirectional at (15.24,12.7) angle=180\\n    Pin 13 (AREF/PA0) \\u2014 type: bidirectional at (15.24,15.24) angle=180\\n    Pin 14 (GND) \\u2014 type: power_in at (0,-22.86) angle=90\\nRegulator_Linear:L7812 \\u2014 3 pin(s) | body 17.78\\u00d710.16mm:\\n    Pin 1 (IN) \\u2014 type: power_in at (-7.62,0) angle=0\\n    Pin 2 (GND) \\u2014 type: power_in at (0,-7.62) angle=90\\n    Pin 3 (OUT) \\u2014 type: power_out at (7.62,0) angle=180\\nConnector_Generic:Conn_01x05 \\u2014 5 pin(s) | body 2.54\\u00d712.70mm:\\n    Pin 1 (Pin_1) \\u2014 type: passive at (-5.08,5.08) angle=0\\n    Pin 2 (Pin_2) \\u2014 type: passive at (-5.08,2.54) angle=0\\n    Pin 3 (Pin_3) \\u2014 type: passive at (-5.08,0) angle=0\\n    Pin 4 (Pin_4) \\u2014 type: passive at (-5.08,-2.54) angle=0\\n    Pin 5 (Pin_5) \\u2014 type: passive at (-5.08,-5.08) angle=0\\nConnector_Generic:Conn_01x10 \\u2014 10 pin(s) | body 2.54\\u00d725.40mm:\\n    Pin 1 (Pin_1) \\u2014 type: passive at (-5.08,10.16) angle=0\\n    Pin 2 (Pin_2) \\u2014 type: passive at (-5.08,7.62) angle=0\\n    Pin 3 (Pin_3) \\u2014 type: passive at (-5.08,5.08) angle=0\\n    Pin 4 (Pin_4) \\u2014 type: passive at (-5.08,2.54) angle=0\\n    Pin 5 (Pin_5) \\u2014 type: passive at (-5.08,0) angle=0\\n    Pin 6 (Pin_6) \\u2014 type: passive at (-5.08,-2.54) angle=0\\n    Pin 7 (Pin_7) \\u2014 type: passive at (-5.08,-5.08) angle=0\\n    Pin 8 (Pin_8) \\u2014 type: passive at (-5.08,-7.62) angle=0\\n    Pin 9 (Pin_9) \\u2014 type: passive at (-5.08,-10.16) angle=0\\n    Pin 10 (Pin_10) \\u2014 type: passive at (-5.08,-12.7) angle=0\\nConnector:AVR-ISP-6 \\u2014 6 pin(s) | body 15.24\\u00d725.40mm:\\n    Pin 1 (MISO) \\u2014 type: passive at (10.16,5.08) angle=180\\n    Pin 2 (VCC) \\u2014 type: passive at (-2.54,12.7) angle=270\\n    Pin 3 (SCK) \\u2014 type: passive at (10.16,0) angle=180\\n    Pin 4 (MOSI) \\u2014 type: passive at (10.16,2.54) angle=180\\n    Pin 5 (~{RST}) \\u2014 type: passive at (10.16,-2.54) angle=180\\n    Pin 6 (GND) \\u2014 type: passive at (-2.54,-10.16) angle=90\\nDevice:Buzzer \\u2014 2 pin(s) | body 2.54\\u00d77.62mm:\\n    Pin 1 (+) \\u2014 type: passive at (-2.54,2.54) angle=0\\n    Pin 2 (-) \\u2014 type: passive at (-2.54,-2.54) angle=0\\nDevice:D \\u2014 2 pin(s) | body 10.16\\u00d72.54mm:\\n    Pin 1 (K) \\u2014 type: passive at (-3.81,0) angle=0\\n    Pin 2 (A) \\u2014 type: passive at (3.81,0) angle=180\\nDevice:D_TVS \\u2014 2 pin(s) | body 10.16\\u00d72.54mm:\\n    Pin 1 (A1) \\u2014 type: passive at (-3.81,0) angle=0\\n    Pin 2 (A2) \\u2014 type: passive at (3.81,0) angle=180\\nDevice:R \\u2014 2 pin(s) | body 2.54\\u00d710.16mm:\\n    Pin 1 () \\u2014 type: passive at (0,3.81) angle=270\\n    Pin 2 () \\u2014 type: passive at (0,-3.81) angle=90\\nDevice:C \\u2014 2 pin(s) | body 2.54\\u00d710.16mm:\\n    Pin 1 () \\u2014 type: passive at (0,3.81) angle=270\\n    Pin 2 () \\u2014 type: passive at (0,-3.81) angle=90\\nConnector:TestPoint \\u2014 1 pin(s) | body 2.54\\u00d72.54mm:\\n    Pin 1 (1) \\u2014 type: passive at (0,0) angle=90\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_symbols",
+   "arguments": {
+    "query": "MCP2003"
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"No symbols found matching \\\"MCP2003\\\"\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_symbol_pins",
+   "arguments": {
+    "symbol": "MCU_Microchip_ATtiny:ATtiny841-SS"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"MCU_Microchip_ATtiny:ATtiny841-SS \\u2014 14 pin(s):\\n  Pin 1 (VCC) \\u2014 type: power_in\\n  Pin 2 (XTAL1/PB0) \\u2014 type: bidirectional\\n  Pin 3 (XTAL2/PB1) \\u2014 type: bidirectional\\n  Pin 4 (~{RESET}/PB3) \\u2014 type: bidirectional\\n  Pin 5 (PB2) \\u2014 type: bidirectional\\n  Pin 6 (PA7) \\u2014 type: bidirectional\\n  Pin 7 (PA6) \\u2014 type: bidirectional\\n  Pin 8 (PA5) \\u2014 type: bidirectional\\n  Pin 9 (PA4) \\u2014 type: bidirectional\\n  Pin 10 (PA3) \\u2014 type: bidirectional\\n  Pin 11 (PA2) \\u2014 type: bidirectional\\n  Pin 12 (PA1) \\u2014 type: bidirectional\\n  Pin 13 (AREF/PA0) \\u2014 type: bidirectional\\n  Pin 14 (GND) \\u2014 type: power_in\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_symbols",
+   "arguments": {
+    "query": "HT75"
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 1 symbols matching \\\"HT75\\\":\\n\\nRegulator_Linear:HT75xx-1-SOT89 | 100mA Low Dropout Voltage Regulator, Fixed Output, SOT89\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_symbols",
+   "arguments": {
+    "query": "HT7550-1",
+    "projectPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7"
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"No symbols found matching \\\"HT7550-1\\\"\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_symbols",
+   "arguments": {
+    "query": "MCP2003B",
+    "projectPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7"
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"No symbols found matching \\\"MCP2003B\\\"\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "create_project",
+   "arguments": {
+    "path": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7",
+    "name": "b30"
+   },
+   "is_error": false,
+   "seconds": 0.05,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"message\\\": \\\"Created project: b30\\\",\\n  \\\"project\\\": {\\n    \\\"name\\\": \\\"b30\\\",\\n    \\\"path\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_pro\\\",\\n    \\\"boardPath\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_pcb\\\",\\n    \\\"schematicPath\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_sch\\\"\\n  },\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false,\\n  \\\"sessionBackend\\\": \\\"swig\\\"\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_symbol_info",
+   "arguments": {
+    "symbol": "Regulator_Linear:HT75xx-1-SOT89"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Symbol: Regulator_Linear:HT75xx-1-SOT89\\nValue: HT75xx-1-SOT89\\nDescription: 100mA Low Dropout Voltage Regulator, Fixed Output, SOT89\\nFootprint: Package_TO_SOT_SMD:SOT-89-3\\nDatasheet: https://www.holtek.com/documents/10179/116711/HT75xx-1v250.pdf\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "batch_list_symbol_pins",
+   "arguments": {
+    "symbols": [
+     "Regulator_Linear:HT75xx-1-SOT89",
+     "Device:Q_NPN_BCE",
+     "Device:Q_NMOS_GSD",
+     "Switch:SW_Push",
+     "power:PWR_FLAG"
+    ]
+   },
+   "is_error": false,
+   "seconds": 0.06,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Regulator_Linear:HT75xx-1-SOT89 \\u2014 3 pin(s) | body 17.78\\u00d710.16mm:\\n    Pin 1 (GND) \\u2014 type: power_in at (0,-5.08) angle=90\\n    Pin 2 (VIN) \\u2014 type: power_in at (-7.62,2.54) angle=0\\n    Pin 3 (VOUT) \\u2014 type: power_out at (7.62,2.54) angle=180\\nSwitch:SW_Push \\u2014 2 pin(s) | body 12.70\\u00d72.54mm:\\n    Pin 1 (1) \\u2014 type: passive at (-5.08,0) angle=0\\n    Pin 2 (2) \\u2014 type: passive at (5.08,0) angle=180\\npower:PWR_FLAG \\u2014 1 pin(s) | body 2.54\\u00d72.54mm:\\n    Pin 1 () \\u2014 type: power_out at (0,0) angle=90\\n\\nErrors:\\n  Device:Q_NPN_BCE: Symbol 'Device:Q_NPN_BCE' not found\\n  Device:Q_NMOS_GSD: Symbol 'Device:Q_NMOS_GSD' not found\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "validate_symbol_library",
+   "arguments": {
+    "libraryPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/megadesk.kicad_sym"
+   },
+   "is_error": false,
+   "seconds": 0.19,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"valid\\\": false,\\n  \\\"path\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/megadesk.kicad_sym\\\",\\n  \\\"message\\\": \\\"megadesk.kicad_sym is invalid: 3 error(s), first at line 24: Unit 'MCP2003B_0_0' does not start with 'megadesk:MCP2003B_'; KiCad rejects the whole library (verified against kicad-cli 10.0: 'Unable to load library')\\\",\\n  \\\"errorCount\\\": 3,\\n  \\\"warningCount\\\": 0,\\n  \\\"issues\\\": [\\n    {\\n      \\\"severity\\\": \\\"error\\\",\\n      \\\"code\\\": \\\"unit_name_mismatch\\\",\\n      \\\"message\\\": \\\"Unit 'MCP2003B_0_0' does not start with 'megadesk:MCP2003B_'; KiCad rejects the whole library (verified against kicad-cli 10.0: 'Unable to load library')\\\",\\n      \\\"line\\\": 24,\\n      \\\"column\\\": 5\\n    },\\n    {\\n      \\\"severity\\\": \\\"error\\\",\\n      \\\"code\\\": \\\"unit_name_mismatch\\\",\\n      \\\"message\\\": \\\"Unit 'MCP2003B_0_1' does not start with 'megadesk:MCP2003B_'; KiCad rejects the whole library (verified against kicad-cli 10.0: 'Unable to load library')\\\",\\n      \\\"line\\\": 34,\\n      \\\"column\\\": 5\\n    },\\n    {\\n      \\\"severity\\\": \\\"error\\\",\\n      \\\"code\\\": \\\"unit_name_mismatch\\\",\\n      \\\"message\\\": \\\"Unit 'MCP2003B_1_1' does not start with 'megadesk:MCP2003B_'; KiCad rejects the whole library (verified against kicad-cli 10.0: 'Unable to load library')\\\",\\n      \\\"line\\\": 39,\\n      \\\"column\\\": 5\\n    }\\n  ],\\n  \\\"kicadCli\\\": {\\n    \\\"ran\\\": true,\\n    \\\"ok\\\": true,\\n    \\\"exitCode\\\": 0,\\n    \\\"output\\\": \\\"Saving symbol library in updated format\\\"\\n  },\\n  \\\"symbolCount\\\": 1,\\n  \\\"semanticChecksRan\\\": true,\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "rename_symbol",
+   "arguments": {
+    "libraryPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/megadesk.kicad_sym",
+    "oldName": "megadesk:MCP2003B",
+    "newName": "MCP2003B"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"old_name\\\": \\\"megadesk:MCP2003B\\\",\\n  \\\"new_name\\\": \\\"MCP2003B\\\",\\n  \\\"extends_updated\\\": 0,\\n  \\\"library_path\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/megadesk.kicad_sym\\\",\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "validate_symbol_library",
+   "arguments": {
+    "libraryPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/megadesk.kicad_sym"
+   },
+   "is_error": false,
+   "seconds": 0.2,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"valid\\\": true,\\n  \\\"path\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/megadesk.kicad_sym\\\",\\n  \\\"message\\\": \\\"megadesk.kicad_sym is valid\\\",\\n  \\\"errorCount\\\": 0,\\n  \\\"warningCount\\\": 0,\\n  \\\"issues\\\": [],\\n  \\\"kicadCli\\\": {\\n    \\\"ran\\\": true,\\n    \\\"ok\\\": true,\\n    \\\"exitCode\\\": 0,\\n    \\\"output\\\": \\\"Saving symbol library in updated format\\\"\\n  },\\n  \\\"symbolCount\\\": 1,\\n  \\\"semanticChecksRan\\\": true,\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "register_symbol_library",
+   "arguments": {
+    "libraryPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/megadesk.kicad_sym",
+    "libraryName": "megadesk",
+    "scope": "project",
+    "projectPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_pro"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"already_registered\\\": false,\\n  \\\"table_path\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/sym-lib-table\\\",\\n  \\\"library_name\\\": \\\"megadesk\\\",\\n  \\\"uri\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/megadesk.kicad_sym\\\",\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "register_footprint_library",
+   "arguments": {
+    "libraryPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/megadesk.pretty",
+    "libraryName": "megadesk",
+    "scope": "project",
+    "projectPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_pro"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"already_registered\\\": false,\\n  \\\"table_path\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/fp-lib-table\\\",\\n  \\\"library_name\\\": \\\"megadesk\\\",\\n  \\\"uri\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/megadesk.pretty\\\",\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_symbols",
+   "arguments": {
+    "query": "2N3904"
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 1 symbols matching \\\"2N3904\\\":\\n\\nTransistor_BJT:2N3904 | 0.2A Ic, 40V Vce, Small Signal NPN Transistor, TO-92\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_footprints",
+   "arguments": {
+    "search_term": "Buzzer_12x9.5"
+   },
+   "is_error": false,
+   "seconds": 0.04,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 1 matching footprints:\\nBuzzer_Beeper:Buzzer_12x9.5RM7.6\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_project_files",
+   "arguments": {
+    "path": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [\"b30.kicad_pcb\", \"b30.kicad_pro\", \"b30.kicad_sch\", \"fp-lib-table\", \"lib/megadesk.kicad_sym\", \"lib/megadesk.pretty/F1004-H-10-20G-R.kicad_mod\", \"lib/megadesk.pretty/FB35-10N0-AHK.kicad_mod\", \"sym-lib-table\"]}"
+  },
+  {
+   "name": "set_symbol_pin_type",
+   "arguments": {
+    "libraryPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/megadesk.kicad_sym",
+    "symbols": [
+     "MCP2003B"
+    ],
+    "pinNumbers": [
+     "1"
+    ],
+    "type": "output"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"message\\\": \\\"Changed 1 pin(s) across 1 symbol(s)\\\",\\n  \\\"libraryPath\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/megadesk.kicad_sym\\\",\\n  \\\"dryRun\\\": false,\\n  \\\"changeCount\\\": 1,\\n  \\\"alreadyCorrect\\\": 0,\\n  \\\"symbolsChanged\\\": [\\n    \\\"MCP2003B\\\"\\n  ],\\n  \\\"backupPath\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/.mcp-backups/megadesk.kicad_sym.20261124-154031-814\\\",\\n  \\\"changes\\\": [\\n    {\\n      \\\"symbol\\\": \\\"MCP2003B\\\",\\n      \\\"unit\\\": \\\"MCP2003B_0_0\\\",\\n      \\\"number\\\": \\\"1\\\",\\n      \\\"name\\\": \\\"RXD\\\",\\n      \\\"fromType\\\": \\\"input\\\",\\n      \\\"toType\\\": \\\"output\\\",\\n      \\\"fromStyle\\\": \\\"line\\\",\\n      \\\"toStyle\\\": \\\"line\\\"\\n    }\\n  ],\\n  \\\"changesTruncated\\\": false,\\n  \\\"missingSymbols\\\": [],\\n  \\\"symbolsWithoutOwnPins\\\": [],\\n  \\\"missingPinNumbers\\\": [],\\n  \\\"missingPinNames\\\": [],\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "set_library_table_uri",
+   "arguments": {
+    "tableType": "symbol",
+    "projectPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7",
+    "libraryName": "megadesk",
+    "uri": "${KIPRJMOD}/lib/megadesk.kicad_sym"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"message\\\": \\\"'megadesk' now points at ${KIPRJMOD}/lib/megadesk.kicad_sym\\\",\\n  \\\"tablePath\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/sym-lib-table\\\",\\n  \\\"tableType\\\": \\\"symbol\\\",\\n  \\\"dryRun\\\": false,\\n  \\\"backup\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/.mcp-backups/sym-lib-table.20261124-154031-816\\\",\\n  \\\"libraryName\\\": \\\"megadesk\\\",\\n  \\\"previousUri\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/megadesk.kicad_sym\\\",\\n  \\\"uri\\\": \\\"${KIPRJMOD}/lib/megadesk.kicad_sym\\\",\\n  \\\"resolvedPath\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/megadesk.kicad_sym\\\",\\n  \\\"exists\\\": true,\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "set_library_table_uri",
+   "arguments": {
+    "tableType": "footprint",
+    "projectPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7",
+    "libraryName": "megadesk",
+    "uri": "${KIPRJMOD}/lib/megadesk.pretty"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"message\\\": \\\"'megadesk' now points at ${KIPRJMOD}/lib/megadesk.pretty\\\",\\n  \\\"tablePath\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/fp-lib-table\\\",\\n  \\\"tableType\\\": \\\"footprint\\\",\\n  \\\"dryRun\\\": false,\\n  \\\"backup\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/.mcp-backups/fp-lib-table.20261124-154031-818\\\",\\n  \\\"libraryName\\\": \\\"megadesk\\\",\\n  \\\"previousUri\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/megadesk.pretty\\\",\\n  \\\"uri\\\": \\\"${KIPRJMOD}/lib/megadesk.pretty\\\",\\n  \\\"resolvedPath\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/megadesk.pretty\\\",\\n  \\\"exists\\\": true,\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "batch_list_symbol_pins",
+   "arguments": {
+    "symbols": [
+     "Transistor_BJT:2N3904",
+     "Device:D_Zener",
+     "Regulator_Linear:HT75xx-1-SOT89",
+     "Device:Buzzer",
+     "MCU_Microchip_ATtiny:ATtiny841-SS"
+    ]
+   },
+   "is_error": false,
+   "seconds": 0.06,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Transistor_BJT:2N3904 \\u2014 3 pin(s) | body 10.16\\u00d712.70mm:\\n    Pin 1 (E) \\u2014 type: passive at (2.54,-5.08) angle=90\\n    Pin 2 (B) \\u2014 type: input at (-5.08,0) angle=0\\n    Pin 3 (C) \\u2014 type: passive at (2.54,5.08) angle=270\\nDevice:D_Zener \\u2014 2 pin(s) | body 10.16\\u00d72.54mm:\\n    Pin 1 (K) \\u2014 type: passive at (-3.81,0) angle=0\\n    Pin 2 (A) \\u2014 type: passive at (3.81,0) angle=180\\nRegulator_Linear:HT75xx-1-SOT89 \\u2014 3 pin(s) | body 17.78\\u00d710.16mm:\\n    Pin 1 (GND) \\u2014 type: power_in at (0,-5.08) angle=90\\n    Pin 2 (VIN) \\u2014 type: power_in at (-7.62,2.54) angle=0\\n    Pin 3 (VOUT) \\u2014 type: power_out at (7.62,2.54) angle=180\\nDevice:Buzzer \\u2014 2 pin(s) | body 2.54\\u00d77.62mm:\\n    Pin 1 (+) \\u2014 type: passive at (-2.54,2.54) angle=0\\n    Pin 2 (-) \\u2014 type: passive at (-2.54,-2.54) angle=0\\nMCU_Microchip_ATtiny:ATtiny841-SS \\u2014 14 pin(s) | body 17.78\\u00d748.26mm:\\n    Pin 1 (VCC) \\u2014 type: power_in at (0,22.86) angle=270\\n    Pin 2 (XTAL1/PB0) \\u2014 type: bidirectional at (15.24,-7.62) angle=180\\n    Pin 3 (XTAL2/PB1) \\u2014 type: bidirectional at (15.24,-10.16) angle=180\\n    Pin 4 (~{RESET}/PB3) \\u2014 type: bidirectional at (15.24,-15.24) angle=180\\n    Pin 5 (PB2) \\u2014 type: bidirectional at (15.24,-12.7) angle=180\\n    Pin 6 (PA7) \\u2014 type: bidirectional at (15.24,-2.54) angle=180\\n    Pin 7 (PA6) \\u2014 type: bidirectional at (15.24,0) angle=180\\n    Pin 8 (PA5) \\u2014 type: bidirectional at (15.24,2.54) angle=180\\n    Pin 9 (PA4) \\u2014 type: bidirectional at (15.24,5.08) angle=180\\n    Pin 10 (PA3) \\u2014 type: bidirectional at (15.24,7.62) angle=180\\n    Pin 11 (PA2) \\u2014 type: bidirectional at (15.24,10.16) angle=180\\n    Pin 12 (PA1) \\u2014 type: bidirectional at (15.24,12.7) angle=180\\n    Pin 13 (AREF/PA0) \\u2014 type: bidirectional at (15.24,15.24) angle=180\\n    Pin 14 (GND) \\u2014 type: power_in at (0,-22.86) angle=90\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_symbol_info",
+   "arguments": {
+    "symbol": "megadesk:MCP2003B",
+    "projectPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Failed to get symbol info: Symbol not found: megadesk:MCP2003B\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "set_symbol_pin_type",
+   "arguments": {
+    "libraryPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/megadesk.kicad_sym",
+    "symbols": [
+     "MCP2003B"
+    ],
+    "pinNumbers": [
+     "4"
+    ],
+    "type": "input"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"message\\\": \\\"Changed 1 pin(s) across 1 symbol(s)\\\",\\n  \\\"libraryPath\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/megadesk.kicad_sym\\\",\\n  \\\"dryRun\\\": false,\\n  \\\"changeCount\\\": 1,\\n  \\\"alreadyCorrect\\\": 0,\\n  \\\"symbolsChanged\\\": [\\n    \\\"MCP2003B\\\"\\n  ],\\n  \\\"backupPath\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/.mcp-backups/megadesk.kicad_sym.20261124-154035-596\\\",\\n  \\\"changes\\\": [\\n    {\\n      \\\"symbol\\\": \\\"MCP2003B\\\",\\n      \\\"unit\\\": \\\"MCP2003B_1_1\\\",\\n      \\\"number\\\": \\\"4\\\",\\n      \\\"name\\\": \\\"TXD\\\",\\n      \\\"fromType\\\": \\\"output\\\",\\n      \\\"toType\\\": \\\"input\\\",\\n      \\\"fromStyle\\\": \\\"line\\\",\\n      \\\"toStyle\\\": \\\"line\\\"\\n    }\\n  ],\\n  \\\"changesTruncated\\\": false,\\n  \\\"missingSymbols\\\": [],\\n  \\\"symbolsWithoutOwnPins\\\": [],\\n  \\\"missingPinNumbers\\\": [],\\n  \\\"missingPinNames\\\": [],\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_library_symbols",
+   "arguments": {
+    "library": "megadesk",
+    "projectPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Failed to list symbols in library megadesk: Library 'megadesk' not found in sym-lib-table\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_symbol_pins",
+   "arguments": {
+    "symbol": "megadesk:MCP2003B",
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"megadesk:MCP2003B \\u2014 8 pin(s):\\n  Pin 1 (RXD) \\u2014 type: output\\n  Pin 2 (CS) \\u2014 type: input\\n  Pin 3 (WAKE) \\u2014 type: input\\n  Pin 4 (TXD) \\u2014 type: input\\n  Pin 5 (VSS) \\u2014 type: power_in\\n  Pin 6 (LBUS) \\u2014 type: bidirectional\\n  Pin 7 (VBB) \\u2014 type: power_in\\n  Pin 8 (VREN) \\u2014 type: output\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "validate_symbol_library",
+   "arguments": {
+    "libraryPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/megadesk.kicad_sym"
+   },
+   "is_error": false,
+   "seconds": 0.2,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"valid\\\": true,\\n  \\\"path\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/megadesk.kicad_sym\\\",\\n  \\\"message\\\": \\\"megadesk.kicad_sym is valid\\\",\\n  \\\"errorCount\\\": 0,\\n  \\\"warningCount\\\": 0,\\n  \\\"issues\\\": [],\\n  \\\"kicadCli\\\": {\\n    \\\"ran\\\": true,\\n    \\\"ok\\\": true,\\n    \\\"exitCode\\\": 0,\\n    \\\"output\\\": \\\"Saving symbol library in updated format\\\"\\n  },\\n  \\\"symbolCount\\\": 1,\\n  \\\"semanticChecksRan\\\": true,\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "search_footprints",
+   "arguments": {
+    "search_term": "SOD-123"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 3 matching footprints:\\nDiode_SMD:D_SOD-123F\\nDiode_SMD:Nexperia_CFP3_SOD-123W\\nDiode_SMD:D_SOD-123\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_symbol_info",
+   "arguments": {
+    "symbol": "Regulator_Linear:L7812"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Symbol: Regulator_Linear:L7812\\nValue: L7812\\nDescription: Positive 1.5A 35V Linear Regulator, Fixed Output 12V, TO-220/TO-263/TO-252\\nDatasheet: http://www.st.com/content/ccc/resource/technical/document/datasheet/41/4f/b3/b0/12/d4/47/88/CD00000444.pdf/files/CD00000444.pdf/jcr:content/translations/en.CD00000444.pdf\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "batch_add_and_connect",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_sch",
+    "components": [
+     {
+      "symbol": "Connector_Generic:Conn_01x05",
+      "reference": "J1",
+      "value": "DESK_24V_GND_LIN_RX_TX",
+      "footprint": "Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical",
+      "position": {
+       "x": 43.18,
+       "y": 45.72
+      },
+      "nets": {
+       "1": "+24V",
+       "2": "GND",
+       "3": "LIN",
+       "4": "EXT_RX",
+       "5": "EXT_TX"
+      }
+     },
+     {
+      "symbol": "Regulator_Linear:L7812",
+      "reference": "U1",
+      "value": "L7812",
+      "footprint": "Package_TO_SOT_THT:TO-220-3_Vertical",
+      "position": {
+       "x": 90.17,
+       "y": 43.18
+      },
+      "nets": {
+       "1": "+24V",
+       "2": "GND",
+       "3": "+12V"
+      }
+     },
+     {
+      "symbol": "Regulator_Linear:HT75xx-1-SOT89",
+      "reference": "U2",
+      "value": "HT7550-1",
+      "footprint": "Package_TO_SOT_SMD:SOT-89-3",
+      "position": {
+       "x": 151.13,
+       "y": 45.72
+      },
+      "nets": {
+       "1": "GND",
+       "2": "+12V",
+       "3": "+5V"
+      }
+     },
+     {
+      "symbol": "Device:D_Zener",
+      "reference": "D1",
+      "value": "SMBJ30A",
+      "footprint": "Diode_SMD:D_SMB",
+      "position": {
+       "x": 50.8,
+       "y": 67.31
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "+24V",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Device:C",
+      "reference": "C1",
+      "value": "0.33uF 50V",
+      "footprint": "Capacitor_SMD:C_1206_3216Metric",
+      "position": {
+       "x": 69.85,
+       "y": 67.31
+      },
+      "nets": {
+       "1": "+24V",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Device:C",
+      "reference": "C2",
+      "value": "10uF 50V",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "position": {
+       "x": 82.55,
+       "y": 67.31
+      },
+      "nets": {
+       "1": "+24V",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Device:C",
+      "reference": "C3",
+      "value": "0.1uF 25V",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "position": {
+       "x": 106.68,
+       "y": 67.31
+      },
+      "nets": {
+       "1": "+12V",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Device:C",
+      "reference": "C4",
+      "value": "10uF 25V",
+      "footprint": "Capacitor_SMD:C_1206_3216Metric",
+      "position": {
+       "x": 119.38,
+       "y": 67.31
+      },
+      "nets": {
+       "1": "+12V",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Device:C",
+      "reference": "C5",
+      "value": "1uF 25V",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "position": {
+       "x": 132.08,
+       "y": 67.31
+      },
+      "nets": {
+       "1": "+12V",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Device:C",
+      "reference": "C6",
+      "value": "10uF 10V",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "position": {
+       "x": 170.18,
+       "y": 67.31
+      },
+      "nets": {
+       "1": "+5V",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Device:C",
+      "reference": "C7",
+      "value": "100nF 10V",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "position": {
+       "x": 182.88,
+       "y": 67.31
+      },
+      "nets": {
+       "1": "+5V",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "power:PWR_FLAG",
+      "reference": "#FLG01",
+      "position": {
+       "x": 31.75,
+       "y": 66.04
+      },
+      "nets": {
+       "1": "+24V"
+      }
+     },
+     {
+      "symbol": "power:PWR_FLAG",
+      "reference": "#FLG02",
+      "position": {
+       "x": 31.75,
+       "y": 74.93
+      },
+      "nets": {
+       "1": "GND"
+      }
+     },
+     {
+      "symbol": "megadesk:MCP2003B",
+      "reference": "U3",
+      "value": "MCP2003B",
+      "footprint": "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm",
+      "position": {
+       "x": 83.82,
+       "y": 110.49
+      },
+      "nets": {
+       "1": "LIN_RXD",
+       "2": "+5V",
+       "3": "GND",
+       "4": "LIN_TXD",
+       "5": "GND",
+       "6": "LIN",
+       "7": "+12V"
+      }
+     },
+     {
+      "symbol": "Device:C",
+      "reference": "C8",
+      "value": "100nF 25V",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "position": {
+       "x": 106.68,
+       "y": 119.38
+      },
+      "nets": {
+       "1": "+12V",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R1",
+      "value": "1k 0.5W LIN master",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "position": {
+       "x": 52.07,
+       "y": 109.22
+      },
+      "nets": {
+       "1": "LIN_PULL",
+       "2": "LIN"
+      }
+     },
+     {
+      "symbol": "Device:D",
+      "reference": "D2",
+      "value": "1N4007",
+      "footprint": "Diode_SMD:D_SMA",
+      "position": {
+       "x": 52.07,
+       "y": 92.71
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "LIN_PULL",
+       "2": "+12V"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R2",
+      "value": "10k RXD pull-up",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+       "x": 30.48,
+       "y": 111.76
+      },
+      "nets": {
+       "1": "+5V",
+       "2": "LIN_RXD"
+      }
+     },
+     {
+      "symbol": "MCU_Microchip_ATtiny:ATtiny841-SS",
+      "reference": "U4",
+      "value": "ATtiny841-SS",
+      "footprint": "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm",
+      "position": {
+       "x": 151.13,
+       "y": 113.03
+      },
+      "nets": {
+       "1": "+5V",
+       "2": "UP",
+       "3": "DOWN",
+       "4": "RESET",
+       "6": "BUZZ_CTL",
+       "7": "ISP_MOSI",
+       "8": "ISP_MISO",
+       "9": "ISP_SCK",
+       "10": "PANEL_PA3",
+       "11": "LIN_RXD",
+       "12": "LIN_TXD",
+       "13": "PANEL_PA0",
+       "14": "GND"
+      }
+     },
+     {
+      "symbol": "Device:C",
+      "reference": "C9",
+      "value": "100nF 10V",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "position": {
+       "x": 123.19,
+       "y": 105.41
+      },
+      "nets": {
+       "1": "+5V",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R3",
+      "value": "10k RESET",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+       "x": 115.57,
+       "y": 141.0
+      },
+      "nets": {
+       "1": "+5V",
+       "2": "RESET"
+      }
+     },
+     {
+      "symbol": "Switch:SW_Push",
+      "reference": "SW1",
+      "value": "RESET",
+      "footprint": "Button_Switch_SMD:SW_SPST_TL3342",
+      "position": {
+       "x": 130.81,
+       "y": 153.67
+      },
+      "nets": {
+       "1": "RESET",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Connector:AVR-ISP-6",
+      "reference": "J2",
+      "value": "AVR ISP 2x3",
+      "footprint": "Connector_PinHeader_2.54mm:PinHeader_2x03_P2.54mm_Vertical",
+      "position": {
+       "x": 198.12,
+       "y": 107.95
+      },
+      "nets": {
+       "1": "ISP_MISO",
+       "2": "+5V",
+       "3": "ISP_SCK",
+       "4": "ISP_MOSI",
+       "5": "RESET",
+       "6": "GND"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R4",
+      "value": "1k",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+       "x": 198.12,
+       "y": 138.43
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "EXT_RX",
+       "2": "ISP_SCK"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R5",
+      "value": "1k",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+       "x": 198.12,
+       "y": 147.32
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "EXT_TX",
+       "2": "ISP_MISO"
+      }
+     },
+     {
+      "symbol": "Connector_Generic:Conn_01x10",
+      "reference": "J3",
+      "value": "PANEL_FFC_10",
+      "footprint": "megadesk:F1004-H-10-20G-R",
+      "position": {
+       "x": 265.43,
+       "y": 103.0
+      },
+      "nets": {
+       "5": "UP",
+       "6": "DOWN",
+       "7": "GND",
+       "9": "PANEL_PA0",
+       "10": "PANEL_PA3"
+      }
+     },
+     {
+      "symbol": "Connector:TestPoint",
+      "reference": "TP1",
+      "value": "UP",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "position": {
+       "x": 246.38,
+       "y": 132.08
+      },
+      "nets": {
+       "1": "UP"
+      }
+     },
+     {
+      "symbol": "Connector:TestPoint",
+      "reference": "TP2",
+      "value": "DOWN",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "position": {
+       "x": 264.16,
+       "y": 132.08
+      },
+      "nets": {
+       "1": "DOWN"
+      }
+     },
+     {
+      "symbol": "Connector:TestPoint",
+      "reference": "TP3",
+      "value": "SERVICE_A",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "position": {
+       "x": 246.38,
+       "y": 148.59
+      },
+      "nets": {
+       "1": "SERVICE_ISOLATED"
+      }
+     },
+     {
+      "symbol": "Connector:TestPoint",
+      "reference": "TP4",
+      "value": "SERVICE_B",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "position": {
+       "x": 264.16,
+       "y": 148.59
+      },
+      "nets": {
+       "1": "SERVICE_ISOLATED"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R6",
+      "value": "2.2k",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+       "x": 184.15,
+       "y": 176.53
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "BUZZ_CTL",
+       "2": "BUZZ_BASE"
+      }
+     },
+     {
+      "symbol": "Device:R",
+      "reference": "R7",
+      "value": "100k",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "position": {
+       "x": 198.12,
+       "y": 189.23
+      },
+      "nets": {
+       "1": "BUZZ_BASE",
+       "2": "GND"
+      }
+     },
+     {
+      "symbol": "Transistor_BJT:2N3904",
+      "reference": "Q1",
+      "value": "2N3904",
+      "footprint": "Package_TO_SOT_THT:TO-92_Inline",
+      "position": {
+       "x": 214.63,
+       "y": 176.53
+      },
+      "nets": {
+       "1": "GND",
+       "2": "BUZZ_BASE",
+       "3": "BUZZ_LOW"
+      }
+     },
+     {
+      "symbol": "Device:Buzzer",
+      "reference": "BZ1",
+      "value": "5V active buzzer <=20mA",
+      "footprint": "Buzzer_Beeper:Buzzer_12x9.5RM7.6",
+      "position": {
+       "x": 240.03,
+       "y": 171.45
+      },
+      "nets": {
+       "1": "+5V",
+       "2": "BUZZ_LOW"
+      }
+     },
+     {
+      "symbol": "Device:D",
+      "reference": "D3",
+      "value": "1N4148 flyback",
+      "footprint": "Diode_SMD:D_SOD-123",
+      "position": {
+       "x": 256.54,
+       "y": 171.45
+      },
+      "rotation": 90,
+      "nets": {
+       "1": "+5V",
+       "2": "BUZZ_LOW"
+      }
+     }
+    ]
+   },
+   "is_error": false,
+   "seconds": 21.43,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Placed 35 component(s), connected 93 pin(s)\\n  \\u26a0 Power nets without PWR_FLAG: +12V, +5V. Add a PWR_FLAG component to each to suppress ERC power-pin errors.\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "generate_netlist",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.3,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"=== Netlist for /home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_sch ===\\n\\nComponents (33):\\n  BZ1: 5V active buzzer <=20mA (Buzzer_Beeper:Buzzer_12x9.5RM7.6)\\n  C1: 0.33uF 50V (Capacitor_SMD:C_1206_3216Metric)\\n  C2: 10uF 50V (Capacitor_SMD:C_1210_3225Metric)\\n  C3: 0.1uF 25V (Capacitor_SMD:C_0805_2012Metric)\\n  C4: 10uF 25V (Capacitor_SMD:C_1206_3216Metric)\\n  C5: 1uF 25V (Capacitor_SMD:C_0805_2012Metric)\\n  C6: 10uF 10V (Capacitor_SMD:C_0805_2012Metric)\\n  C7: 100nF 10V (Capacitor_SMD:C_0603_1608Metric)\\n  C8: 100nF 25V (Capacitor_SMD:C_0805_2012Metric)\\n  C9: 100nF 10V (Capacitor_SMD:C_0603_1608Metric)\\n  D1: SMBJ30A (Diode_SMD:D_SMB)\\n  D2: 1N4007 (Diode_SMD:D_SMA)\\n  D3: 1N4148 flyback (Diode_SMD:D_SOD-123)\\n  J1: DESK_24V_GND_LIN_RX_TX (Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical)\\n  J2: AVR ISP 2x3 (Connector_PinHeader_2.54mm:PinHeader_2x03_P2.54mm_Vertical)\\n  J3: PANEL_FFC_10 (megadesk:F1004-H-10-20G-R)\\n  Q1: 2N3904 (Package_TO_SOT_THT:TO-92_Inline)\\n  R1: 1k 0.5W LIN master (Resistor_SMD:R_1206_3216Metric)\\n  R2: 10k RXD pull-up (Resistor_SMD:R_0603_1608Metric)\\n  R3: 10k RESET (Resistor_SMD:R_0603_1608Metric)\\n  R4: 1k (Resistor_SMD:R_0603_1608Metric)\\n  R5: 1k (Resistor_SMD:R_0603_1608Metric)\\n  R6: 2.2k (Resistor_SMD:R_0603_1608Metric)\\n  R7: 100k (Resistor_SMD:R_0603_1608Metric)\\n  SW1: RESET (Button_Switch_SMD:SW_SPST_TL3342)\\n  TP1: UP (TestPoint:TestPoint_Pad_D1.5mm)\\n  TP2: DOWN (TestPoint:TestPoint_Pad_D1.5mm)\\n  TP3: SERVICE_A (TestPoint:TestPoint_Pad_D1.5mm)\\n  TP4: SERVICE_B (TestPoint:TestPoint_Pad_D1.5mm)\\n  U1: L7812 (Package_TO_SOT_THT:TO-220-3_Vertical)\\n  U2: HT7550-1 (Package_TO_SOT_SMD:SOT-89-3)\\n  U3: MCP2003B (Package_SO:SOIC-8_3.9x4.9mm_P1.27mm)\\n  U4: ATtiny841-SS (Package_SO:SOIC-14_3.9x8.7mm_P1.27mm)\\n\\nNets (29):\\n  /+5V: BZ1/1, C6/1, C7/1, C9/1, D3/1, J2/2, R2/1, R3/1, U2/3, U3/2, U4/1\\n  /+12V: C3/1, C4/1, C5/1, C8/1, D2/2, U1/3, U2/2, U3/7\\n  /+24V: C1/1, C2/1, D1/1, J1/1, U1/1\\n  /BUZZ_BASE: Q1/2, R6/2, R7/1\\n  /BUZZ_CTL: R6/1, U4/6\\n  /BUZZ_LOW: BZ1/2, D3/2, Q1/3\\n  /DOWN: J3/6, TP2/1, U4/3\\n  /EXT_RX: J1/4, R4/1\\n  /EXT_TX: J1/5, R5/1\\n  /GND: C1/2, C2/2, C3/2, C4/2, C5/2, C6/2, C7/2, C8/2, C9/2, D1/2, J1/2, J2/6, J3/7, Q1/1, R7/2, SW1/2, U1/2, U2/1, U3/3, U3/5, U4/14\\n  /ISP_MISO: J2/1, R5/2, U4/8\\n  /ISP_MOSI: J2/4, U4/7\\n  /ISP_SCK: J2/3, R4/2, U4/9\\n  /LIN: J1/3, R1/2, U3/6\\n  /LIN_PULL: D2/1, R1/1\\n  /LIN_RXD: R2/2, U3/1, U4/11\\n  /LIN_TXD: U3/4, U4/12\\n  /PANEL_PA0: J3/9, U4/13\\n  /PANEL_PA3: J3/10, U4/10\\n  /RESET: J2/5, R3/2, SW1/1, U4/4\\n  /SERVICE_ISOLATED: TP3/1, TP4/1\\n  /UP: J3/5, TP1/1, U4/2\\n  unconnected-(J3-Pin_1-Pad1): J3/1\\n  unconnected-(J3-Pin_2-Pad2): J3/2\\n  unconnected-(J3-Pin_3-Pad3): J3/3\\n  unconnected-(J3-Pin_4-Pad4): J3/4\\n  unconnected-(J3-Pin_8-Pad8): J3/8\\n  unconnected-(U3-VREN-Pad8): U3/8\\n  unconnected-(U4-PB2-Pad5): U4/5\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_schematic_pin_locations",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_sch",
+    "reference": "U3"
+   },
+   "is_error": false,
+   "seconds": 0.25,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Pin locations for U3:\\n  Pin 1 (RXD): x=73.66, y=105.41, angle=180\\u00b0\\n  Pin 2 (CS): x=73.66, y=109.22, angle=180\\u00b0\\n  Pin 3 (WAKE): x=73.66, y=113.03, angle=180\\u00b0\\n  Pin 4 (TXD): x=73.66, y=116.83999999999999, angle=180\\u00b0\\n  Pin 5 (VSS): x=93.97999999999999, y=116.83999999999999, angle=0\\u00b0\\n  Pin 6 (LBUS): x=93.97999999999999, y=113.03, angle=0\\u00b0\\n  Pin 7 (VBB): x=93.97999999999999, y=109.22, angle=0\\u00b0\\n  Pin 8 (VREN): x=93.97999999999999, y=105.41, angle=0\\u00b0\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "run_erc",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 1.78,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"ERC result: 7 violation(s)\\n  Errors: 7  Warnings: 0  Info: 0\\n\\n1. [error] Pin not connected @ (93.98, 105.41)\\n2. [error] Pin not connected @ (166.37, 125.73)\\n3. [error] Pin not connected @ (260.35, 92.71)\\n4. [error] Pin not connected @ (260.35, 95.25)\\n5. [error] Pin not connected @ (260.35, 97.79)\\n6. [error] Pin not connected @ (260.35, 100.33)\\n7. [error] Pin not connected @ (260.35, 110.49)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "validate_schematic",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.29,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"valid\\\": true,\\n  \\\"path\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_sch\\\",\\n  \\\"message\\\": \\\"b30.kicad_sch is valid\\\",\\n  \\\"errorCount\\\": 0,\\n  \\\"warningCount\\\": 0,\\n  \\\"issues\\\": [],\\n  \\\"kicadCli\\\": {\\n    \\\"ran\\\": true,\\n    \\\"ok\\\": true,\\n    \\\"exitCode\\\": 0,\\n    \\\"output\\\": \\\"Successfully saved schematic file using the latest format\\\"\\n  },\\n  \\\"componentCount\\\": 35,\\n  \\\"semanticChecksRan\\\": true,\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "find_wires_crossing_symbols",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.02,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 0 wire(s) crossing symbols:\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "batch_add_no_connects",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_sch",
+    "pins": [
+     {
+      "componentRef": "U3",
+      "pinName": "8"
+     },
+     {
+      "componentRef": "U4",
+      "pinName": "5"
+     },
+     {
+      "componentRef": "J3",
+      "pinName": "1"
+     },
+     {
+      "componentRef": "J3",
+      "pinName": "2"
+     },
+     {
+      "componentRef": "J3",
+      "pinName": "3"
+     },
+     {
+      "componentRef": "J3",
+      "pinName": "4"
+     },
+     {
+      "componentRef": "J3",
+      "pinName": "8"
+     }
+    ]
+   },
+   "is_error": false,
+   "seconds": 1.46,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Placed 7 no-connect marker(s), 0 failed\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "run_erc",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 1.78,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"ERC result: 0 violation(s)\\n  Errors: 0  Warnings: 0  Info: 0\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_schematic_nets",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.86,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Nets (22):\\n  +12V [8 pin(s)]: U1/3, U2/2, C3/1, C4/1, C5/1, U3/7, C8/1, D2/2\\n  +24V [6 pin(s)]: J1/1, U1/1, D1/1, C1/1, C2/1\\n  +5V [11 pin(s)]: U2/3, C6/1, C7/1, U3/2, R2/1, U4/1, C9/1, R3/1, J2/2, BZ1/1, D3/1\\n  BUZZ_BASE [3 pin(s)]: R6/2, R7/1, Q1/2\\n  BUZZ_CTL [2 pin(s)]: U4/6, R6/1\\n  BUZZ_LOW [3 pin(s)]: Q1/3, BZ1/2, D3/2\\n  DOWN [3 pin(s)]: U4/3, J3/6, TP2/1\\n  EXT_RX [2 pin(s)]: J1/4, R4/1\\n  EXT_TX [2 pin(s)]: J1/5, R5/1\\n  GND [22 pin(s)]: J1/2, U1/2, U2/1, D1/2, C1/2, C2/2, C3/2, C4/2, C5/2, C6/2, C7/2, U3/3, U3/5, C8/2, U4/14, C9/2, SW1/2, J2/6, J3/7, R7/2, Q1/1\\n  ISP_MISO [3 pin(s)]: U4/8, J2/1, R5/2\\n  ISP_MOSI [2 pin(s)]: U4/7, J2/4\\n  ISP_SCK [3 pin(s)]: U4/9, J2/3, R4/2\\n  LIN [3 pin(s)]: J1/3, U3/6, R1/2\\n  LIN_PULL [2 pin(s)]: R1/1, D2/1\\n  LIN_RXD [3 pin(s)]: U3/1, R2/2, U4/11\\n  LIN_TXD [2 pin(s)]: U3/4, U4/12\\n  PANEL_PA0 [2 pin(s)]: U4/13, J3/9\\n  PANEL_PA3 [2 pin(s)]: U4/10, J3/10\\n  RESET [4 pin(s)]: U4/4, R3/2, SW1/1, J2/5\\n  SERVICE_ISOLATED [2 pin(s)]: TP3/1, TP4/1\\n  UP [3 pin(s)]: U4/2, J3/5, TP1/1\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "find_overlapping_elements",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.03,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 0 overlap(s):\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_floating_labels",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.72,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"No floating labels found.\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "find_orphaned_wires",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.62,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"No orphaned wires found.\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_schematic_view",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_sch",
+    "width": 1600,
+    "height": 1200
+   },
+   "is_error": false,
+   "seconds": 0.42,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"image\", \"data\": \"iVBORw0KGgoAAAANSUhEUgAABkAAAASwCAIAAAAsYxHAAAAACXBIWXMAAA7EAAAOxAGVKw4bAAIjtUlEQVR4nOzdCVQUZ6Lo8ck59973zksmNzOTO0kmi1FjElfcjWtcY2JcEjWaaDSa1WjigvuKiigugChGEQQUcMFdRBF3cUFFjSCoKIiIqICAbIJA8750XWsq0CCWTXU1/H/nO56vq5uiuu2yu/9Wd/+lGAAAAAAAANCxv1h6AwAAAAAAAIDyELAAAAAAAACgawQsAAAAAAAA6BoBCwAAAAAAALpGwAIAAAAAAICuEbAAAAAAAACgawQsAAAAAAAA6BoBCwAAAAAAALpGwAIAAAAAAICuEbAAAAAAAACgawQsAAAAAAAA6BoBCwAAAAAAALpGwAIAAAAAAICuEbAAAAAAAACgawQsAAAAAAAA6BoBCwAAAAAAALpGwAIAAAAAAICuEbAAAAAAAACgawQsAAAAAAAA6BoBCwAAAAAAALpGwAIAAAAAAICuEbAAAAAAAACgawQsAAAAAAAA6BoBCwAAAAAAALpGwAIAAAAAAICuEbAAAAAAAACgawQsAAAAAAAA6BoBCwAAAAAAALpGwAIAAAAAAICuEbAAAAAAAACgawQsAAAAAAAA6BoBCwAAAAAAALpGwAIAAAAAAICuEbAAAAAAAACgawQsAAAAAAAA6BoBCwAAAAAAALpGwAIAAAAAAICuEbAAAAAAAACgawQsAAAAAAAA6BoBCwAAAAAAALpGwAIAAAAAAICuEbAAAAAAAACgawQsAAAAAAAA6BoBCwAAAAAAALpGwAIAAAAAAICuEbAAAAAAAACgawQsAAAAAAAA6BoBCwAAAAAAALpGwAIAAAAAAICuEbAAAAAAAACgawQsAAAAAAAA6BoBCwAAAAAAALpGwAIAAAAAAICuEbAAAAAAAACgawQsAAAAAAAA6JreA1ZmUlJ0QACDwShnRG3adGHNGotvBoOh8/G7t7fFt4HB0Pm46ONzaf16i28Gg6HzccHT0+LbwGDofLCbWOPISUmxdAF6Ar0HrL2jRm0fNOjgpEkMBqOssWPwYM8mTSy+GQyGzseyt96y+DYwGDof6zp23NSrl8U3g8HQ89jz888rate2+GYwGDofy958M2TsWItvBqPiY0u/foenTbN0AXoCvQesPSNGJISGWnorYFpBXl7wr79aeitQLPYRsadYeitgQnZy8o6vv978+eeb+/a9e/GipTenuvNp29bSmwATYnbt2tK/vzT8unU75+5u6S2q1k4sWBDp72/prYBp4uH+rJubpbcCxRk3b27s0cPSWwET0uPjfTt3lh5QTjg6WnpzqjvxvOthRoaltwKmnff09Ova9cjMmcqFMbt3H5w82VKbVEEELKi3c+hQ51desfRWgIClXycXLQr68cek8HDxLGrFO+8UFRRYeouqNQKWPuXevy/2ETFi9+93q107MSzM0ltUrRGw9Ew81l/bs8fSWwECln5dDw7e8fXX0mNKelycpTenuiNg6dbl7dtX1KkTs3v3/WvXlMsJWGZAwNIt8bLcp337VfXrW3pDQMCyDqttbMTTKUtvRbVGwNKzwvz8dR06xOzaZekNqe4IWLplKCr6rU6dgrw8sbNYeluqOwKWbv3u5RXm5GTprcD/ImDp1qp69e7HxJReTsAyAwKWbiWGhYnnUu4NGlh6Q0DAsgJFhYVutWrlpqdbekOqNQKWngV++63T//zPfltbS29IdUfA0q1bJ05s/eILMRG7SdK5c5benGqNgKVbh6ZM+a1OndU2Nh5NmkSsW2fpzanuCFj6lB4Xt7xmTbGPiJ1l17BhBoNBPouAZQYELJ0jYOkBAUvnxAND0A8/8HdkcQQsPSt89CgzMdH7gw/Oe3hYeluqNQKWboWMG3dp/fpinhvrAAFLtw5OmXJ4xozctLSk8PDlb7+ddeeOpbeoWiNg6dO14OCFL7yQcPJk5u3bfl27htrby2cRsMyAB2mdI2DpAQFL5w5MmLD7+++V/78BiyBg6V/k+vW7f/jB0ltRrRGwdMv19dcD+vTZ0r+/W61afl26POSQXsshYFmFrV98ERsSYumtqNYIWPoUf/jwln79pPn14OCtAwbIZxGwzICApXMELD0gYOnZcQcH8cBQVFho6Q0BAcsKRKxbt2vYMEtvRbVGwNKt5Oho6aOpxQuP3728LL051RoByyps6tOHgGVZBCx9ij9yZGPPntL8WlDQ5r595bMIWGZAwNKt9Lg48SxqRe3a4s/M27ctvTnVGgFLt47NmePTpk3iqVNiN7kXGWnpzanuCFj6dGrJkn1jx4p95MaBAyvff//qzp2W3qJqjYClfzw3tjgClm5d8PDY89NPt8+cifDzW16jRl5mpqW3qFojYOlTQV7esho1fvf2jjtwwKNJk3OrV8tnEbDMgAdp3dpva7ulf3/PZs3En2HOzpbenGqNgKVb6z78cPPnn4t9RIztgwY9ys219BZVawQsfcq+d29T794Bn3/u26kTjyYWR8DSv5jAQLHXWHorqjUClm7lPXggnnGJx5T1H38sXpxbenOqOwKWbokXjxs+/ti3Y8cjs2YplxOwzICABTwRAQuoCAIW8EQELOCJCFhARRCwrA4BywyeGLD2jhzpVrMmg1Gdh+vrry956SWLbwaDofOx6K9/tfg2MBg6H04vv+zy6qsW3wwGQ89j2Vtv8YDCYDxxLHrhheU1alh8MxjKUX6fImCZwRMDFv+jDgAAAAAAUJaHGRnlHz1KwDIDAhYAAAAAAIBqBCwtELAAAAAAAABUI2BpgYAFAAAAAACgGgFLCwQsAAAAAAAA1QhYWiBgAQAAAAAAqEbA0gIBCwAAAAAAQDUClhYIWAAAAAAAAKoRsLRAwAIAAAAAAFCNgKUFAhYAAAAAAIBqBCwtELAAAAAAAABUI2BpgYAFAAAAAACgGgFLCwQsAAAAAAAA1QhYWiBgAQAAAAAAqEbA0gIBCwAAAAAAQDUClhYIWAAAAAAAAKoRsLRAwAIAAAAAAFCNgKUFAhYAAAAAAIBqBCwtELAAAAAAAABUI2BpgYAFAAAAAACgGgFLCwQsAAAAAAAA1QhYWiBgAQAAAAAAqEbA0gIBCwAAAAAAQDUClhYIWAAAAAAAAKoRsLRAwAIAAAAAAFCNgKUFAhYAAAAAAIBqBCwtELAAAAAAAABUI2BpgYAFAAAAAACgGgFLCwQsAAAAAAAA1QhYWiBgAQAAAAAAqEbA0gIBCwAAAAAAQDUClhYIWAAAAAAAAKoRsLRAwAIAAAAAAFCNgKUFAhYAAAAAAIBqBCwtELAAAAAAAABUI2BpgYAFAAAAAACgGgFLCwQsAAAAAAAA1QhYWiBgAQAAAAAAqEbA0gIBCwAAAAAAQDUClhYIWAAAAAAAAKoRsLRAwAIAAAAAAFCNgKUFAhYAAAAAAIBqBCwtELAAAAAAAABUI2BpgYAFAAAAAACgGgFLCwQsAAAAAAAA1QhYWiBgAQAAAAAAqEbA0gIBCwAAAAAAQDUClhYIWAAAAAAAAKoRsLRAwAIAAAAAAFCNgKUFAhYAAAAAAIBqBCwtELAAAAAAAABUI2BpgYAFAAAAAACgGgFLCwQsAAAAAAAA1QhYWiBgAQAAAAAAqEbA0gIBCwAAAAAAQDUClhYIWAAAAAAAAKoRsLRAwAIAAAAAAFCNgKUFAhYAAAAAAIBqBCwtELAAAAAAAABUI2BpgYAFAAAAAACgGgFLCwQsAAAAAAAA1QhYWiBgAQAAAAAAqEbA0gIBCwAAAAAAQDUClhYIWAAAAAAAAKoRsLRAwAIAAAAAAFCNgKUFAhYAAAAAAIBqBCwtELAAAAAAAABUI2BpgYAFAAAAAACgGgFLCwQsAAAAAAAA1QhYWiBgAQAAAAAAqEbA0gIBCwAAAAAAQDUClhYIWAAAAA"
+  },
+  {
+   "name": "lint_offgrid",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"No off-grid geometry (grid 1.27 mm)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "edit_schematic_component",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_sch",
+    "reference": "R1",
+    "footprint": "Resistor_SMD:R_2512_6332Metric",
+    "properties": {
+     "Power": "0.5W minimum",
+     "Voltage": "50V minimum"
+    }
+   },
+   "is_error": false,
+   "seconds": 0.01,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Successfully updated R1: footprint=Resistor_SMD:R_2512_6332Metric; added=Power,Voltage\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "add_schematic_text",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_sch",
+    "text": "DESK LIN CONTROLLER  |  24V input, 12V LIN, 5V logic",
+    "position": [
+     30.48,
+     21.59
+    ],
+    "fontSize": 1.6,
+    "bold": true
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Added text 'DESK LIN CONTROLLER  |  24V input, 12V LIN, 5V logic' at (30.48, 21.59)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "add_schematic_text",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_sch",
+    "text": "Inputs: 5V logic; panel switches to GND; enable MCU pull-ups. Isolate external drivers during ISP.",
+    "position": [
+     31.75,
+     199.39
+    ],
+    "fontSize": 1.0
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Added text 'Inputs: 5V logic; panel switches to GND; enable MCU pull-ups. Isolate external drivers during ISP.' at (31.75, 199.39)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "add_schematic_text",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_sch",
+    "text": "TVS surge clamping may exceed 7812 maximum input; verify upstream surge limits and thermal budget.",
+    "position": [
+     31.75,
+     203.2
+    ],
+    "fontSize": 1.0
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Added text 'TVS surge clamping may exceed 7812 maximum input; verify upstream surge limits and thermal budget.' at (31.75, 203.2)\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "run_erc",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 1.81,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"ERC result: 0 violation(s)\\n  Errors: 0  Warnings: 0  Info: 0\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "validate_schematic",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.32,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"valid\\\": true,\\n  \\\"path\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_sch\\\",\\n  \\\"message\\\": \\\"b30.kicad_sch is valid\\\",\\n  \\\"errorCount\\\": 0,\\n  \\\"warningCount\\\": 0,\\n  \\\"issues\\\": [],\\n  \\\"kicadCli\\\": {\\n    \\\"ran\\\": true,\\n    \\\"ok\\\": true,\\n    \\\"exitCode\\\": 0,\\n    \\\"output\\\": \\\"Successfully saved schematic file using the latest format\\\"\\n  },\\n  \\\"componentCount\\\": 35,\\n  \\\"semanticChecksRan\\\": true,\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "validate_symbol_library",
+   "arguments": {
+    "libraryPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/megadesk.kicad_sym"
+   },
+   "is_error": false,
+   "seconds": 0.21,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"valid\\\": true,\\n  \\\"path\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/megadesk.kicad_sym\\\",\\n  \\\"message\\\": \\\"megadesk.kicad_sym is valid\\\",\\n  \\\"errorCount\\\": 0,\\n  \\\"warningCount\\\": 0,\\n  \\\"issues\\\": [],\\n  \\\"kicadCli\\\": {\\n    \\\"ran\\\": true,\\n    \\\"ok\\\": true,\\n    \\\"exitCode\\\": 0,\\n    \\\"output\\\": \\\"Saving symbol library in updated format\\\"\\n  },\\n  \\\"symbolCount\\\": 1,\\n  \\\"semanticChecksRan\\\": true,\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "get_footprint_info",
+   "arguments": {
+    "library_name": "Resistor_SMD",
+    "footprint_name": "R_2512_6332Metric"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Footprint: R_2512_6332Metric\\nLibrary: Resistor_SMD\\nDescription: Resistor SMD 2512 (6332 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)\\nKeywords: resistor\\n2 pads: 1, 2\\n  pad 1: smd roundrect\\n  pad 2: smd roundrect\\nLayers used: F.CrtYd, F.Cu, F.Fab, F.Mask, F.Paste, F.SilkS\\nCourtyard size: 7.66mm x 3.86mm\\nAttributes: {\\\"type\\\":\\\"smd\\\",\\\"board_only\\\":false,\\\"exclude_from_pos_files\\\":false,\\\"exclude_from_bom\\\":false}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_library_table",
+   "arguments": {
+    "tableType": "symbol",
+    "scope": "project",
+    "projectPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_pro"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"message\\\": \\\"1 entry in sym-lib-table\\\",\\n  \\\"tablePath\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/sym-lib-table\\\",\\n  \\\"tableType\\\": \\\"symbol\\\",\\n  \\\"entryCount\\\": 1,\\n  \\\"missingCount\\\": 0,\\n  \\\"tableReferenceCount\\\": 0,\\n  \\\"referencedLibraryCount\\\": 0,\\n  \\\"entries\\\": [\\n    {\\n      \\\"name\\\": \\\"megadesk\\\",\\n      \\\"type\\\": \\\"KiCad\\\",\\n      \\\"uri\\\": \\\"${KIPRJMOD}/lib/megadesk.kicad_sym\\\",\\n      \\\"options\\\": \\\"\\\",\\n      \\\"descr\\\": \\\"\\\",\\n      \\\"resolvedPath\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/megadesk.kicad_sym\\\",\\n      \\\"exists\\\": true\\n    }\\n  ],\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "list_library_table",
+   "arguments": {
+    "tableType": "footprint",
+    "scope": "project",
+    "projectPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_pro"
+   },
+   "is_error": false,
+   "seconds": 0.0,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"{\\n  \\\"success\\\": true,\\n  \\\"message\\\": \\\"1 entry in fp-lib-table\\\",\\n  \\\"tablePath\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/fp-lib-table\\\",\\n  \\\"tableType\\\": \\\"footprint\\\",\\n  \\\"entryCount\\\": 1,\\n  \\\"missingCount\\\": 0,\\n  \\\"tableReferenceCount\\\": 0,\\n  \\\"referencedLibraryCount\\\": 0,\\n  \\\"entries\\\": [\\n    {\\n      \\\"name\\\": \\\"megadesk\\\",\\n      \\\"type\\\": \\\"KiCad\\\",\\n      \\\"uri\\\": \\\"${KIPRJMOD}/lib/megadesk.pretty\\\",\\n      \\\"options\\\": \\\"\\\",\\n      \\\"descr\\\": \\\"\\\",\\n      \\\"resolvedPath\\\": \\\"/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/lib/megadesk.pretty\\\",\\n      \\\"exists\\\": true\\n    }\\n  ],\\n  \\\"_backend\\\": \\\"swig\\\",\\n  \\\"_realtime\\\": false\\n}\", \"annotations\": null, \"meta\": null}]}"
+  },
+  {
+   "name": "find_wires_crossing_symbols",
+   "arguments": {
+    "schematicPath": "/home/modernmariner/Projects/Agentic AI for Circuit Design/EDA_Agent/eval/output/b30/run7/b30.kicad_sch"
+   },
+   "is_error": false,
+   "seconds": 0.03,
+   "result": "{\"is_error\": false, \"result\": [{\"type\": \"text\", \"text\": \"Found 0 wire(s) crossing symbols:\", \"annotations\": null, \"meta\": null}]}"
+  }
+ ],
+ "model_calls": [
+  {
+   "seconds": 5.74,
+   "input_tokens": 15951,
+   "cached_input_tokens": 0,
+   "output_tokens": 279
+  },
+  {
+   "seconds": 5.99,
+   "input_tokens": 16856,
+   "cached_input_tokens": 15948,
+   "output_tokens": 350
+  },
+  {
+   "seconds": 4.98,
+   "input_tokens": 25153,
+   "cached_input_tokens": 16853,
+   "output_tokens": 224
+  },
+  {
+   "seconds": 14.24,
+   "input_tokens": 25928,
+   "cached_input_tokens": 25150,
+   "output_tokens": 778
+  },
+  {
+   "seconds": 4.73,
+   "input_tokens": 28004,
+   "cached_input_tokens": 25925,
+   "output_tokens": 217
+  },
+  {
+   "seconds": 5.77,
+   "input_tokens": 28371,
+   "cached_input_tokens": 28001,
+   "output_tokens": 344
+  },
+  {
+   "seconds": 8.87,
+   "input_tokens": 29537,
+   "cached_input_tokens": 28368,
+   "output_tokens": 538
+  },
+  {
+   "seconds": 3.72,
+   "input_tokens": 32073,
+   "cached_input_tokens": 29534,
+   "output_tokens": 94
+  },
+  {
+   "seconds": 4.4,
+   "input_tokens": 32548,
+   "cached_input_tokens": 32070,
+   "output_tokens": 226
+  },
+  {
+   "seconds": 31.44,
+   "input_tokens": 33488,
+   "cached_input_tokens": 32545,
+   "output_tokens": 2681
+  },
+  {
+   "seconds": 7.27,
+   "input_tokens": 36261,
+   "cached_input_tokens": 33485,
+   "output_tokens": 299
+  },
+  {
+   "seconds": 5.33,
+   "input_tokens": 38998,
+   "cached_input_tokens": 36258,
+   "output_tokens": 277
+  },
+  {
+   "seconds": 6.35,
+   "input_tokens": 39331,
+   "cached_input_tokens": 38995,
+   "output_tokens": 382
+  },
+  {
+   "seconds": 17.52,
+   "input_tokens": 45428,
+   "cached_input_tokens": 39328,
+   "output_tokens": 778
+  },
+  {
+   "seconds": 4.6,
+   "input_tokens": 46275,
+   "cached_input_tokens": 45425,
+   "output_tokens": 100
+  },
+  {
+   "seconds": 3.68,
+   "input_tokens": 46455,
+   "cached_input_tokens": 46272,
+   "output_tokens": 98
+  },
+  {
+   "seconds": 3.61,
+   "input_tokens": 46635,
+   "cached_input_tokens": 46452,
+   "output_tokens": 94
+  },
+  {
+   "seconds": 7.91,
+   "input_tokens": 46807,
+   "cached_input_tokens": 46632,
+   "output_tokens": 442
+  },
+  {
+   "seconds": 7.1,
+   "input_tokens": 48630,
+   "cached_input_tokens": 46804,
+   "output_tokens": 340
+  }
+ ],
+ "cleared_results": 0,
+ "tools_offered": [
+  "add_library_symbol_property",
+  "add_no_connect",
+  "add_schematic_component",
+  "add_schematic_net_label",
+  "add_schematic_text",
+  "add_schematic_wire",
+  "add_symbol_property",
+  "annotate_schematic",
+  "autoplace_schematic_fields",
+  "batch_add_and_connect",
+  "batch_add_components",
+  "batch_add_no_connects",
+  "batch_connect",
+  "batch_edit_schematic_components",
+  "batch_list_symbol_pins",
+  "batch_set_schematic_property_positions",
+  "connect_passthrough",
+  "connect_to_net",
+  "create_project",
+  "create_schematic",
+  "create_symbol",
+  "delete_schematic_component",
+  "delete_schematic_net_label",
+  "delete_schematic_wire",
+  "delete_symbol",
+  "edit_schematic_component",
+  "export_schematic_pdf",
+  "export_schematic_svg",
+  "export_symbol",
+  "find_duplicate_symbols",
+  "find_orphaned_wires",
+  "find_overlapping_elements",
+  "find_wires_crossing_symbols",
+  "generate_netlist",
+  "get_elements_in_region",
+  "get_footprint_info",
+  "get_net_at_point",
+  "get_net_connections",
+  "get_project_info",
+  "get_schematic_component",
+  "get_schematic_pin_locations",
+  "get_schematic_view",
+  "get_schematic_view_region",
+  "get_symbol_info",
+  "get_wire_connections",
+  "import_symbol",
+  "lint_offgrid",
+  "lint_schematic_cosmetic",
+  "list_floating_labels",
+  "list_footprint_libraries",
+  "list_libraries",
+  "list_library_footprints",
+  "list_library_symbols",
+  "list_library_table",
+  "list_project_files",
+  "list_schematic_components",
+  "list_schematic_labels",
+  "list_schematic_nets",
+  "list_schematic_texts",
+  "list_schematic_wires",
+  "list_symbol_libraries",
+  "list_symbol_pins",
+  "list_symbols_in_library",
+  "move_schematic_component",
+  "move_schematic_net_label",
+  "open_project",
+  "read_project_file",
+  "register_footprint_library",
+  "register_symbol_library",
+  "remove_library_table_entry",
+  "remove_schematic_component_property",
+  "rename_symbol",
+  "repair_flat_symbols",
+  "replace_instance_lib_ids",
+  "replace_schematic_component",
+  "rotate_schematic_component",
+  "run_erc",
+  "save_project",
+  "search_footprints",
+  "search_symbols",
+  "set_library_table_uri",
+  "set_schematic_component_property",
+  "set_schematic_property_position",
+  "set_symbol_pin_type",
+  "snap_to_grid",
+  "suggest_schematic_declutter",
+  "update_symbol_from_library",
+  "validate_schematic",
+  "validate_symbol_library"
+ ],
+ "task_id": "b30"
+}
