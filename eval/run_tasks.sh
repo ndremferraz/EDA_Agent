@@ -7,8 +7,8 @@ task_ids=$(python -c 'import json; print("\n".join(json.loads(line)["id"] for li
 
 # Default uses runs 1-3; ReAct uses 4-6; Plan-and-Replan uses 7-9.
 run=4
-for approach in react plan-and-replan; do
-  for attempt in 1 2 3; do
+for approach in react; do
+  for attempt in 1; do
     while IFS= read -r task_id; do
       [[ -n "$task_id" ]] || continue
       run_dir="eval/output/$task_id/run$run"

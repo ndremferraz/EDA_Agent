@@ -1,0 +1,5 @@
+Created the [b17 KiCad project](file:///home/andreferraz/EDA_Agent/eval/output/b17/run4/b17.kicad_pro) and its [schematic](file:///home/andreferraz/EDA_Agent/eval/output/b17/run4/b17.kicad_sch). It contains the requested four BSS138s, pull-ups, gate-bias network, headers and fiducials.
+
+**Important limitation:** The specified VCC/2 gate bias does not guarantee switching across the full 1.65–5.5 V range. At VCC = 1.65 V, the gate bias is only 0.825 V, below the BSS138’s possible threshold. The schematic includes a warning; a different architecture is needed for guaranteed operation.
+
+Assumptions: common ground, open-drain signals, and a 10 V-rated polarized bypass capacitor. ERC reports **0 errors and 11 symbol-library mismatch warnings**; refreshing the symbols did not clear those warnings.

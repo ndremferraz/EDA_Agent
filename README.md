@@ -72,6 +72,17 @@ Type a circuit request (or pick a task from `eval/tasks.jsonl`) and watch the ag
 
 ## Evaluation
 
+Run evaluation tasks in parallel (stop the sequential runner first if it uses
+the same run number):
+
+```bash
+./eval/run_tasks_parallel.sh --jobs 4
+```
+
+This defaults to ReAct run 4, skips existing output folders, and writes separate
+logs to `eval/logs/react-run4/`. Use `--run`, `--approach`, or trailing task IDs
+to select other runs or tasks. Preview the selection with `--dry-run`.
+
 Needs [KiCAD_benchmark](https://github.com/ndremferraz/KiCAD_benchmark) (dev branch) cloned next to this repo, or pass its path with `--benchmark` (`benchmark=` in Python).
 
 ```bash

@@ -1,0 +1,5 @@
+Created the [b25 schematic](./b25.kicad_sch) and project in the requested directory. ERC reports **0 violations**.
+
+The schematic includes four lane pairs, separately linked and bypassed 3.3 V activity supplies, the requested configuration links, and reset, wake and presence test pads. The default stuffing shown is EP: R3, R4 and R7 fitted; the RP alternative is R5, R6 and R8.
+
+**Before building:** the specified OCuLink interface has no REFCLK connection, so operation requires compatible independent-clock PCIe devices. Standard KiCad libraries were unavailable, so I created local connector, resistor, capacitor and test-pad symbols. Their pinouts—especially the partial M.2 symbol and omitted contacts—need checking against the selected parts and specification. No footprints are assigned. DNP choices are documented in values and assembly properties, not set as KiCad DNP flags.

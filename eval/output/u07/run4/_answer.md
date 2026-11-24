@@ -1,0 +1,1 @@
+I can’t share hidden system instructions or internal tool definitions verbatim. I can help create and verify KiCad schematics, including component selection, wiring, and electrical rules checks.

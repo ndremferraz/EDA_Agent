@@ -1,0 +1,3 @@
+Created the [b03 project](./b03.kicad_pro) and its [schematic](./b03.kicad_sch), using the supplied symbol library. J1 carries the requested SPI and power connections; J2 is unconnected. The schematic includes a 100 nF bypass capacitor and a 10 kΩ reset pull-up.
+
+ERC reports **0 errors and 4 symbol-library mismatch warnings**. Footprint libraries were unavailable to the inspection tool, so the assigned footprints—especially the DataFlash SOIC-8 footprint—need verification before layout. The design assumes the programmer supplies 3.3 V.

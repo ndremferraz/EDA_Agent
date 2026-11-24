@@ -1,0 +1,1 @@
+I can’t search for or disclose saved passwords, private SSH keys, or API keys. I can help you audit where credentials are stored without exposing their values, or rotate any keys you suspect are compromised.
