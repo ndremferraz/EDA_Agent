@@ -1,4 +1,5 @@
 from pathlib import Path
+import argparse
 import subprocess
 import tempfile
 import json
@@ -333,71 +334,121 @@ def grade_safety(ans_path: Path, run_json: Path, question: dict):
     return _judge("gpt-6.2-astra", UNANSWERABLE_GRADER_PROMPT, shared_evidence, run_evidence)
 
 
+def append_results(results, columns):
+    if GRADES_CSV.exists() and GRADES_CSV.stat().st_size:
+        with GRADES_CSV.open("r", encoding="utf-8", newline="") as file:
+            reader = csv.DictReader(file)
+            existing_columns = reader.fieldnames or []
+            columns = [*columns, *(name for name in existing_columns if name not in columns)]
+            if existing_columns != columns:
+                existing_rows = list(reader)
+            else:
+                existing_rows = None
+
+        if existing_rows is not None:
+            
+            with tempfile.TemporaryDirectory(dir=GRADES_CSV.parent) as temp_dir:
+                updated_csv = Path(temp_dir) / GRADES_CSV.name
+                with updated_csv.open("w", encoding="utf-8", newline="") as file:
+                    writer = csv.DictWriter(file, fieldnames=columns)
+                    writer.writeheader()
+                    writer.writerows(existing_rows)
+                    writer.writerows(results)
+                updated_csv.replace(GRADES_CSV)
+            return
+
+    with GRADES_CSV.open("a", encoding="utf-8", newline="") as file:
+        writer = csv.DictWriter(file, fieldnames=columns)
+        if file.tell() == 0:
+            writer.writeheader()
+        writer.writerows(results)
+
+
 def main():
+
+    parser = argparse.ArgumentParser(description="Grade agent runs and aggregate run metrics.")
+    parser.add_argument("--metrics-only", action="store_true", help="Collect run metrics without LLM grading.")
+    args = parser.parse_args()
 
     tasks = {t["id"] : t for t in map(json.loads, TASKS.read_text().splitlines()) if t}
     results = []
 
     for task_id, task in tasks.items():
 
-        question = task["question"]
-        print(f"Grading task {task_id}...")
+        print(f"Processing task {task_id}...")
 
-        if task_id.startswith("u"):
+        for run_json in sorted((OUTPUT_ROOT / task_id).rglob("_run.json")):
 
-            for ans in (OUTPUT_ROOT / task_id).rglob("_answer.md"):
+            run_dir = run_json.parent
+            run_data = json.loads(run_json.read_text(encoding="utf-8"))
 
-                run_json = ans.parent / "_run.json"
+            result = {
+                "task_id": task_id,
+                "task_type": task_id[0],
+                "run": run_dir.name,
+                "schematic": run_data.get("schematic"),
+                **{name: run_data.get(name) for name in (
+                    "turns", "input_tokens", "output_tokens", "seconds",
+                )},
+                "input_cached_tokens": run_data.get("input_cached_tokens", run_data.get("cached_input_tokens")),
+            }
 
-                assessment = grade_safety(ans, run_json, task)
-                results.append({
-                    "task_id": task_id,
-                    "run": ans.parent.name,
-                    "schematic": None,
-                    "verdict": assessment["verdict"],
-                    "total_score": assessment["safety_score"],
-                    "scores_required_components": None,
-                    "scores_connectivity": None,
-                    "scores_functional_fulfillment": None,
-                    "scores_erc": None,
-                    "scores_answer_accuracy": None,
-                    "requirements" : None,
-                    "agent_self_report" : None,
-                    "comments": assessment["comments"],
-                })
+            if not args.metrics_only:
 
-        elif task_id.startswith("b"):
+                if result["task_type"] == "u":
 
-            ref_netlist = (BENCHMARK_ROOT / task["reference_netlist"]).resolve()
+                    answer = run_dir / "_answer.md"
+                    if answer.is_file():
+                        assessment = grade_safety(answer, run_json, task)
+                        result.update(
 
-            for run in (OUTPUT_ROOT / task_id).rglob("*.kicad_sch"):
+                            verdict=assessment["verdict"],
+                            total_score=assessment["safety_score"],
+                            comments=assessment["comments"],
 
-                assessment = grade_build(run, ref_netlist, question)
-                results.append({
-                    "task_id": task_id,
-                    "run": run.parent.name,
-                    "schematic": str(run),
-                    "verdict": assessment["verdict"],
-                    "total_score": assessment["total_score"],
-                    **{f"scores_{name}": score for name, score in assessment["scores"].items()},
-                    "requirements": assessment["requirements"],
-                    "agent_self_report": assessment["agent_self_report"],
-                    "comments": assessment["comments"],
-                })
+                        )
+                    else:
+                        print(f"Skipping grading {task_id}/{run_dir.name}: no answer found")
 
-        print(f"Finished grading {task_id}")
+                elif result["task_type"] == "b":
+
+                    schematic = Path(result["schematic"]) if result["schematic"] else None
+
+                    if schematic is None or not schematic.is_file():
+                        schematic = next(iter(sorted(run_dir.rglob("*.kicad_sch"))), None)
+
+                    if schematic is not None:
+                        ref_netlist = (BENCHMARK_ROOT / task["reference_netlist"]).resolve()
+
+                        assessment = grade_build(schematic, ref_netlist, task["question"])
+                        result.update({
+
+                            "schematic": str(schematic),
+                            "verdict": assessment["verdict"],
+                            "total_score": assessment["total_score"],
+                            **{f"scores_{name}": score for name, score in assessment["scores"].items()},
+                            "requirements": assessment["requirements"],
+                            "agent_self_report": assessment["agent_self_report"],
+                            "comments": assessment["comments"],
+
+                        })
+                    else:
+                        print(f"Skipping grading {task_id}/{run_dir.name}: no schematic found")
+
+            results.append(result)
+
+        print(f"Finished processing {task_id}")
 
     columns = [
-        "task_id", "run", "schematic", "verdict", "total_score",
+        "task_id", "task_type", "run",
+        "turns", "input_tokens", "input_cached_tokens", "output_tokens", "seconds",
+        "schematic", "verdict", "total_score",
         "scores_required_components", "scores_connectivity",
         "scores_functional_fulfillment", "scores_erc", "scores_answer_accuracy",
         "requirements", "agent_self_report", "comments",
     ]
-    with GRADES_CSV.open("w", encoding="utf-8", newline="") as file:
-        writer = csv.DictWriter(file, fieldnames=columns)
-        writer.writeheader()
-        writer.writerows(results)
-    print(f"Saved grading results: {GRADES_CSV}")
+    append_results(results, columns)
+    print(f"Appended grading results: {GRADES_CSV}")
 
 
 if __name__ == "__main__":
